@@ -16,6 +16,22 @@
   --grid-line: #1E2430;
 }
 
+[data-theme="light"], .light-mode {
+  --bg-base: #F8FAFC;
+  --bg-surface: #FFFFFF;
+  --bg-elevated: #F1F5F9;
+  --bg-border: #CBD5E1;
+  --accent-primary: #0284C7;
+  --accent-warn: #D97706;
+  --accent-danger: #DC2626;
+  --accent-safe: #059669;
+  --accent-rail: #4F46E5;
+  --text-primary: #0F172A;
+  --text-secondary: #334155;
+  --text-muted: #64748B;
+  --grid-line: #E2E8F0;
+}
+
 * {
   box-sizing: border-box;
   margin: 0;
@@ -243,7 +259,7 @@ h4 { font-size: 18px; font-weight: 500; }
 
 /* ---------- Track Map ---------- */
 .track-map-canvas {
-  background: #080B0F;
+  background: var(--bg-surface);
   position: relative;
 }
 

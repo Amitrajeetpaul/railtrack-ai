@@ -33,6 +33,13 @@ export default function SimulatePage() {
   const [isSystemsModalOpen, setIsSystemsModalOpen] = useState(false);
   const [isApplying, setIsApplying] = useState(false);
   const [applyMessage, setApplyMessage] = useState<string | null>(null);
+  const [theme, setTheme] = useState<'dark' | 'light'>('dark');
+
+  const toggleTheme = () => {
+    const nextTheme = theme === 'dark' ? 'light' : 'dark';
+    setTheme(nextTheme);
+    document.documentElement.setAttribute('data-theme', nextTheme);
+  };
 
   const { data: trains = [], isLoading: trainsLoading, error: trainsError } = useQuery({
     queryKey: ['trains'],
@@ -183,6 +190,17 @@ export default function SimulatePage() {
             </Link>
           ))}
         </nav>
+
+        {/* Theme Toggle Button */}
+        <button
+          onClick={toggleTheme}
+          style={{
+            padding: '6px 12px', borderRadius: '6px', border: '1px solid var(--bg-border)',
+            background: 'var(--bg-elevated)', color: 'var(--text-primary)', fontSize: '12px',
+            fontFamily: 'var(--font-space-mono)', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px'
+          }}>
+          <span>{theme === 'dark' ? '☀️' : '🌙'}</span> {theme === 'dark' ? 'Light Mode' : 'Dark Mode'}
+        </button>
 
         {/* System Feeds Trigger Button */}
         <button
