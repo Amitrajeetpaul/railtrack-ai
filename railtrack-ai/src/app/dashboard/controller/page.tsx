@@ -58,6 +58,55 @@ export default function ControllerDashboard() {
     loading: boolean;
   }>>({});
 
+  const [searchQuery, setSearchQuery] = useState('');
+  const [isSearching, setIsSearching] = useState(false);
+
+  const handleSearchTrain = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!searchQuery.trim()) return;
+    const num = searchQuery.replace(/\D/g, '');
+    if (!num) return;
+    
+    setIsSearching(true);
+    try {
+      const token = getClientToken();
+      const res = await fetch(`${API_BASE}/api/trains/live/${num}`, {
+        headers: token ? { Authorization: `Bearer ${token}` } : {}
+      });
+      const data = await res.json();
+      
+      try {
+        await fetch(`${API_BASE}/api/trains/info/${num}`, {
+          headers: token ? { Authorization: `Bearer ${token}` } : {}
+        });
+      } catch (e) {
+        console.warn('Info API error:', e);
+      }
+
+      setLiveTrainData(prev => ({
+        ...prev,
+        [num]: {
+          status: data.status === 'not_running' ? 'not_running' : 'ok',
+          message: data.message,
+          delay: data.delay_minutes || 0,
+          currentStation: data.current_station,
+          currentStationName: data.current_station_name,
+          expectedArrivalNdls: data.expected_arrival_ndls,
+          nextStation: data.next_station,
+          lastUpdated: data.last_updated,
+          terminated: data.terminated,
+          isLive: data.status === 'ok',
+          loading: false
+        }
+      }));
+      setSelectedTrain(num);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setIsSearching(false);
+    }
+  };
+
   const fetchLiveTrainData = async (e: React.MouseEvent, trainId: string) => {
     e.stopPropagation();
     try {
@@ -469,10 +518,25 @@ export default function ControllerDashboard() {
               <span className="panel-header">Train Queue</span>
               <span style={{ fontFamily: 'var(--font-jetbrains)', fontSize: '12px', color: 'var(--accent-primary)' }}>{trains.length}</span>
             </div>
+            {/* Live IRCTC Train Search Bar */}
+            <form onSubmit={handleSearchTrain} style={{ padding: '8px 12px', borderBottom: '1px solid var(--bg-border)', display: 'flex', gap: '6px', background: 'var(--bg-elevated)' }}>
+              <input
+                type="text"
+                className="input"
+                placeholder="Search 5-digit train no. (e.g. 12002)..."
+                value={searchQuery}
+                onChange={e => setSearchQuery(e.target.value)}
+                style={{ padding: '6px 10px', fontSize: '11px', flex: 1, fontFamily: 'var(--font-jetbrains)' }}
+              />
+              <button type="submit" className="btn-primary" disabled={isSearching} style={{ padding: '6px 10px', fontSize: '11px', whiteSpace: 'nowrap' }}>
+                {isSearching ? '...' : '🔍 Fetch'}
+              </button>
+            </form>
+
             {/* Informational note about live data */}
             <div style={{ padding: '6px 16px', background: 'rgba(0,212,255,0.04)', borderBottom: '1px solid var(--bg-border)', display: 'flex', alignItems: 'center', gap: '6px' }}>
               <span style={{ fontSize: '10px', color: 'var(--text-muted)', fontFamily: 'var(--font-space-mono)' }}>
-                ℹ Live data available for trains currently running
+                ℹ Search any Indian Railways train number to fetch live IRCTC tracking
               </span>
             </div>
             <div style={{ overflowY: 'auto', flex: 1 }}>

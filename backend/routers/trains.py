@@ -116,10 +116,10 @@ async def get_live_train_status(
     current_user: User = Depends(get_current_user),
 ):
     """Fetch real live train actuals from IRCTC RapidAPI."""
-    url = f"https://indian-railway-irctc.p.rapidapi.com/api/trains/v1/train/status?departure_date=TODAY&isH5=true&client=web&train_number={train_number}"
-    
     rapidapi_key = os.getenv("RAPIDAPI_KEY")
-    rapidapi_host = os.getenv("RAPIDAPI_HOST")
+    rapidapi_host = os.getenv("RAPIDAPI_HOST", "irctc1.p.rapidapi.com")
+    
+    url = f"https://{rapidapi_host}/api/v3/getLiveStation?hours=1" if "getLiveStation" in rapidapi_host else f"https://{rapidapi_host}/api/trains/v1/train/status?departure_date=TODAY&isH5=true&client=web&train_number={train_number}"
     
     if not rapidapi_key or not rapidapi_host:
         raise HTTPException(
