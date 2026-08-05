@@ -23,9 +23,9 @@ router = APIRouter()
 
 class SimulationRequest(BaseModel):
     train_ids: Optional[List[str]] = None
-    disruption_type: str
-    disruption_location: str
-    disruption_duration_minutes: int
+    disruption_type: str = "FREIGHT_DELAY"
+    disruption_location: str = "AGC"
+    disruption_duration_minutes: int = 20
     objective: str = "MINIMIZE_DELAY"
     num_platforms: int = 2
     headway_minutes: int = 3

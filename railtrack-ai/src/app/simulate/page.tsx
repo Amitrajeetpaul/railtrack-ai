@@ -101,6 +101,10 @@ export default function SimulatePage() {
       setSimResults(data);
       setSimState('RESULTS');
       setApplyMessage(null);
+    },
+    onError: (err: any) => {
+      setSimState('IDLE');
+      console.error('Simulation error:', err);
     }
   });
 
@@ -108,11 +112,11 @@ export default function SimulatePage() {
     setSimState('RUNNING');
     const payload = {
       train_ids: selectedTrains.length > 0 ? selectedTrains : undefined,
-      disruption_type: disruptionType,
-      disruption_location: disruptionLocation,
-      disruption_duration_minutes: disruptionDuration,
-      num_platforms: numPlatforms,
-      headway_minutes: headwayMinutes,
+      disruption_type: disruptionType || 'FREIGHT_DELAY',
+      disruption_location: disruptionLocation || 'AGC',
+      disruption_duration_minutes: Number(disruptionDuration) || 20,
+      num_platforms: Number(numPlatforms) || 2,
+      headway_minutes: Number(headwayMinutes) || 3,
       objective: objective === 'DELAY' ? 'MINIMIZE_DELAY'
                : objective === 'EXPRESS' ? 'PRIORITIZE_EXPRESS'
                : objective === 'THROUGHPUT' ? 'MAXIMIZE_THROUGHPUT'
