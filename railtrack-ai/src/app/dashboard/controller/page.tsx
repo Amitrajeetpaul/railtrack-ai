@@ -60,6 +60,8 @@ export default function ControllerDashboard() {
 
   const [searchQuery, setSearchQuery] = useState('');
   const [isSearching, setIsSearching] = useState(false);
+  const [customTrains, setCustomTrains] = useState<Train[]>([]);
+  const [searchNotification, setSearchNotification] = useState<string | null>(null);
 
   const handleSearchTrain = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -68,6 +70,7 @@ export default function ControllerDashboard() {
     if (!num) return;
     
     setIsSearching(true);
+    setSearchNotification(null);
     try {
       const token = getClientToken();
       const res = await fetch(`${API_BASE}/api/trains/live/${num}`, {
@@ -75,13 +78,34 @@ export default function ControllerDashboard() {
       });
       const data = await res.json();
       
+      let trainInfo: any = {};
       try {
-        await fetch(`${API_BASE}/api/trains/info/${num}`, {
+        const infoRes = await fetch(`${API_BASE}/api/trains/info/${num}`, {
           headers: token ? { Authorization: `Bearer ${token}` } : {}
         });
+        if (infoRes.ok) trainInfo = await infoRes.json();
       } catch (e) {
         console.warn('Info API error:', e);
       }
+
+      const newTrain: Train = {
+        id: num,
+        name: trainInfo.name || `Train ${num}`,
+        priority: 'EXPRESS',
+        origin: trainInfo.origin || data.current_station_name || 'Origin',
+        destination: trainInfo.destination || data.next_station || 'Destination',
+        section: user?.section || 'NR-42',
+        status: data.status === 'not_running' ? 'HALTED' : (data.delay_minutes > 0 ? 'DELAYED' : 'ON_TIME'),
+        delay: data.delay_minutes || 0,
+        speed: 75.0,
+        platform: 1,
+        eta: data.last_updated || '18:30'
+      };
+
+      setCustomTrains(prev => {
+        if (prev.some(t => t.id === num)) return prev.map(t => t.id === num ? newTrain : t);
+        return [newTrain, ...prev];
+      });
 
       setLiveTrainData(prev => ({
         ...prev,
@@ -99,9 +123,16 @@ export default function ControllerDashboard() {
           loading: false
         }
       }));
+
       setSelectedTrain(num);
-    } catch (err) {
+      if (data.status === 'ok') {
+        setSearchNotification(`Fetched Train ${num} (${newTrain.name}): @ ${data.current_station_name || 'En Route'} → Next: ${data.next_station || 'Transit'} (${data.delay_minutes === 0 ? '● ON TIME' : `+${data.delay_minutes}m delay`})`);
+      } else {
+        setSearchNotification(`Train ${num} added to queue: Data status: ${data.message || 'Scheduled'}`);
+      }
+    } catch (err: any) {
       console.error(err);
+      setSearchNotification(`Search Error: ${err.message}`);
     } finally {
       setIsSearching(false);
     }
@@ -539,8 +570,15 @@ export default function ControllerDashboard() {
                 ℹ Search any Indian Railways train number to fetch live IRCTC tracking
               </span>
             </div>
+
+            {searchNotification && (
+              <div style={{ padding: '8px 12px', background: 'rgba(0,212,255,0.12)', borderBottom: '1px solid var(--accent-primary)', color: 'var(--accent-primary)', fontSize: '11px', fontFamily: 'var(--font-jetbrains)', lineHeight: 1.4 }}>
+                {searchNotification}
+              </div>
+            )}
+
             <div style={{ overflowY: 'auto', flex: 1 }}>
-              {trains.map(train => (
+              {Array.from(new Set([...customTrains, ...trains].map(t => t.id))).map(id => [...customTrains, ...trains].find(t => t.id === id)!).map(train => (
                 <div
                   key={train.id}
                   onClick={() => setSelectedTrain(selectedTrain === train.id ? null : train.id)}
