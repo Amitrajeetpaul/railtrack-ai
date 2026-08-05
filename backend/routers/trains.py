@@ -136,6 +136,13 @@ async def get_live_train_status(
         async with httpx.AsyncClient() as client:
             response = await client.get(url, headers=headers, timeout=10.0)
             
+            if response.status_code == 429:
+                return LiveTrainResponse(
+                    train_number=train_number,
+                    status="not_running",
+                    message="RapidAPI free tier rate limit reached — Section Timetable Active"
+                )
+
             if response.status_code != 200:
                 return LiveTrainResponse(
                     train_number=train_number,

@@ -127,8 +127,10 @@ export default function ControllerDashboard() {
       setSelectedTrain(num);
       if (data.status === 'ok') {
         setSearchNotification(`Fetched Train ${num} (${newTrain.name}): @ ${data.current_station_name || 'En Route'} → Next: ${data.next_station || 'Transit'} (${data.delay_minutes === 0 ? '● ON TIME' : `+${data.delay_minutes}m delay`})`);
+      } else if (data.message?.includes('429') || data.message?.includes('rate limit')) {
+        setSearchNotification(`⚡ Train ${num} added to queue: RapidAPI free daily quota reached for key (HTTP 429) — Section Timetable Active.`);
       } else {
-        setSearchNotification(`Train ${num} added to queue: Data status: ${data.message || 'Scheduled'}`);
+        setSearchNotification(`Train ${num} added to queue: ${data.message || 'Scheduled'}`);
       }
     } catch (err: any) {
       console.error(err);
