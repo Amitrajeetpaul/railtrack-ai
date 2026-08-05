@@ -119,8 +119,6 @@ async def get_live_train_status(
     rapidapi_key = os.getenv("RAPIDAPI_KEY")
     rapidapi_host = os.getenv("RAPIDAPI_HOST", "irctc1.p.rapidapi.com")
     
-    url = f"https://{rapidapi_host}/api/v3/getLiveStation?hours=1" if "getLiveStation" in rapidapi_host else f"https://{rapidapi_host}/api/trains/v1/train/status?departure_date=TODAY&isH5=true&client=web&train_number={train_number}"
-    
     if not rapidapi_key or not rapidapi_host:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, 
@@ -131,30 +129,50 @@ async def get_live_train_status(
         "x-rapidapi-key": rapidapi_key,
         "x-rapidapi-host": rapidapi_host
     }
-    
+
+    url = f"https://{rapidapi_host}/api/v1/liveTrainStatus?trainNo={train_number}" if "irctc1" in rapidapi_host else f"https://{rapidapi_host}/api/trains/v1/train/status?departure_date=TODAY&isH5=true&client=web&train_number={train_number}"
+
     try:
         async with httpx.AsyncClient() as client:
             response = await client.get(url, headers=headers, timeout=10.0)
             
-            # Gracefully handle 400 (train not currently running today)
-            if response.status_code == 400:
-                return LiveTrainResponse(
-                    train_number=train_number,
-                    status="not_running",
-                    message="Train not currently running or data unavailable today"
-                )
-            
-            # For any other non-2xx, also return gracefully rather than crashing
             if response.status_code != 200:
                 return LiveTrainResponse(
                     train_number=train_number,
                     status="not_running",
-                    message=f"API unavailable (HTTP {response.status_code})"
+                    message=f"API returned status {response.status_code}"
                 )
 
             data = response.json()
             
-            # Check if the API itself signals no data in body
+            # Check irctc1.p.rapidapi.com format
+            if "data" in data and isinstance(data["data"], dict):
+                d = data["data"]
+                if not d.get("success", True) and not d.get("train_name"):
+                    return LiveTrainResponse(
+                        train_number=train_number,
+                        status="not_running",
+                        message=data.get("message", "No data available")
+                    )
+
+                next_stn = d.get("next_station_name") or d.get("dest_stn_name") or "Transit"
+                curr_stn = d.get("current_station_name") or d.get("source_stn_name") or "En Route"
+                msg = d.get("new_message") or d.get("title") or "Running"
+                delay = int(d.get("delay", d.get("delay_minutes", 0)))
+
+                return LiveTrainResponse(
+                    train_number=train_number,
+                    status="ok",
+                    current_station=d.get("source", ""),
+                    current_station_name=curr_stn,
+                    delay_minutes=delay,
+                    terminated=d.get("at_dstn", False),
+                    last_updated=str(d.get("std", "Live")),
+                    next_station=next_stn,
+                    expected_arrival_ndls=msg
+                )
+
+            # Fallback for standard IRCTC format
             body = data.get("body", {})
             if not body or data.get("status") == False:
                 return LiveTrainResponse(
@@ -163,57 +181,16 @@ async def get_live_train_status(
                     message="Train not currently running or data unavailable today"
                 )
             
-            terminated = body.get("terminated", False)
-            last_updated = str(body.get("server_timestamp", "Unknown"))
-            
-            current_station_code = body.get("current_station", "")
-            current_station_name = "Transit"
-            next_station = "Unknown"
-            expected_arrival_ndls = None
-            delay_minutes = 0
-            
-            # Find in stations list
-            stations = body.get("stations", [])
-            
-            for i, st in enumerate(stations):
-                st_code = st.get("station_code")
-                # Lookup NDLS explicitly
-                if st_code == "NDLS":
-                    expected_arrival_ndls = st.get("actual_arrival_time") or st.get("expected_arrival")
-                
-                if st_code == current_station_code:
-                    current_station_name = st.get("station_name", current_station_code)
-                    # Try delay calculation if not directly given
-                    direct_delay = st.get("delay")
-                    if isinstance(direct_delay, int):
-                        delay_minutes = direct_delay
-                    else:
-                        actual = st.get("actual_arrival_time")
-                        sched = st.get("scheduled_arrival_time", st.get("arrival_time"))
-                        if actual and sched:
-                            try:
-                                h_a, m_a = map(int, actual.split(":"))
-                                h_s, m_s = map(int, sched.split(":"))
-                                delay_minutes = (h_a * 60 + m_a) - (h_s * 60 + m_s)
-                                # handle midnight cross
-                                if delay_minutes < -720: 
-                                    delay_minutes += 1440 
-                            except:
-                                delay_minutes = int(body.get("delay", 0))
-                    
-                    if i + 1 < len(stations):
-                        next_station = stations[i+1].get("station_name", "End of Route")
-            
             return LiveTrainResponse(
                 train_number=train_number,
                 status="ok",
-                current_station=current_station_code,
-                current_station_name=current_station_name,
-                delay_minutes=delay_minutes,
-                terminated=terminated,
-                last_updated=last_updated,
-                next_station=next_station,
-                expected_arrival_ndls=expected_arrival_ndls
+                current_station=body.get("current_station", ""),
+                current_station_name=body.get("current_station_name", "Transit"),
+                delay_minutes=int(body.get("delay", 0)),
+                terminated=body.get("terminated", False),
+                last_updated=str(body.get("server_timestamp", "Live")),
+                next_station=body.get("next_station", "En Route"),
+                expected_arrival_ndls=None
             )
             
     except httpx.TimeoutException:
