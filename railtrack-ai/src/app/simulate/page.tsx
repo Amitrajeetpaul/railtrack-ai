@@ -45,11 +45,11 @@ export default function SimulatePage() {
     queryKey: ['trains'],
     queryFn: async () => {
       const token = getClientToken();
-      if (!token) { router.push('/login'); throw new Error('No token'); }
+      if (!token) return [];
       const res = await fetch(`${API_BASE}/api/trains/?section=${user?.section || 'NR-42'}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
-      if (res.status === 401) { router.push('/login'); throw new Error('Unauthorized'); }
+      if (!res.ok) return [];
       return res.json() as Promise<Train[]>;
     },
     enabled: isAuthReady,
@@ -84,7 +84,7 @@ export default function SimulatePage() {
   const simulateMutation = useMutation({
     mutationFn: async (payload: any) => {
       const token = getClientToken();
-      if (!token) { router.push('/login'); throw new Error('No token'); }
+      if (!token) throw new Error('No token');
       const res = await fetch(`${API_BASE}/api/simulate/run`, {
         method: 'POST',
         headers: {
@@ -93,7 +93,6 @@ export default function SimulatePage() {
         },
         body: JSON.stringify(payload)
       });
-      if (res.status === 401) { router.push('/login'); throw new Error('Unauthorized'); }
       if (!res.ok) throw new Error('Failed to run simulation');
       return res.json();
     },

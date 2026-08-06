@@ -108,11 +108,10 @@ export default function AnalyticsPage() {
     queryKey: ['analytics-kpis'],
     queryFn: async () => {
       const token = getClientToken();
-      if (!token) { router.push('/login'); throw new Error('No token'); }
+      if (!token) throw new Error('No token');
       const res = await fetch(`${API_BASE}/api/analytics/kpis`, {
         headers: { Authorization: `Bearer ${token}` }
       });
-      if (res.status === 401) { router.push('/login'); throw new Error('Unauthorized'); }
       if (!res.ok) throw new Error('Failed to fetch KPIs');
       return res.json() as Promise<{
         punctuality_pct: number;
@@ -137,11 +136,11 @@ export default function AnalyticsPage() {
     queryKey: ['analytics-delay', period],
     queryFn: async () => {
       const token = getClientToken();
-      if (!token) { router.push('/login'); return []; }
+      if (!token) return [];
       const res = await fetch(`${API_BASE}/api/analytics/delay-chart?period=${period}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
-      if (res.status === 401) { router.push('/login'); throw new Error('Unauthorized'); }
+      if (!res.ok) return [];
       return res.json() as Promise<any[]>;
     },
     enabled: isAuthReady,
@@ -151,11 +150,11 @@ export default function AnalyticsPage() {
     queryKey: ['analytics-throughput', period],
     queryFn: async () => {
       const token = getClientToken();
-      if (!token) { router.push('/login'); return []; }
+      if (!token) return [];
       const res = await fetch(`${API_BASE}/api/analytics/throughput-chart?period=${period}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
-      if (res.status === 401) { router.push('/login'); throw new Error('Unauthorized'); }
+      if (!res.ok) return [];
       return res.json() as Promise<any[]>;
     },
     enabled: isAuthReady,
@@ -165,11 +164,11 @@ export default function AnalyticsPage() {
     queryKey: ['analytics-heatmap'],
     queryFn: async () => {
       const token = getClientToken();
-      if (!token) { router.push('/login'); return []; }
+      if (!token) return [];
       const res = await fetch(`${API_BASE}/api/analytics/heatmap`, {
         headers: { Authorization: `Bearer ${token}` }
       });
-      if (res.status === 401) { router.push('/login'); throw new Error('Unauthorized'); }
+      if (!res.ok) return [];
       return res.json() as Promise<{day: string, hour: number, value: number}[]>;
     },
     enabled: isAuthReady,
@@ -179,11 +178,11 @@ export default function AnalyticsPage() {
     queryKey: ['analytics-incidents'],
     queryFn: async () => {
       const token = getClientToken();
-      if (!token) { router.push('/login'); return []; }
+      if (!token) return [];
       const res = await fetch(`${API_BASE}/api/analytics/incidents`, {
         headers: { Authorization: `Bearer ${token}` }
       });
-      if (res.status === 401) { router.push('/login'); throw new Error('Unauthorized'); }
+      if (!res.ok) return [];
       return res.json() as Promise<any[]>;
     },
     refetchInterval: 30000,
@@ -194,11 +193,11 @@ export default function AnalyticsPage() {
     queryKey: ['analytics-ai-acceptance', period],
     queryFn: async () => {
       const token = getClientToken();
-      if (!token) { router.push('/login'); return []; }
+      if (!token) return [];
       const res = await fetch(`${API_BASE}/api/analytics/ai-acceptance?period=${period}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
-      if (res.status === 401) { router.push('/login'); throw new Error('Unauthorized'); }
+      if (!res.ok) return [];
       return res.json() as Promise<{date: string, acceptance: number, total: number}[]>;
     },
     enabled: isAuthReady,
