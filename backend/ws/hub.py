@@ -3,24 +3,27 @@ ws/hub.py — WebSocket telemetry hub for RailTrack AI.
 Requires a valid JWT token as query param: ws://host/ws/telemetry?token=xxx
 
 Broadcast strategy:
-  - Every 30 s, query DB for trains with status RUNNING.
-  - For each, call the IRCTC RapidAPI live-status endpoint.
-  - Results are cached in-memory per train for 60 s to avoid hammering the API.
-  - If RAPIDAPI_KEY env var is missing, falls back to mock random data so local
-    dev still works without credentials.
-  - Individual RapidAPI failures are swallowed; we use the last cached result.
-  - If RAPID API returns no running trains, we broadcast an empty-array event.
+  - Every BROADCAST_INTERVAL_SECONDS, query DB for trains with status RUNNING.
+  - Broadcast simulated telemetry (speed/position/signal) for each — every
+    event is tagged "source": "simulated" so the frontend never presents it
+    as real IRCTC data.
+
+This previously called RapidAPI on a background loop, but that meant hitting
+a rate-limited external API dozens of times an hour just to animate the
+dashboard — the RapidAPI subscription was permanently exhausted/misconfigured
+and every call failed anyway. Real, accurate live data is available on-demand
+via GET /api/trains/live/{train_number} (backed by RailRadar, see
+utils/railradar.py), which has a small daily quota appropriate for
+user-triggered lookups, not continuous background polling.
 """
 
 import asyncio
 import json
 import logging
-import os
 import random
 from datetime import datetime
-from typing import Dict, List, Optional, Tuple
+from typing import List
 
-import httpx
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect, Query
 from fastapi import status as http_status
 from sqlalchemy import select
@@ -34,26 +37,7 @@ logger = logging.getLogger(__name__)
 
 router = APIRouter()
 
-# ── In-memory RapidAPI result cache ──────────────────────────────────────────
-# key   = train_id (str)
-# value = (fetched_at: float unix timestamp, payload: dict)
-_live_cache: Dict[str, Tuple[float, dict]] = {}
-
-# Per-train exponential backoff TTL (seconds). Doubled on each 429; reset on success.
-_backoff_ttl: Dict[str, int] = {}
-_BACKOFF_MAX = 1800  # 30 minutes maximum backoff per train
-
-CACHE_TTL_SECONDS = 300           # base interval between RapidAPI calls per train
-BROADCAST_INTERVAL_SECONDS = 300  # how often the loop fires (5 min)
-MAX_API_CALLS_PER_CYCLE = 3       # max RapidAPI calls in one broadcast pass
-MIN_GAP_BETWEEN_CALLS = 10        # seconds — global guard between any two API calls
-MAX_CONSECUTIVE_429S = 5          # circuit breaker: skip cycle if this many 429s in a row
-
-RAPIDAPI_KEY  = os.getenv("RAPIDAPI_KEY", "")
-RAPIDAPI_HOST = os.getenv("RAPIDAPI_HOST", "indian-railway-irctc.p.rapidapi.com")
-
-# Global timestamp of the last RapidAPI call made (any train)
-_global_last_api_call: float = 0.0
+BROADCAST_INTERVAL_SECONDS = 15  # how often the simulated loop fires
 
 
 # ── Connection manager ────────────────────────────────────────────────────────
@@ -84,87 +68,15 @@ class ConnectionManager:
 manager = ConnectionManager()
 
 
-# ── RapidAPI live fetch (mirrors logic in routers/trains.py) ─────────────────
+# ── Simulated telemetry ─────────────────────────────────────────────────────
 
-async def _fetch_rapidapi_live(train_number: str) -> Optional[dict]:
+def _simulated_telemetry(train_id: str) -> dict:
     """
-    Call the IRCTC RapidAPI live-status endpoint for one train.
-    Returns a normalised dict or None on any failure.
-
-    URL/parsing must match whichever product RAPIDAPI_HOST actually points
-    at — this previously hardcoded the "indian-railway-irctc" endpoint path
-    even when RAPIDAPI_HOST was set to "irctc1...", which 404'd on every call.
+    Plausible-looking simulated telemetry for the animated dashboard.
+    Explicitly tagged "source": "simulated" — never to be confused with a
+    real IRCTC/RailRadar feed. Real, accurate live status for a specific
+    train is available on-demand via GET /api/trains/live/{train_number}.
     """
-    url = (
-        f"https://{RAPIDAPI_HOST}/api/v1/liveTrainStatus?trainNo={train_number}"
-        if "irctc1" in RAPIDAPI_HOST
-        else f"https://{RAPIDAPI_HOST}/api/trains/v1/train/status"
-             f"?departure_date=TODAY&isH5=true&client=web&train_number={train_number}"
-    )
-    headers = {
-        "x-rapidapi-key":  RAPIDAPI_KEY,
-        "x-rapidapi-host": RAPIDAPI_HOST,
-    }
-    try:
-        async with httpx.AsyncClient() as client:
-            resp = await client.get(url, headers=headers, timeout=8.0)
-
-        if resp.status_code == 429:
-            logger.warning("RapidAPI 429 rate-limited for train %s", train_number)
-            return {"__rate_limited__": True}   # sentinel — caller handles backoff
-        if resp.status_code == 400:
-            # Train not running today — not an error, just no data
-            return None
-        if resp.status_code != 200:
-            logger.warning("RapidAPI %s for train %s: %s", resp.status_code, train_number, resp.text[:300])
-            return None
-
-        data = resp.json()
-
-        if "irctc1" in RAPIDAPI_HOST:
-            d = data.get("data")
-            if not isinstance(d, dict):
-                logger.warning("Unexpected live status shape for train %s: keys=%s", train_number, list(data.keys()))
-                return None
-            return {
-                "current_station": d.get("source", ""),
-                "delay_minutes":   int(d.get("delay", d.get("delay_minutes", 0)) or 0),
-                "terminated":      bool(d.get("at_dstn", False)),
-                "last_updated":    str(d.get("last_updated") or datetime.utcnow().isoformat()),
-            }
-
-        body = data.get("body", {})
-        if not body or data.get("status") is False:
-            return None
-
-        stations      = body.get("stations", [])
-        current_code  = body.get("current_station", "")
-        delay_minutes = int(body.get("delay", 0))
-
-        # Try to get delay from current station entry
-        for st in stations:
-            if st.get("station_code") == current_code:
-                direct = st.get("delay")
-                if isinstance(direct, int):
-                    delay_minutes = direct
-                break
-
-        return {
-            "current_station": current_code,
-            "delay_minutes":   delay_minutes,
-            "terminated":      body.get("terminated", False),
-            "last_updated":    str(body.get("server_timestamp", datetime.utcnow().isoformat())),
-        }
-
-    except Exception as exc:
-        logger.warning("RapidAPI fetch failed for train %s: %s", train_number, exc)
-        return None
-
-
-# ── Mock fallback (no API key) ────────────────────────────────────────────────
-
-def _mock_telemetry(train_id: str) -> dict:
-    """Return a plausible-looking fake telemetry packet for local dev."""
     return {
         "type":      "TELEMETRY",
         "train_id":  train_id,
@@ -174,6 +86,7 @@ def _mock_telemetry(train_id: str) -> dict:
         "lon":       round(76.0 + random.uniform(-0.5, 3.0), 6),
         "delay":     random.randint(0, 30),
         "signal":    random.choice(["GREEN", "GREEN", "GREEN", "YELLOW", "RED"]),
+        "source":    "simulated",
     }
 
 
@@ -181,20 +94,14 @@ def _mock_telemetry(train_id: str) -> dict:
 
 async def _broadcast_live_telemetry():
     """
-    Fetch live positions for all RUNNING trains and broadcast to all clients.
-
+    Broadcast simulated positions for all RUNNING trains.
     Called every BROADCAST_INTERVAL_SECONDS from send_periodic().
     """
-    now = datetime.utcnow().timestamp()
-
-    # 1. Get all RUNNING trains from DB
     running_trains: List[str] = []
     try:
         async with AsyncSessionLocal() as db:
             result = await db.execute(
-                select(Train.id).where(
-                    Train.status == TrainStatusEnum.RUNNING
-                )
+                select(Train.id).where(Train.status == TrainStatusEnum.RUNNING)
             )
             running_trains = [row[0] for row in result.all()]
     except Exception as exc:
@@ -210,89 +117,8 @@ async def _broadcast_live_telemetry():
         }))
         return
 
-    # 2. If no API key, fall back to mock for all running trains
-    if not RAPIDAPI_KEY:
-        for train_id in running_trains:
-            event = _mock_telemetry(train_id)
-            await manager.broadcast(json.dumps(event))
-        return
-
-    # 3. Real path: fetch from RapidAPI (respecting per-train cache TTL)
-    global _global_last_api_call
-    api_calls_this_cycle = 0
-    consecutive_429s = 0
-
     for train_id in running_trains:
-        digits_only = "".join(c for c in train_id if c.isdigit())
-        lookup_id   = digits_only if digits_only else train_id
-
-        # Circuit breaker: if too many 429s this cycle, serve stale/skip rest
-        if consecutive_429s >= MAX_CONSECUTIVE_429S:
-            logger.warning("Circuit breaker tripped: %d consecutive 429s — serving cache only", consecutive_429s)
-            cached_at, cached_payload = _live_cache.get(train_id, (0.0, {}))
-            if cached_payload:
-                live = cached_payload
-            else:
-                continue
-        else:
-            # Determine effective TTL for this train (may be backed off)
-            effective_ttl = _backoff_ttl.get(train_id, CACHE_TTL_SECONDS)
-            cached_at, cached_payload = _live_cache.get(train_id, (0.0, {}))
-            cache_fresh = (now - cached_at) < effective_ttl and cached_payload
-
-            if cache_fresh:
-                live = cached_payload
-            elif (
-                api_calls_this_cycle >= MAX_API_CALLS_PER_CYCLE
-                or (now - _global_last_api_call) < MIN_GAP_BETWEEN_CALLS
-            ):
-                if cached_payload:
-                    live = cached_payload
-                else:
-                    continue
-            else:
-                # Fetch fresh from RapidAPI
-                _global_last_api_call = now
-                api_calls_this_cycle += 1
-                fetched = await _fetch_rapidapi_live(lookup_id)
-
-                if fetched and fetched.get("__rate_limited__"):
-                    # 429 — double this train's backoff TTL, up to the max
-                    current_ttl = _backoff_ttl.get(train_id, CACHE_TTL_SECONDS)
-                    _backoff_ttl[train_id] = min(current_ttl * 2, _BACKOFF_MAX)
-                    consecutive_429s += 1
-                    logger.info("Train %s backoff TTL now %ds", train_id, _backoff_ttl[train_id])
-                    if cached_payload:
-                        live = cached_payload
-                    else:
-                        continue
-                elif fetched:
-                    # Success — reset backoff for this train
-                    _backoff_ttl.pop(train_id, None)
-                    consecutive_429s = 0
-                    _live_cache[train_id] = (now, fetched)
-                    live = fetched
-                elif cached_payload:
-                    live = cached_payload
-                else:
-                    continue
-
-        # 4. Build the telemetry event matching the field names the frontend reads:
-        #    telemetry.type, telemetry.train_id, telemetry.delay, telemetry.timestamp
-        event = {
-            "type":            "TELEMETRY",
-            "train_id":        train_id,
-            "timestamp":       live.get("last_updated", datetime.utcnow().isoformat()),
-            "delay":           live.get("delay_minutes", 0),
-            "current_station": live.get("current_station", ""),
-            "terminated":      live.get("terminated", False),
-            # speed / lat / lon not available from this endpoint;
-            # keep last known values or omit (frontend doesn't require them for display)
-            "speed":           None,
-            "lat":             None,
-            "lon":             None,
-        }
-        await manager.broadcast(json.dumps(event))
+        await manager.broadcast(json.dumps(_simulated_telemetry(train_id)))
 
 
 # ── WebSocket endpoint ────────────────────────────────────────────────────────
@@ -303,10 +129,10 @@ async def websocket_endpoint(
     token: str = Query(default=None, description="JWT auth token"),
 ):
     """
-    Live telemetry WebSocket.
+    Simulated telemetry WebSocket (dashboard animation feed).
     - A valid JWT is required to connect; missing/invalid tokens are rejected.
-    - Every BROADCAST_INTERVAL_SECONDS, fetches real IRCTC live positions and
-      broadcasts them. Falls back to mock if RAPIDAPI_KEY is not set.
+    - Every BROADCAST_INTERVAL_SECONDS, broadcasts simulated positions for all
+      RUNNING trains, each tagged "source": "simulated".
     - Also echoes any messages received from the client.
     """
     if not token:
@@ -335,7 +161,7 @@ async def websocket_endpoint(
     await manager.connect(websocket)
 
     async def send_periodic():
-        """Background task: broadcast real telemetry every BROADCAST_INTERVAL_SECONDS."""
+        """Background task: broadcast simulated telemetry every BROADCAST_INTERVAL_SECONDS."""
         # Brief stabilisation delay before the first broadcast
         await asyncio.sleep(2)
         while True:

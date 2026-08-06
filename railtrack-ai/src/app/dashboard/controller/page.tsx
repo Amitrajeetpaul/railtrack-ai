@@ -424,8 +424,12 @@ export default function ControllerDashboard() {
         ws.onmessage = (e) => {
           try {
             const telemetry = JSON.parse(e.data);
-            console.log('Telemetry:', telemetry);
-            if (telemetry.type === 'TELEMETRY' && telemetry.train_id) {
+            // The WS feed animates the track map with simulated positions —
+            // it is NOT a real IRCTC/RailRadar feed (see ws/hub.py). Don't
+            // let it mark trains "isLive"/overwrite real delay data from an
+            // actual GET /api/trains/live/{num} fetch; that would silently
+            // replace honest data with fabricated numbers every ~15s.
+            if (telemetry.type === 'TELEMETRY' && telemetry.train_id && telemetry.source !== 'simulated') {
               setLiveTrainData(prev => ({
                 ...prev,
                 [telemetry.train_id]: {
@@ -698,7 +702,7 @@ export default function ControllerDashboard() {
               width: '8px', height: '8px', borderRadius: '50%',
               background: wsStatus === 'reconnecting' ? 'var(--accent-warn)' : wsStatus === 'reconnected' ? 'var(--accent-safe)' : connectionState === 'ws' ? 'var(--accent-safe)' : 'var(--accent-warn)',
             }} className="animate-pulse-live" />
-            {wsStatus === 'reconnecting' ? 'RECONNECTING…' : wsStatus === 'reconnected' ? 'LIVE FEED ✓' : connectionState === 'ws' ? 'LIVE TELEMETRY' : 'LIVE (POLLING)'}
+            {wsStatus === 'reconnecting' ? 'RECONNECTING…' : wsStatus === 'reconnected' ? 'FEED RECONNECTED' : connectionState === 'ws' ? 'TELEMETRY FEED' : 'POLLING'}
           </div>
           <button
             onClick={logout}
