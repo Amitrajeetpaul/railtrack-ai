@@ -136,7 +136,7 @@ def get_train_meta(train_number: str):
                 "priority": "LOCAL" if is_local else "EXPRESS"
             }
 
-    # Smart Indian Railways Suburban EMU series decoder
+    # Indian Railways Suburban EMU series decoder
     if train_number.startswith("38"):
         return {"name": f"Howrah - Kharagpur Local ({train_number})", "origin": "Howrah Jn (HWH)", "destination": "Kharagpur Jn (KGP)", "priority": "LOCAL"}
     if train_number.startswith("37"):
