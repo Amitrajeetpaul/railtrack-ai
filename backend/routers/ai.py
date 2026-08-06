@@ -96,10 +96,15 @@ def _format_decisions(decisions: list) -> str:
 
 async def _detect_realtime_conflicts(running_trains: list) -> list:
     """
-    Same logic as conflicts.py: group RUNNING trains by section,
-    emit ephemeral dict-conflicts for same-section pairs.
+    Same logic as conflicts.py (reuses _pair_conflict_type so the chat
+    assistant reports the same conflict count as the Conflicts page):
+    group RUNNING trains by section, emit ephemeral dict-conflicts only for
+    pairs with a plausible physical conflict (shared platform or opposing
+    origin/destination) — not every pair merely sharing a broad section.
     Returns list of dicts (not ORM objects).
     """
+    from routers.conflicts import _pair_conflict_type
+
     if len(running_trains) < 2:
         return []
 
@@ -113,17 +118,21 @@ async def _detect_realtime_conflicts(running_trains: list) -> list:
         if len(trains_in_seg) < 2:
             continue
         for train_a, train_b in combinations(trains_in_seg, 2):
+            conflict_type = _pair_conflict_type(train_a, train_b)
+            if conflict_type is None:
+                continue
             both_express = (
                 train_a.priority.value == "EXPRESS" and
                 train_b.priority.value == "EXPRESS"
             )
+            severity = "HIGH" if (conflict_type == "PLATFORM" or both_express) else "MEDIUM"
             rt_conflicts.append({
                 "id":            f"RT-{train_a.id}-{train_b.id}",
                 "train_a_id":    train_a.id,
                 "train_b_id":    train_b.id,
                 "location":      segment,
-                "severity":      "HIGH" if both_express else "MEDIUM",
-                "conflict_type": "CROSSING",
+                "severity":      severity,
+                "conflict_type": conflict_type,
                 "detected_at":   now,
                 "status":        "ACTIVE",
                 "source":        "REALTIME",

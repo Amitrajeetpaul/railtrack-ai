@@ -251,6 +251,11 @@ async def get_live_train_info_and_update(
         prio_enum = PriorityEnum.EXPRESS
 
     if not train:
+        # Neutral/unknown defaults — this endpoint only registers train
+        # identity/route metadata, it has no live status. Previously defaulted
+        # to status=RUNNING, platform=1, speed=75.0 for every searched train,
+        # which fabricated dozens of identical "running on platform 1" ghost
+        # entries and flooded the real-time conflict detector with noise.
         train = Train(
             id=train_number,
             name=name,
@@ -258,16 +263,18 @@ async def get_live_train_info_and_update(
             origin=origin,
             destination=destination,
             section=current_user.section or "NR-42",
-            status=TrainStatusEnum.RUNNING,
+            status=TrainStatusEnum.SCHEDULED,
             delay=0,
-            speed=75.0,
-            platform=1,
+            speed=0.0,
+            platform=None,
         )
         db.add(train)
-    else:
-        train.name = name
-        train.origin = origin
-        train.destination = destination
+    # If the train already exists (e.g. from seed data), don't overwrite its
+    # name/origin/destination — this previously clobbered known-good seeded
+    # data with the static dataset's values every time someone searched an
+    # existing train number, and the two datasets don't always agree on
+    # direction (seed had 12301 as NDLS→HWH; the static file's entry for the
+    # same number implied HWH→NDLS), silently corrupting real data.
 
     await db.commit()
     await db.refresh(train)

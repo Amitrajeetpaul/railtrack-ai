@@ -57,14 +57,32 @@ class ResolveRequest(BaseModel):
 
 # ─── Real-time conflict detection ──────────────────────────────────────────────
 
+def _pair_conflict_type(train_a: Train, train_b: Train) -> Optional[str]:
+    """
+    Decide whether two same-section RUNNING trains actually have a plausible
+    physical conflict, using the only real position-ish signals the schema
+    has (platform, origin/destination) — not just "both running in the same
+    broad section," which flags every pair regardless of whether they're
+    anywhere near each other (91 "conflicts" for 14 unrelated trains sharing
+    a whole zone was noise, not signal).
+
+    Returns a Conflict.conflict_type value, or None if no plausible conflict.
+    """
+    if train_a.platform is not None and train_a.platform == train_b.platform:
+        return "PLATFORM"  # can't both occupy the same platform
+    if train_a.origin == train_b.destination and train_a.destination == train_b.origin:
+        return "CROSSING"  # opposing directions on the same origin/destination pair
+    return None
+
+
 async def _detect_realtime_conflicts(db: AsyncSession) -> List[ConflictResponse]:
     """
-    Scan RUNNING trains and return ephemeral ConflictResponse objects for any
-    segment where 2+ trains are simultaneously active.
+    Scan RUNNING trains and return ephemeral ConflictResponse objects for
+    pairs with a plausible physical conflict (see _pair_conflict_type).
 
-    Grouping key: train.section  (the operating segment each train belongs to).
-    Since the Train model has no live position field, section is the finest-grain
-    segment available from the DB without calling RapidAPI.
+    Grouping key: train.section (the operating zone each train belongs to) —
+    narrowed further by platform/route matching within that zone, since the
+    Train model has no live position field to work with directly.
 
     These conflicts are NOT saved to the database.
     """
@@ -80,7 +98,7 @@ async def _detect_realtime_conflicts(db: AsyncSession) -> List[ConflictResponse]
     if len(running_trains) < 2:
         return []
 
-    # Group by section (operating segment)
+    # Group by section (operating zone)
     segment_map: dict[str, list] = defaultdict(list)
     for train in running_trains:
         segment_map[train.section].append(train)
@@ -92,19 +110,25 @@ async def _detect_realtime_conflicts(db: AsyncSession) -> List[ConflictResponse]
         if len(trains_in_seg) < 2:
             continue
 
-        # Generate one conflict per unique pair in the same segment
         for train_a, train_b in combinations(trains_in_seg, 2):
-            # Skip pair if a DB conflict already exists for these two trains
-            # (avoids duplicating a pre-seeded CROSSING as an RT conflict too)
+            conflict_type = _pair_conflict_type(train_a, train_b)
+            if conflict_type is None:
+                continue
+
             rt_id = f"RT-{train_a.id}-{train_b.id}"
 
-            # Infer severity from priority: express-on-express = HIGH, else MEDIUM
             high_prio = {"EXPRESS"}
             both_express = (
                 train_a.priority.value in high_prio and
                 train_b.priority.value in high_prio
             )
-            severity = "HIGH" if both_express else "MEDIUM"
+            severity = "HIGH" if (conflict_type == "PLATFORM" or both_express) else "MEDIUM"
+
+            recommendation = (
+                f"Reassign {train_b.id} off Platform {train_a.platform} — {train_a.id} already occupies it"
+                if conflict_type == "PLATFORM"
+                else f"Hold {train_b.id} at next loop until {train_a.id} clears {segment} (opposing direction)"
+            )
 
             rt_conflicts.append(
                 ConflictResponse(
@@ -113,9 +137,9 @@ async def _detect_realtime_conflicts(db: AsyncSession) -> List[ConflictResponse]
                     train_b_id=train_b.id,
                     location=segment,
                     severity=severity,
-                    conflict_type="CROSSING",
+                    conflict_type=conflict_type,
                     time_to_conflict=None,
-                    recommendation=f"Hold {train_b.id} at next loop until {train_a.id} clears {segment}",
+                    recommendation=recommendation,
                     confidence=72,
                     time_saving=5,
                     detected_at=now,
