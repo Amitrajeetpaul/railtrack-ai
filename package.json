@@ -1,0 +1,13 @@
+{
+  "name": "railtrack-ai-monorepo",
+  "version": "2.0.0",
+  "private": true,
+  "workspaces": [
+    "railtrack-ai"
+  ],
+  "scripts": {
+    "dev": "cd railtrack-ai && npm run dev",
+    "build": "cd railtrack-ai && npm run build",
+    "start": "cd railtrack-ai && npm run start"
+  }
+}

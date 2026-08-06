@@ -1,4 +1,5 @@
 {
   "buildCommand": "cd railtrack-ai && npm run build",
-  "outputDirectory": "railtrack-ai/.next"
+  "outputDirectory": "railtrack-ai/.next",
+  "framework": "nextjs"
 }
