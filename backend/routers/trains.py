@@ -6,10 +6,10 @@ routers/trains.py — Real DB-backed train endpoints for RailTrack AI.
 """
 
 from datetime import datetime, timezone
+import logging
 import os
 from typing import Optional, List
 
-import httpx
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from pydantic import BaseModel
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -18,7 +18,9 @@ from sqlalchemy.orm import selectinload
 
 from database import get_db
 from models import Train, Schedule, AuditLog, User
-from auth_utils import get_current_user
+from auth_utils import get_current_user, require_section_access
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter()
 
@@ -157,60 +159,54 @@ def get_train_meta(train_number: str):
         "priority": "EXPRESS"
     }
 
+RAILRADAR_ERROR_MESSAGES = {
+    "not_configured": "Live tracking is not configured on the server (RAILRADAR_API_KEY missing).",
+    "rate_limited": "Live tracking quota exceeded for today — showing no data rather than a guess.",
+    "not_found": "Train not found or not running today.",
+    "network": "Could not reach the live train tracking service.",
+    "bad_response": "Live tracking service returned an unrecognized response format.",
+}
+
+
 @router.get("/live/{train_number}", response_model=LiveTrainResponse)
 async def get_live_train_status(
     train_number: str,
     current_user: User = Depends(get_current_user),
 ):
-    """Fetch real live train actuals from IRCTC RapidAPI with smart section fallback."""
-    rapidapi_key = os.getenv("RAPIDAPI_KEY")
-    rapidapi_host = os.getenv("RAPIDAPI_HOST", "irctc1.p.rapidapi.com")
+    """
+    Fetch real live train status from RailRadar (https://railradar.in).
+    On any failure (quota, network, not found, unrecognized response),
+    returns status="unavailable"/"not_running" with a clear message —
+    never fabricates position/delay data.
+    """
+    from utils.railradar import fetch_live_train
 
-    if rapidapi_key and rapidapi_host:
-        headers = {
-            "x-rapidapi-key": rapidapi_key,
-            "x-rapidapi-host": rapidapi_host
-        }
-        url = f"https://{rapidapi_host}/api/v1/liveTrainStatus?trainNo={train_number}" if "irctc1" in rapidapi_host else f"https://{rapidapi_host}/api/trains/v1/train/status?departure_date=TODAY&isH5=true&client=web&train_number={train_number}"
+    data = await fetch_live_train(train_number)
 
-        try:
-            async with httpx.AsyncClient() as client:
-                response = await client.get(url, headers=headers, timeout=5.0)
-                
-                if response.status_code == 200:
-                    data = response.json()
-                    
-                    if "data" in data and isinstance(data["data"], dict):
-                        d = data["data"]
-                        next_stn = d.get("next_station_name") or d.get("dest_stn_name") or "Transit"
-                        curr_stn = d.get("current_station_name") or d.get("source_stn_name") or "En Route"
-                        delay = int(d.get("delay", d.get("delay_minutes", 0)))
+    if "__error__" in data:
+        err = data["__error__"]
+        message = RAILRADAR_ERROR_MESSAGES.get(err, f"Live tracking error ({err}).")
+        return LiveTrainResponse(
+            train_number=train_number,
+            status="not_running" if err == "not_found" else "unavailable",
+            message=message,
+        )
 
-                        return LiveTrainResponse(
-                            train_number=train_number,
-                            status="ok",
-                            current_station=d.get("source", "NR-42"),
-                            current_station_name=curr_stn,
-                            delay_minutes=delay,
-                            terminated=d.get("at_dstn", False),
-                            last_updated="Live IRCTC Feed",
-                            next_station=next_stn,
-                            expected_arrival_ndls=None
-                        )
-        except Exception:
-            pass
+    current = data.get("currentLocation") or {}
+    next_halt = data.get("nextHalt") or {}
+    route_by_seq = {r.get("sequence"): r for r in data.get("route", [])}
+    current_name = route_by_seq.get(current.get("sequence"), {}).get("stationName") or current.get("stationCode", "")
 
-    meta = get_train_meta(train_number)
     return LiveTrainResponse(
         train_number=train_number,
         status="ok",
-        current_station="ST-3",
-        current_station_name=f"{meta['origin']} Junction",
-        delay_minutes=0 if int(train_number) % 2 == 0 else 5,
-        terminated=False,
-        last_updated="Section Telemetry Active",
-        next_station=meta['destination'],
-        expected_arrival_ndls=None
+        current_station=current.get("stationCode", ""),
+        current_station_name=current_name,
+        delay_minutes=int(data.get("delayMinutes") or 0),
+        terminated=data.get("status") == "completed",
+        last_updated=data.get("lastUpdatedAt"),
+        next_station=next_halt.get("stationName", ""),
+        expected_arrival_ndls=None,
     )
 
 
@@ -226,30 +222,17 @@ async def get_live_train_info_and_update(
     result = await db.execute(select(Train).where(Train.id == train_number))
     train = result.scalar_one_or_none()
 
+    # Name/origin/destination come from the static local timetable dataset
+    # (backend/data/ir_trains.json). We previously also called
+    # indian-railway-irctc.p.rapidapi.com here to "enrich" these fields live,
+    # but that host is a different RapidAPI product this account was never
+    # subscribed to (always 403) — it silently wasted a round-trip and did
+    # nothing. Removed rather than calling an endpoint we can't verify works.
     meta = get_train_meta(train_number)
     name = meta["name"]
     origin = meta["origin"]
     destination = meta["destination"]
     prio_str = meta["priority"]
-
-    try:
-        url = f"https://indian-railway-irctc.p.rapidapi.com/api/v1/getTrainDetails?trainNo={train_number}"
-        rapidapi_key = os.getenv("RAPIDAPI_KEY")
-        rapidapi_host = os.getenv("RAPIDAPI_HOST")
-
-        if rapidapi_key and rapidapi_host:
-            headers = {"x-rapidapi-key": rapidapi_key, "x-rapidapi-host": rapidapi_host}
-            async with httpx.AsyncClient() as client:
-                response = await client.get(url, headers=headers, timeout=5.0)
-                if response.status_code == 200:
-                    data = response.json()
-                    data_body = data.get("data", {})
-                    if data_body.get("trainName"):
-                        name = data_body.get("trainName")
-                        origin = data_body.get("sourceStationName", origin)
-                        destination = data_body.get("destinationStationName", destination)
-    except Exception:
-        pass
 
     try:
         prio_enum = PriorityEnum(prio_str.upper())
@@ -356,6 +339,8 @@ async def update_train_status(
 
     if train is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Train {train_id} not found")
+
+    require_section_access(current_user, train.section)
 
     try:
         new_status = TrainStatusEnum(body.status.upper())
