@@ -46,3 +46,4 @@ Thumbs.db
 *.sqlite3
 coverage/
 .pytest_cache/
+.vercel
