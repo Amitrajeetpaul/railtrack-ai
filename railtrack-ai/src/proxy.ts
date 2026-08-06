@@ -1,5 +1,5 @@
 /**
- * src/middleware.ts â€” Next.js Edge middleware for RailTrack AI.
+ * src/proxy.ts â€” Next.js Edge proxy (middleware) for RailTrack AI.
  * Protects authenticated routes by checking for the railtrack_token cookie.
  * Redirects unauthenticated users to /login.
  */

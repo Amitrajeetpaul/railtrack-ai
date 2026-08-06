@@ -46,7 +46,15 @@ const authOptions = {
   },
   pages:   { signIn: '/login', error: '/login' },
   session: { strategy: 'jwt', maxAge: 86400 },
-  secret:  process.env.NEXTAUTH_SECRET ?? 'change-in-prod',
+  // No hardcoded fallback — a missing NEXTAUTH_SECRET must not silently sign
+  // sessions with a known/guessable string. NextAuth itself warns loudly (and
+  // in production refuses to sign real sessions) when this is unset; it must
+  // not be a top-level throw here since that would fail the build at
+  // page-data collection time, not just requests to this (currently unused —
+  // login goes through /api/auth/google-verify on the backend, not NextAuth's
+  // own signIn()) route. Set NEXTAUTH_SECRET (`openssl rand -base64 32`) in
+  // the deployment env before wiring any real flow through this route.
+  secret: process.env.NEXTAUTH_SECRET,
 };
 
 const handler = NextAuth(authOptions);
