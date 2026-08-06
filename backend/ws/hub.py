@@ -1,6 +1,6 @@
 """
 ws/hub.py — WebSocket telemetry hub for RailTrack AI.
-Accepts optional JWT token as query param: ws://host/ws/telemetry?token=xxx
+Requires a valid JWT token as query param: ws://host/ws/telemetry?token=xxx
 
 Broadcast strategy:
   - Every 30 s, query DB for trains with status RUNNING.
@@ -90,10 +90,16 @@ async def _fetch_rapidapi_live(train_number: str) -> Optional[dict]:
     """
     Call the IRCTC RapidAPI live-status endpoint for one train.
     Returns a normalised dict or None on any failure.
+
+    URL/parsing must match whichever product RAPIDAPI_HOST actually points
+    at — this previously hardcoded the "indian-railway-irctc" endpoint path
+    even when RAPIDAPI_HOST was set to "irctc1...", which 404'd on every call.
     """
     url = (
-        f"https://{RAPIDAPI_HOST}/api/trains/v1/train/status"
-        f"?departure_date=TODAY&isH5=true&client=web&train_number={train_number}"
+        f"https://{RAPIDAPI_HOST}/api/v1/liveTrainStatus?trainNo={train_number}"
+        if "irctc1" in RAPIDAPI_HOST
+        else f"https://{RAPIDAPI_HOST}/api/trains/v1/train/status"
+             f"?departure_date=TODAY&isH5=true&client=web&train_number={train_number}"
     )
     headers = {
         "x-rapidapi-key":  RAPIDAPI_KEY,
@@ -110,10 +116,23 @@ async def _fetch_rapidapi_live(train_number: str) -> Optional[dict]:
             # Train not running today — not an error, just no data
             return None
         if resp.status_code != 200:
-            logger.warning("RapidAPI %s for train %s", resp.status_code, train_number)
+            logger.warning("RapidAPI %s for train %s: %s", resp.status_code, train_number, resp.text[:300])
             return None
 
         data = resp.json()
+
+        if "irctc1" in RAPIDAPI_HOST:
+            d = data.get("data")
+            if not isinstance(d, dict):
+                logger.warning("Unexpected live status shape for train %s: keys=%s", train_number, list(data.keys()))
+                return None
+            return {
+                "current_station": d.get("source", ""),
+                "delay_minutes":   int(d.get("delay", d.get("delay_minutes", 0)) or 0),
+                "terminated":      bool(d.get("at_dstn", False)),
+                "last_updated":    str(d.get("last_updated") or datetime.utcnow().isoformat()),
+            }
+
         body = data.get("body", {})
         if not body or data.get("status") is False:
             return None
@@ -285,18 +304,19 @@ async def websocket_endpoint(
 ):
     """
     Live telemetry WebSocket.
-    - If a token is provided, it is validated before accepting the connection.
+    - A valid JWT is required to connect; missing/invalid tokens are rejected.
     - Every BROADCAST_INTERVAL_SECONDS, fetches real IRCTC live positions and
       broadcasts them. Falls back to mock if RAPIDAPI_KEY is not set.
     - Also echoes any messages received from the client.
     """
-    # Validate token if provided (optional so dashboard can connect in dev)
-    if token:
-        try:
-            verify_token(token)
-        except Exception:
-            await websocket.close(code=http_status.WS_1008_POLICY_VIOLATION)
-            return
+    if not token:
+        await websocket.close(code=http_status.WS_1008_POLICY_VIOLATION, reason="Missing auth token")
+        return
+    try:
+        verify_token(token)
+    except Exception:
+        await websocket.close(code=http_status.WS_1008_POLICY_VIOLATION, reason="Invalid or expired token")
+        return
 
     # Evict any existing connection from the same client host to prevent duplicates
     client_host = websocket.client.host if websocket.client else None

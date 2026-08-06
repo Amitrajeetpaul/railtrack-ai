@@ -11,12 +11,15 @@ import logging
 # Load .env before anything imports os.getenv()
 load_dotenv()
 
-# Safety check for production deployments
+# Safety check for production deployments — fail fast rather than sign JWTs with a weak key
 secret_key = os.getenv("SECRET_KEY", "")
-if "change" in secret_key.lower():
-    logging.warning("âš ï¸ CRITICAL SECURITY WARNING: SECRET_KEY contains the word 'change'. "
-                    "Do NOT use default/weak keys in production. "
-                    "Run `python -c \"import secrets; print(secrets.token_hex(32))\"` to generate a secure key.")
+if not secret_key or "change" in secret_key.lower():
+    raise SystemExit(
+        "CRITICAL: SECRET_KEY is unset or contains the word 'change'. "
+        "Refusing to start with a default/weak key. "
+        "Run `python -c \"import secrets; print(secrets.token_hex(32))\"` to generate a secure key "
+        "and set it in backend/.env."
+    )
 
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect, Query, HTTPException, Request
 from fastapi.exceptions import RequestValidationError

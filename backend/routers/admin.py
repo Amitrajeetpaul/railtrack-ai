@@ -1,3 +1,5 @@
+import asyncio
+import logging
 import os
 import time
 import httpx
@@ -12,6 +14,8 @@ import uuid
 from database import get_db
 from models import User, RoleEnum
 from auth_utils import get_current_user
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter()
 
@@ -78,17 +82,19 @@ async def invite_user(
         
     try:
         from utils.email import send_invite_email
-        send_invite_email(
+        await asyncio.to_thread(
+            send_invite_email,
             to_email=req.email,
             to_name=req.name,
             role=req.role,
-            section=req.section
+            section=req.section,
         )
     except Exception as e:
-        # Now return the error so we can see it in frontend too
-        print(f"[EMAIL ERROR] {e}")
-        return {"success": True, "message": f"User created but email failed: {str(e)}"}
-        
+        # User account was already created — don't leak internal error detail
+        # (API keys, provider errors) to the caller, just log it server-side.
+        logger.error("Invite email failed for %s: %s", req.email, e)
+        return {"success": True, "message": "User created but the invite email could not be sent."}
+
     return {"success": True}
 
 

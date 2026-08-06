@@ -176,8 +176,10 @@ async def get_me(current_user: User = Depends(get_current_user)):
 
 
 @router.post("/register", response_model=UserResponse, status_code=status.HTTP_201_CREATED)
+@limiter.limit("10/minute")
 async def register(
-    request: RegisterRequest,
+    request: Request,
+    body: RegisterRequest,
     current_user: User = Depends(get_current_active_admin),
     db: AsyncSession = Depends(get_db),
 ):
@@ -185,25 +187,25 @@ async def register(
     Admin-only: create a new user account with a bcrypt-hashed password.
     """
     # Check for duplicate email
-    result = await db.execute(select(User).where(User.email == request.email))
+    result = await db.execute(select(User).where(User.email == body.email))
     if result.scalar_one_or_none():
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
-            detail=f"User with email '{request.email}' already exists",
+            detail=f"User with email '{body.email}' already exists",
         )
 
     new_user = User(
         id=f"U-{uuid.uuid4().hex[:8].upper()}",
-        email=request.email,
-        hashed_password=get_password_hash(request.password),
-        name=request.name,
-        role=request.role,
-        section=request.section,
+        email=body.email,
+        hashed_password=get_password_hash(body.password),
+        name=body.name,
+        role=body.role,
+        section=body.section,
         is_active=True,
     )
     db.add(new_user)
 
-    await _write_audit(db, current_user.id, "CREATE_USER", entity=f"user:{new_user.id}", detail=request.email)
+    await _write_audit(db, current_user.id, "CREATE_USER", entity=f"user:{new_user.id}", detail=body.email)
     await db.commit()
     await db.refresh(new_user)
 
@@ -241,7 +243,8 @@ async def get_all_users(
 
 
 @router.post("/setup")
-async def setup_account(body: SetupRequest, db: AsyncSession = Depends(get_db)):
+@limiter.limit("5/minute")
+async def setup_account(request: Request, body: SetupRequest, db: AsyncSession = Depends(get_db)):
     """
     Invited user completes account setup: set password & activate.
     """
@@ -261,7 +264,8 @@ async def setup_account(body: SetupRequest, db: AsyncSession = Depends(get_db)):
 
 
 @router.post("/google-verify", response_model=TokenResponse)
-async def google_verify(request: GoogleVerifyRequest, db: AsyncSession = Depends(get_db)):
+@limiter.limit("10/minute")
+async def google_verify(request: Request, body: GoogleVerifyRequest, db: AsyncSession = Depends(get_db)):
     """
     Verify a Google OAuth id_token.
     - If the user exists in DB: return JWT.
@@ -271,7 +275,7 @@ async def google_verify(request: GoogleVerifyRequest, db: AsyncSession = Depends
     async with httpx.AsyncClient() as client:
         resp = await client.get(
             "https://oauth2.googleapis.com/tokeninfo",
-            params={"id_token": request.token},
+            params={"id_token": body.token},
             timeout=10.0,
         )
 
@@ -283,14 +287,19 @@ async def google_verify(request: GoogleVerifyRequest, db: AsyncSession = Depends
 
     google_data = resp.json()
 
-    # Validate audience matches our app
+    # Validate audience matches our app. If GOOGLE_CLIENT_ID isn't configured,
+    # refuse rather than silently accepting tokens minted for any Google app.
     expected_client_id = os.getenv("GOOGLE_CLIENT_ID", "")
-    if expected_client_id and expected_client_id != "placeholder":
-        if google_data.get("aud") != expected_client_id:
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Token audience mismatch",
-            )
+    if not expected_client_id or expected_client_id == "placeholder":
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail="Google sign-in is not configured on the server.",
+        )
+    if google_data.get("aud") != expected_client_id:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Token audience mismatch",
+        )
 
     google_email: str = google_data.get("email", "")
     google_name: str  = google_data.get("name", google_email.split("@")[0])

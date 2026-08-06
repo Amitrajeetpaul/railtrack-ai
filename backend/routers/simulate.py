@@ -15,7 +15,7 @@ from datetime import datetime
 
 from database import get_db
 from models import Train, SimulationResult, User, AuditLog, Conflict, Decision, TrainStatusEnum, DecisionSourceEnum
-from auth_utils import get_current_user
+from auth_utils import get_current_user, require_section_access
 from algorithm.solver import PrecedenceOptimizer
 
 router = APIRouter()
@@ -125,6 +125,9 @@ async def run_simulation(
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f"None of the requested trains found: {req.train_ids}",
         )
+
+    for tr in trains_db:
+        require_section_access(current_user, tr.section)
 
     # Build solver-compatible train dicts
     solver_trains = []
@@ -305,6 +308,7 @@ async def apply_simulation_plan(
         result = await db.execute(select(Train).where(Train.id == tr_id))
         tr = result.scalar_one_or_none()
         if tr:
+            require_section_access(current_user, tr.section)
             tr.delay = int(entry.get("delay_minutes", 0))
             tr.platform = int(entry.get("platform", 1))
             

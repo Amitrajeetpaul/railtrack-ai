@@ -21,7 +21,7 @@ from sqlalchemy import select
 
 from database import get_db
 from models import Conflict, Decision, AuditLog, User, Train, TrainStatusEnum, DecisionSourceEnum, SeverityEnum
-from auth_utils import get_current_user
+from auth_utils import get_current_user, require_section_access
 
 logger = logging.getLogger(__name__)
 
@@ -216,6 +216,10 @@ async def resolve_conflict(
         train_a_id = parts[1] if len(parts) > 1 else "UNKNOWN"
         train_b_id = parts[2] if len(parts) > 2 else "UNKNOWN"
 
+        train_a_res = await db.execute(select(Train.section).where(Train.id == train_a_id))
+        train_a_section = train_a_res.scalar_one_or_none()
+        require_section_access(current_user, train_a_section)
+
         now = datetime.utcnow()
         # Log the acknowledgement (no DB write for the conflict itself)
         try:
@@ -256,6 +260,9 @@ async def resolve_conflict(
 
     if conflict.resolved:
         raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Conflict is already resolved")
+
+    train_a_res = await db.execute(select(Train.section).where(Train.id == conflict.train_a_id))
+    require_section_access(current_user, train_a_res.scalar_one_or_none())
 
     valid_actions = {"ACCEPT_AI", "MANUAL_OVERRIDE"}
     action_upper = body.get("action", "ACCEPT_AI").upper() if body else "ACCEPT_AI"

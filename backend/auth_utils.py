@@ -19,7 +19,13 @@ from database import get_db
 
 load_dotenv(override=True)
 
-SECRET_KEY = os.getenv("SECRET_KEY", "railtrack-super-secret-key-change-in-prod")
+SECRET_KEY = os.getenv("SECRET_KEY")
+if not SECRET_KEY:
+    raise RuntimeError(
+        "SECRET_KEY environment variable is not set. Refusing to start with a "
+        "default/known signing key — generate one with "
+        "`python -c \"import secrets; print(secrets.token_hex(32))\"` and set it in .env."
+    )
 ALGORITHM  = os.getenv("ALGORITHM",  "HS256")
 ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", "1440"))
 
@@ -112,3 +118,25 @@ async def get_current_active_admin(current_user=Depends(get_current_user)):
             detail="Admin role required",
         )
     return current_user
+
+
+# Roles whose `section` value is a cross-section sentinel (they may act on any section)
+CROSS_SECTION_VALUES = {"All Zones", "HQ"}
+
+
+def require_section_access(current_user, section: Optional[str]) -> None:
+    """
+    Raise 403 if `current_user` is section-scoped (i.e. not SUPERVISOR/ADMIN,
+    whose `section` field holds a cross-section sentinel like "All Zones"/"HQ")
+    and is trying to act on a section other than their own.
+
+    Used to stop any authenticated user from mutating trains/conflicts/simulations
+    belonging to a section that isn't theirs.
+    """
+    if section is None or current_user.section in CROSS_SECTION_VALUES:
+        return
+    if current_user.section != section:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail=f"You are not authorized to act on section '{section}'.",
+        )

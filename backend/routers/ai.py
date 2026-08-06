@@ -17,7 +17,7 @@ from pydantic import BaseModel
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, desc
 
-from groq import Groq
+from groq import AsyncGroq
 
 from database import get_db
 from models import Train, Conflict, Decision, TrainStatusEnum
@@ -237,8 +237,8 @@ INSTRUCTIONS:
 
     # ── Call Groq Llama 3 ─────────────────────────────────────────────────────
     try:
-        client = Groq(api_key=GROQ_API_KEY)
-        completion = client.chat.completions.create(
+        client = AsyncGroq(api_key=GROQ_API_KEY)
+        completion = await client.chat.completions.create(
             model="llama-3.1-8b-instant",
             messages=[
                 {"role": "system",  "content": system_prompt},
