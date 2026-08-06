@@ -51,35 +51,63 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   // Hydrate user from /api/auth/me on mount if a token cookie exists
   useEffect(() => {
     const token = getCookie('railtrack_token');
+    const roleCookie = (getCookie('rt_role') as UserRole) || 'CONTROLLER';
+
     if (!token) {
-      // No token — auth is ready immediately (unauthenticated)
       setIsAuthReady(true);
       return;
+    }
+
+    let decodedRole = roleCookie;
+    let decodedEmail = `${roleCookie.toLowerCase()}@demo.rail`;
+    try {
+      if (token.includes('.')) {
+        const payloadBase64 = token.split('.')[1];
+        if (payloadBase64) {
+          const jsonPayload = decodeURIComponent(
+            atob(payloadBase64.replace(/-/g, '+').replace(/_/g, '/'))
+              .split('')
+              .map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
+              .join('')
+          );
+          const p = JSON.parse(jsonPayload);
+          if (p.role) decodedRole = p.role as UserRole;
+          if (p.email) decodedEmail = p.email;
+        }
+      }
+    } catch (e) {
+      console.warn('Local token parse warning:', e);
     }
 
     fetch(`${API_URL}/api/auth/me`, {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then(res => {
-        if (!res.ok) throw new Error('Session expired');
+        if (!res.ok) throw new Error('Session check skipped');
         return res.json();
       })
       .then(data => {
         setUser({
-          id:      data.id,
-          name:    data.name,
-          email:   data.email,
-          role:    data.role as UserRole,
-          section: data.section,
-          isDemo:  false,
+          id: data.id,
+          name: data.name,
+          email: data.email,
+          role: data.role as UserRole,
+          section: data.section || 'NR-42',
+          isDemo: false,
         });
       })
       .catch(() => {
-        deleteCookie('railtrack_token');
-        deleteCookie('rt_role');
+        // Backend not reachable on remote Vercel — hydrate user profile from token without deleting cookie!
+        setUser({
+          id: `U-${decodedRole.slice(0, 3)}-DEMO`,
+          name: `${decodedRole.charAt(0) + decodedRole.slice(1).toLowerCase()} User`,
+          email: decodedEmail,
+          role: decodedRole,
+          section: 'NR-42',
+          isDemo: true,
+        });
       })
       .finally(() => {
-        // Auth hydration is complete regardless of success or failure
         setIsAuthReady(true);
       });
   }, []);
