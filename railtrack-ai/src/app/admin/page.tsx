@@ -102,10 +102,15 @@ export default function AdminPage() {
     setInviteError('');
     try {
       const token = getClientToken();
-      // POST /api/auth/register — default password that user can change later
-      const res = await fetch(`${API_BASE}/api/auth/register`, {
+      // POST /api/admin/invite — creates the account in a pending/INVITED
+      // state and emails a setup link where the user picks their own
+      // password. This previously called /api/auth/register with a
+      // hardcoded "demo1234" password for every single invited user —
+      // an immediately-active account with a shared, guessable password,
+      // and no actual invite ever sent despite the UI saying "Send Invite."
+      const res = await fetch(`${API_BASE}/api/admin/invite`, {
         method: 'POST',
-        headers: { 
+        headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
         },
@@ -114,16 +119,19 @@ export default function AdminPage() {
           email: inviteForm.email,
           role: inviteForm.role,
           section: inviteForm.section,
-          password: 'demo1234',
         })
       });
+      const data = await res.json().catch(() => ({}));
       if (!res.ok) {
-        const data = await res.json().catch(() => ({}));
         throw new Error(data.detail || data.error || `Error ${res.status}`);
       }
       setShowInviteModal(false);
-      setToast(`✅ User ${inviteForm.email} created with password demo1234`);
-      setTimeout(() => setToast(''), 5000);
+      setToast(
+        data.message
+          ? `⚠ ${inviteForm.email}: ${data.message}`
+          : `✅ Invite sent to ${inviteForm.email} — they'll set their own password via the emailed link.`
+      );
+      setTimeout(() => setToast(''), 6000);
       setInviteForm({ name: '', email: '', role: 'CONTROLLER', section: '' });
       queryClient.invalidateQueries({ queryKey: ['users'] });
     } catch (err: any) {

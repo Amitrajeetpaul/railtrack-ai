@@ -92,8 +92,18 @@ async def invite_user(
     except Exception as e:
         # User account was already created — don't leak internal error detail
         # (API keys, provider errors) to the caller, just log it server-side.
+        # Surface the setup link itself so an admin can still share it
+        # manually (e.g. no RESEND_API_KEY configured) — the account is
+        # correctly locked pending setup either way, this is just the
+        # delivery mechanism falling back from email to "copy and send it
+        # yourself" rather than leaving the invite completely stuck.
         logger.error("Invite email failed for %s: %s", req.email, e)
-        return {"success": True, "message": "User created but the invite email could not be sent."}
+        frontend_url = os.getenv("FRONTEND_URL", "http://localhost:3000")
+        setup_link = f"{frontend_url}/auth/setup?email={req.email}"
+        return {
+            "success": True,
+            "message": f"Invite email could not be sent — share this setup link with them directly: {setup_link}",
+        }
 
     return {"success": True}
 
@@ -265,35 +275,48 @@ async def get_system_health(
             message="Failed to import engine"
         ))
 
-    # 4. IRCTC RapidAPI Check
-    try:
-        start_time = time.perf_counter()
-        rapidapi_host = os.getenv("RAPIDAPI_HOST", "indian-railway-irctc.p.rapidapi.com")
-        
-        # We just ping the root or an invalid endpoint quickly to measure latency to the edge
-        url = f"https://{rapidapi_host}"
-        
-        async with httpx.AsyncClient() as client:
-            resp = await client.head(url, timeout=3.0)
+    # 4. RailRadar Live Tracker Check
+    # Reports on the API actually used by GET /api/trains/live/{n} (see
+    # utils/railradar.py). Deliberately does NOT call the real live-status
+    # endpoint here — that would burn the 50-req/day free-tier quota on every
+    # admin page load just to render a health dot. Instead: report whether
+    # the key is configured, and do a cheap unauthenticated reachability
+    # check against the base host. This previously checked a different,
+    # unrelated (and unsubscribed) RapidAPI host, and treated ANY response
+    # — including a 429 rate-limit — as "UP"/"Ping OK", which is precisely
+    # the kind of status that's misleading rather than reassuring.
+    railradar_key = os.getenv("RAILRADAR_API_KEY", "")
+    if not railradar_key:
+        results.append(ServiceHealth(
+            service="RailRadar Live Tracker",
+            status="DOWN",
+            latency_ms=0,
+            uptime_seconds=0.0,
+            uptime="Unconfigured",
+            message="RAILRADAR_API_KEY not set — live tracking search will return 'unavailable'"
+        ))
+    else:
+        try:
+            start_time = time.perf_counter()
+            async with httpx.AsyncClient() as client:
+                resp = await client.head("https://api.railradar.in", timeout=3.0)
             latency = int((time.perf_counter() - start_time) * 1000)
-            
-            # As long as we get a response (even 403 or 404 because no auth), the API is reachable
             results.append(ServiceHealth(
-                service="IRCTC Live Tracker Router",
-                status="UP",
+                service="RailRadar Live Tracker",
+                status="UP" if resp.status_code < 500 else "DEGRADED",
                 latency_ms=latency,
                 uptime_seconds=0.0,
                 uptime="External",
-                message=f"Ping OK ({resp.status_code})"
+                message=f"Key configured, host reachable (HTTP {resp.status_code}). Quota not tested here — 50 req/day free tier."
             ))
-    except Exception as e:
-        results.append(ServiceHealth(
-            service="IRCTC Live Tracker Router",
-            status="DEGRADED",
-            latency_ms=0,
-            uptime_seconds=0.0,
-            uptime="External",
-            message="Connection timeout or DNS failure"
-        ))
+        except Exception:
+            results.append(ServiceHealth(
+                service="RailRadar Live Tracker",
+                status="DEGRADED",
+                latency_ms=0,
+                uptime_seconds=0.0,
+                uptime="External",
+                message="Connection timeout or DNS failure"
+            ))
 
     return results

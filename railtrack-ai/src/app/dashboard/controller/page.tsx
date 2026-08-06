@@ -1145,26 +1145,30 @@ export default function ControllerDashboard() {
               </div>
             </div>
 
-            {conflicts.map(c => (
-              <div key={c.id} style={{ padding: '10px 16px', borderBottom: '1px solid var(--bg-border)', cursor: 'pointer' }}
-                onClick={() => { setActiveConflict(c); setShowAI(true); }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
-                  <span style={{ fontFamily: 'var(--font-jetbrains)', fontSize: '12px', color: 'var(--accent-danger)', fontWeight: 700 }}>
-                    {c.trainA} ↔ {c.trainB}
-                  </span>
-                  <span className={`badge-${c.severity === 'HIGH' ? 'conflict' : 'warn'}`} style={{ fontSize: '9px' }}>{c.severity}</span>
+            {/* Capped + scrollable: an unbounded list here was squeezing the
+                Ask AI Assistant panel below down to almost nothing. */}
+            <div style={{ maxHeight: '180px', overflowY: 'auto' }}>
+              {conflicts.map(c => (
+                <div key={c.id} style={{ padding: '10px 16px', borderBottom: '1px solid var(--bg-border)', cursor: 'pointer' }}
+                  onClick={() => { setActiveConflict(c); setShowAI(true); }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
+                    <span style={{ fontFamily: 'var(--font-jetbrains)', fontSize: '12px', color: 'var(--accent-danger)', fontWeight: 700 }}>
+                      {c.trainA} ↔ {c.trainB}
+                    </span>
+                    <span className={`badge-${c.severity === 'HIGH' ? 'conflict' : 'warn'}`} style={{ fontSize: '9px' }}>{c.severity}</span>
+                  </div>
+                  <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>{c.location}</div>
+                  <div style={{ fontFamily: 'var(--font-jetbrains)', fontSize: '11px', color: 'var(--accent-warn)', marginTop: '2px' }}>
+                    T-{Math.floor(c.timeToConflict / 60)}:{String(c.timeToConflict % 60).padStart(2, '0')}
+                  </div>
                 </div>
-                <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>{c.location}</div>
-                <div style={{ fontFamily: 'var(--font-jetbrains)', fontSize: '11px', color: 'var(--accent-warn)', marginTop: '2px' }}>
-                  T-{Math.floor(c.timeToConflict / 60)}:{String(c.timeToConflict % 60).padStart(2, '0')}
+              ))}
+              {conflicts.length === 0 && (
+                <div style={{ padding: '16px', fontSize: '12px', color: 'var(--accent-safe)', textAlign: 'center', fontFamily: 'var(--font-space-mono)' }}>
+                  ✓ NO ACTIVE CONFLICTS
                 </div>
-              </div>
-            ))}
-            {conflicts.length === 0 && (
-              <div style={{ padding: '16px', fontSize: '12px', color: 'var(--accent-safe)', textAlign: 'center', fontFamily: 'var(--font-space-mono)' }}>
-                ✓ NO ACTIVE CONFLICTS
-              </div>
-            )}
+              )}
+            </div>
           </div>
 
           {/* Disruptions */}
@@ -1172,25 +1176,28 @@ export default function ControllerDashboard() {
             <div style={{ padding: '12px 16px' }}>
               <span className="panel-header">Incoming Disruptions</span>
             </div>
-            {loadingDisruptions ? (
-              <div style={{ padding: '16px', fontSize: '12px', color: 'var(--text-muted)', textAlign: 'center', fontFamily: 'var(--font-space-mono)' }}>
-                Loading...
-              </div>
-            ) : disruptions.length === 0 ? (
-              <div style={{ padding: '16px', fontSize: '12px', color: 'var(--accent-safe)', textAlign: 'center', fontFamily: 'var(--font-space-mono)' }}>
-                ✓ NO ACTIVE DISRUPTIONS
-              </div>
-            ) : (
-              disruptions.map((d, i) => (
-                <div key={i} style={{ padding: '10px 16px', borderBottom: '1px solid var(--bg-border)', display: 'flex', gap: '10px' }}>
-                  <span style={{ fontSize: '16px' }}>{d.icon}</span>
-                  <div>
-                    <div style={{ fontSize: '12px', color: 'var(--text-secondary)', lineHeight: 1.4 }}>{d.text}</div>
-                    <div style={{ fontFamily: 'var(--font-jetbrains)', fontSize: '11px', color: 'var(--text-muted)', marginTop: '2px' }}>{d.time}</div>
-                  </div>
+            {/* Capped + scrollable — same reason as Active Conflicts above. */}
+            <div style={{ maxHeight: '160px', overflowY: 'auto' }}>
+              {loadingDisruptions ? (
+                <div style={{ padding: '16px', fontSize: '12px', color: 'var(--text-muted)', textAlign: 'center', fontFamily: 'var(--font-space-mono)' }}>
+                  Loading...
                 </div>
-              ))
-            )}
+              ) : disruptions.length === 0 ? (
+                <div style={{ padding: '16px', fontSize: '12px', color: 'var(--accent-safe)', textAlign: 'center', fontFamily: 'var(--font-space-mono)' }}>
+                  ✓ NO ACTIVE DISRUPTIONS
+                </div>
+              ) : (
+                disruptions.map((d, i) => (
+                  <div key={i} style={{ padding: '10px 16px', borderBottom: '1px solid var(--bg-border)', display: 'flex', gap: '10px' }}>
+                    <span style={{ fontSize: '16px' }}>{d.icon}</span>
+                    <div>
+                      <div style={{ fontSize: '12px', color: 'var(--text-secondary)', lineHeight: 1.4 }}>{d.text}</div>
+                      <div style={{ fontFamily: 'var(--font-jetbrains)', fontSize: '11px', color: 'var(--text-muted)', marginTop: '2px' }}>{d.time}</div>
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
           </div>
 
           {/* Recent Decisions */}
@@ -1212,7 +1219,7 @@ export default function ControllerDashboard() {
           </div>
 
           {/* NLP Chat */}
-          <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+          <div style={{ flex: 1, minHeight: '320px', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
             <div style={{ padding: '12px 16px', borderBottom: '1px solid var(--bg-border)' }}>
               <span className="panel-header">Ask AI Assistant</span>
             </div>
