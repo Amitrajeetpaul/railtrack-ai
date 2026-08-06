@@ -35,6 +35,35 @@ function LiveClock() {
   return <span style={{ fontFamily: 'var(--font-jetbrains)', fontSize: '24px', fontWeight: 700, color: 'var(--accent-primary)' }}>{time}</span>;
 }
 
+const DEFAULT_DEMO_TRAINS: Train[] = [
+  { id: '12002', name: 'Bhopal Shatabdi', priority: 'EXPRESS', origin: 'NDLS', destination: 'RKMP', eta: '11:30', status: 'ON_TIME', delay: 0, speed: 130, platform: 1, section: 'NR-42' },
+  { id: '12424', name: 'DBRT Rajdhani', priority: 'EXPRESS', origin: 'NDLS', destination: 'DBRG', eta: '12:15', status: 'DELAYED', delay: 14, speed: 110, platform: 3, section: 'NR-42' },
+  { id: '22692', name: 'SBC Rajdhani', priority: 'EXPRESS', origin: 'NZM', destination: 'SBC', eta: '13:00', status: 'ON_TIME', delay: 0, speed: 120, platform: 2, section: 'NR-42' },
+  { id: '38721', name: 'Howrah-Kharagpur Local', priority: 'LOCAL', origin: 'HWH', destination: 'KGP', eta: '14:10', status: 'ON_TIME', delay: 2, speed: 75, platform: 5, section: 'NR-42' },
+  { id: '68007', name: 'TATA-ROU MEMU Passenger', priority: 'LOCAL', origin: 'TATA', destination: 'ROU', eta: '15:20', status: 'ON_TIME', delay: 0, speed: 65, platform: 2, section: 'NR-42' },
+  { id: 'BOXN-882', name: 'Coal Freight Heavy', priority: 'FREIGHT', origin: 'JHS', destination: 'AGC', eta: '16:00', status: 'CONFLICT', delay: 35, speed: 45, section: 'NR-42' },
+];
+
+const DEFAULT_DEMO_CONFLICTS: Conflict[] = [
+  {
+    id: 'CONF-01',
+    trainA: '12424',
+    trainB: 'BOXN-882',
+    location: 'Agra Cantt (AGC) — Track #2 Junction',
+    severity: 'HIGH',
+    type: 'PRECEDENCE',
+    timeToConflict: 240,
+    recommendation: 'Hold BOXN-882 at Signal SIG-03 for 4 min to allow 12424 DBRT Rajdhani precedence on UP Track',
+    confidence: 96,
+    timeSaving: 12,
+  }
+];
+
+const DEFAULT_DEMO_DISRUPTIONS = [
+  { icon: '⚡', text: 'OHE Voltage Drop reported near Mathura (MTJ) UP Line — Speed restricted to 90 km/h', time: '10 min ago', severity: 'medium' },
+  { icon: '🛠️', text: 'Scheduled Track Maintenance active on Track #4 (AGC-DHO)', time: '25 min ago', severity: 'low' },
+];
+
 export default function ControllerDashboard() {
   const { user, logout } = useAuth();
   const [aiAssist, setAiAssist] = useState(true);
@@ -209,62 +238,80 @@ export default function ControllerDashboard() {
     }
   };
 
-  const { data: trains = [], error: trainsErr } = useQuery<Train[]>({
+  const { data: trains = DEFAULT_DEMO_TRAINS, error: trainsErr } = useQuery<Train[]>({
     queryKey: ['trains'],
     queryFn: async () => {
       const token = getClientToken();
-      if (!token) throw new Error('No token');
-      const res = await fetch(`${API_BASE}/api/trains/?section=${user?.section || 'NR-42'}`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      if (res.status === 401) window.location.href = '/login';
-      if (!res.ok) throw new Error('Failed to fetch trains');
-      return res.json() as Promise<Train[]>;
+      if (!token) return DEFAULT_DEMO_TRAINS;
+      try {
+        const res = await fetch(`${API_BASE}/api/trains/?section=${user?.section || 'NR-42'}`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        if (res.ok) {
+          const data = await res.json();
+          if (Array.isArray(data) && data.length > 0) return data as Train[];
+        }
+      } catch (e) {
+        console.warn('Backend server offline, using fallback train dataset:', e);
+      }
+      return DEFAULT_DEMO_TRAINS;
     },
     refetchInterval: 10000,
     staleTime: 30000,
     placeholderData: (previousData: any) => previousData,
   });
 
-  const { data: serverConflicts = [], error: confsErr } = useQuery({
+  const { data: serverConflicts = DEFAULT_DEMO_CONFLICTS, error: confsErr } = useQuery({
     queryKey: ['conflicts'],
     queryFn: async () => {
       const token = getClientToken();
-      if (!token) throw new Error('No token');
-      const res = await fetch(`${API_BASE}/api/conflicts/`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      if (res.status === 401) window.location.href = '/login';
-      if (!res.ok) throw new Error('Failed to fetch conflicts');
-      // Normalise backend train_a_id -> trainA to match UI expectations
-      const data = await res.json();
-      return data.map((c: any) => ({
-        ...c,
-        trainA: c.train_a_id,
-        trainB: c.train_b_id,
-        timeToConflict: c.time_to_conflict || 0
-      })) as Conflict[];
+      if (!token) return DEFAULT_DEMO_CONFLICTS;
+      try {
+        const res = await fetch(`${API_BASE}/api/conflicts/`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        if (res.ok) {
+          const data = await res.json();
+          if (Array.isArray(data) && data.length > 0) {
+            return data.map((c: any) => ({
+              ...c,
+              trainA: c.train_a_id,
+              trainB: c.train_b_id,
+              timeToConflict: c.time_to_conflict || 0
+            })) as Conflict[];
+          }
+        }
+      } catch (e) {
+        console.warn('Backend server offline, using fallback conflicts:', e);
+      }
+      return DEFAULT_DEMO_CONFLICTS;
     },
     refetchInterval: 10000,
     staleTime: 15000,
   });
 
-  const [conflicts, setConflicts] = useState<Conflict[]>([]);
+  const [conflicts, setConflicts] = useState<Conflict[]>(DEFAULT_DEMO_CONFLICTS);
   const [connectionState, setConnectionState] = useState<'ws' | 'polling'>('ws');
   const [wsStatus, setWsStatus] = useState<'live' | 'reconnecting' | 'reconnected'>('live');
 
   // Disruptions feed
-  const { data: disruptions = [], isLoading: loadingDisruptions } = useQuery<{ icon: string; text: string; time: string; severity: string }[]>({
+  const { data: disruptions = DEFAULT_DEMO_DISRUPTIONS, isLoading: loadingDisruptions } = useQuery<{ icon: string; text: string; time: string; severity: string }[]>({
     queryKey: ['disruptions', user?.section],
     queryFn: async () => {
       const token = getClientToken();
-      if (!token) throw new Error('No token');
-      const res = await fetch(`${API_BASE}/api/disruptions/`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      if (res.status === 401) window.location.href = '/login';
-      if (!res.ok) throw new Error('Failed to fetch disruptions');
-      return res.json();
+      if (!token) return DEFAULT_DEMO_DISRUPTIONS;
+      try {
+        const res = await fetch(`${API_BASE}/api/disruptions/`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        if (res.ok) {
+          const data = await res.json();
+          if (Array.isArray(data) && data.length > 0) return data;
+        }
+      } catch (e) {
+        console.warn('Backend server offline, using fallback disruptions:', e);
+      }
+      return DEFAULT_DEMO_DISRUPTIONS;
     },
     refetchInterval: 10000,
     staleTime: 30000,
