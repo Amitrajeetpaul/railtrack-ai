@@ -293,7 +293,7 @@ export default function LiveTrackMap({ conflictSegment, onTrainClick, liveTrainD
         ))}
         <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: '8px' }}>
           <span className="signal-lamp signal-lamp-green" style={{ width: '10px', height: '10px' }} />
-          <span style={{ fontFamily: 'var(--font-headline)', fontSize: '11px', fontWeight: 700, color: 'var(--accent-safe)' }}>LIVE SIGNAL-BOARD</span>
+          <span style={{ fontFamily: 'var(--font-headline)', fontSize: '11px', fontWeight: 700, color: 'var(--accent-safe)' }} title="Illustrative section traffic view — train positions here are simulated for layout, not live GPS. Search a train number above for its real, live-tracked position.">SIMULATED TRAFFIC VIEW</span>
         </div>
       </div>
     </div>
