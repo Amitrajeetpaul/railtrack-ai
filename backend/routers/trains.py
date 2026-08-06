@@ -110,18 +110,33 @@ async def get_trains(
     ]
 
 
-KNOWN_TRAINS = {
-    "12002": {"name": "Shatabdi Express (Bhopal)", "origin": "NDLS", "destination": "RKB", "priority": "EXPRESS"},
-    "12424": {"name": "Rajdhani Express (Dibrugarh)", "origin": "NDLS", "destination": "DBRG", "priority": "EXPRESS"},
-    "12951": {"name": "Rajdhani Express (Mumbai)", "origin": "MMCT", "destination": "NDLS", "priority": "EXPRESS"},
-    "12260": {"name": "Duronto Express (Sealdah)", "origin": "BCT", "destination": "SDAH", "priority": "EXPRESS"},
-    "12655": {"name": "Navjeevan Express", "origin": "ADI", "destination": "MAS", "priority": "EXPRESS"},
-    "12301": {"name": "Howrah Rajdhani Express", "origin": "HWH", "destination": "NDLS", "priority": "EXPRESS"},
-    "12626": {"name": "Kerala Express", "origin": "NDLS", "destination": "TVC", "priority": "EXPRESS"},
-    "12801": {"name": "Purushottam Express", "origin": "PURI", "destination": "NDLS", "priority": "EXPRESS"},
-    "54321": {"name": "Goods Freight Container", "origin": "TKD", "destination": "UMB", "priority": "FREIGHT"},
-    "34123": {"name": "EMU Local Commuter", "origin": "PWL", "destination": "NDLS", "priority": "LOCAL"},
-}
+import json
+
+IR_TRAINS_FILE = os.path.join(os.path.dirname(__file__), "..", "data", "ir_trains.json")
+IR_TRAINS = {}
+
+if os.path.exists(IR_TRAINS_FILE):
+    try:
+        with open(IR_TRAINS_FILE, "r") as f:
+            IR_TRAINS = json.load(f)
+    except Exception:
+        pass
+
+def get_train_meta(train_number: str):
+    if train_number in IR_TRAINS:
+        t = IR_TRAINS[train_number]
+        return {
+            "name": t.get("name") or f"Express {train_number}",
+            "origin": t.get("src_name") or t.get("src_code") or "Origin Station",
+            "destination": t.get("dst_name") or t.get("dst_code") or "Destination Station",
+            "priority": "EXPRESS"
+        }
+    return {
+        "name": f"Express {train_number}",
+        "origin": "Origin Station",
+        "destination": "Destination Station",
+        "priority": "EXPRESS"
+    }
 
 @router.get("/live/{train_number}", response_model=LiveTrainResponse)
 async def get_live_train_status(
@@ -141,7 +156,7 @@ async def get_live_train_status(
 
         try:
             async with httpx.AsyncClient() as client:
-                response = await client.get(url, headers=headers, timeout=10.0)
+                response = await client.get(url, headers=headers, timeout=5.0)
                 
                 if response.status_code == 200:
                     data = response.json()
@@ -166,17 +181,16 @@ async def get_live_train_status(
         except Exception:
             pass
 
-    # Smart fallback for section simulation if live API quota is exhausted
-    known = KNOWN_TRAINS.get(train_number, {"name": f"Express {train_number}", "origin": "NDLS", "destination": "MAS", "priority": "EXPRESS"})
+    meta = get_train_meta(train_number)
     return LiveTrainResponse(
         train_number=train_number,
         status="ok",
         current_station="ST-3",
-        current_station_name=f"{known['origin']} Junction",
-        delay_minutes=0 if int(train_number) % 2 == 0 else 8,
+        current_station_name=f"{meta['origin']} Junction",
+        delay_minutes=0 if int(train_number) % 2 == 0 else 5,
         terminated=False,
         last_updated="Section Telemetry Active",
-        next_station=known['destination'],
+        next_station=meta['destination'],
         expected_arrival_ndls=None
     )
 
@@ -193,11 +207,11 @@ async def get_live_train_info_and_update(
     result = await db.execute(select(Train).where(Train.id == train_number))
     train = result.scalar_one_or_none()
 
-    known = KNOWN_TRAINS.get(train_number, {"name": f"Train {train_number}", "origin": "NDLS", "destination": "MAS", "priority": "EXPRESS"})
-    name = known["name"]
-    origin = known["origin"]
-    destination = known["destination"]
-    prio_str = known["priority"]
+    meta = get_train_meta(train_number)
+    name = meta["name"]
+    origin = meta["origin"]
+    destination = meta["destination"]
+    prio_str = meta["priority"]
 
     try:
         url = f"https://indian-railway-irctc.p.rapidapi.com/api/v1/getTrainDetails?trainNo={train_number}"
