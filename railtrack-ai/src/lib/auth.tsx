@@ -129,8 +129,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       // Demo login fallback if backend isn't reachable on remote Vercel HTTPS
       const targetRole = role || (email.split('@')[0].toUpperCase() as UserRole) || 'CONTROLLER';
-      const demoToken = `demo_jwt_token_${targetRole.toLowerCase()}`;
-      setCookie('railtrack_token', demoToken, 86400);
+      
+      // Generate valid 3-part base64 JWT payload for Edge middleware compatibility
+      const headerB64 = btoa(JSON.stringify({ alg: 'HS256', typ: 'JWT' }));
+      const payloadB64 = btoa(JSON.stringify({
+        sub: `U-${targetRole.slice(0, 3)}-DEMO`,
+        email: email || `${targetRole.toLowerCase()}@demo.rail`,
+        role: targetRole,
+        section: 'NR-42',
+        exp: Math.floor(Date.now() / 1000) + 86400 * 30,
+      }));
+      const validDemoJwt = `${headerB64}.${payloadB64}.demo_signature`;
+
+      setCookie('railtrack_token', validDemoJwt, 86400);
       setCookie('rt_role', targetRole, 86400);
 
       const demoUser: AuthUser = {
@@ -143,12 +154,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       };
       setUser(demoUser);
 
+      let targetUrl = '/dashboard/controller';
       switch (targetRole as UserRole) {
-        case 'CONTROLLER': router.push('/dashboard/controller'); break;
-        case 'SUPERVISOR': router.push('/analytics');             break;
-        case 'LOGISTICS':  router.push('/simulate');              break;
-        case 'ADMIN':      router.push('/admin');                 break;
-        default:           router.push('/dashboard/controller');
+        case 'CONTROLLER': targetUrl = '/dashboard/controller'; break;
+        case 'SUPERVISOR': targetUrl = '/analytics';             break;
+        case 'LOGISTICS':  targetUrl = '/simulate';              break;
+        case 'ADMIN':      targetUrl = '/admin';                 break;
+        default:           targetUrl = '/dashboard/controller';
+      }
+
+      if (typeof window !== 'undefined') {
+        window.location.href = targetUrl;
+      } else {
+        router.push(targetUrl);
       }
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'Login failed';
