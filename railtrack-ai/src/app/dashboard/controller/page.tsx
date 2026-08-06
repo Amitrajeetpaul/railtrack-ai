@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import Link from 'next/link';
 import { useAuth } from '@/lib/auth';
@@ -482,6 +482,12 @@ export default function ControllerDashboard() {
   const [chatHistory, setChatHistory] = useState<{ role: 'user' | 'ai'; text: string }[]>([
     { role: 'ai', text: 'Hello! I\'m your AI assistant powered by Llama 3.1. Ask me about conflicts, train status, or optimization suggestions for your section.' }
   ]);
+  // The message list scrolls internally (fixed-height panel) — without this,
+  // a reply lands below the visible area and looks like nothing happened.
+  const chatScrollRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    chatScrollRef.current?.scrollTo({ top: chatScrollRef.current.scrollHeight, behavior: 'smooth' });
+  }, [chatHistory, chatLoading]);
 
   const triggerDemoScenario = useCallback((preset: 'overtake' | 'headon' | 'bottleneck') => {
     let demoConflict: Conflict;
@@ -532,24 +538,14 @@ export default function ControllerDashboard() {
     setSearchNotification(`⚡ Demo Scenario loaded: "${demoConflict.location}" — AI Recommendation modal active!`);
   }, []);
 
-  // Trigger a conflict scenario every 30 seconds
-  useEffect(() => {
-    if (!aiAssist) return;
-    const interval = setInterval(() => {
-      if (conflicts.length === 0) return;
-      const conflict = conflicts[Math.floor(Math.random() * conflicts.length)];
-      setActiveConflict(conflict);
-      setShowAI(true);
-    }, 30000);
-    // Show first conflict after 5s
-    const initial = setTimeout(() => {
-      if (conflicts.length > 0) {
-        setActiveConflict(conflicts[0]);
-        setShowAI(true);
-      }
-    }, 5000);
-    return () => { clearInterval(interval); clearTimeout(initial); };
-  }, [aiAssist]);
+  // Previously auto-opened the AI Recommendation popup 5s after load and
+  // every 30s thereafter. It's an absolutely-positioned overlay covering the
+  // same right-hand column as "Ask AI Assistant" below it — the recurring
+  // popup would silently intercept clicks meant for the chat's send button,
+  // making the chat look broken ("I type, nothing happens") when it was
+  // actually the invisible-to-the-user overlay eating the click. The popup
+  // still opens on a real trigger — clicking a conflict card or a Demo
+  // Preset button — just not on an uncontrollable timer anymore.
 
   const handleAccept = useCallback(async (conflict: Conflict) => {
     try {
@@ -1220,7 +1216,7 @@ export default function ControllerDashboard() {
             <div style={{ padding: '12px 16px', borderBottom: '1px solid var(--bg-border)' }}>
               <span className="panel-header">Ask AI Assistant</span>
             </div>
-            <div style={{ flex: 1, overflowY: 'auto', padding: '12px 16px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+            <div ref={chatScrollRef} style={{ flex: 1, overflowY: 'auto', padding: '12px 16px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
               {chatHistory.map((msg, i) => (
                 <div key={i} style={{
                   padding: '8px 12px',
@@ -1240,7 +1236,7 @@ export default function ControllerDashboard() {
                   {msg.text}
                 </div>
               ))}
-              {/* Typing indicator while waiting for Claude */}
+              {/* Typing indicator while waiting for a reply */}
               {chatLoading && (
                 <div style={{
                   padding: '8px 12px', borderRadius: '6px', fontSize: '12px',
