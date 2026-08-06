@@ -127,7 +127,7 @@ export default function LandingPage() {
           <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', background: 'rgba(0,212,255,0.08)', border: '1px solid rgba(0,212,255,0.2)', borderRadius: '999px', padding: '4px 16px', marginBottom: '24px' }}>
             <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: 'var(--accent-primary)', display: 'inline-block' }} className="animate-pulse-live" />
             <span style={{ fontFamily: 'var(--font-space-mono)', fontSize: '11px', color: 'var(--accent-primary)', letterSpacing: '0.1em' }}>
-              LIVE DEMO • SIH 2024 PROJECT
+              LIVE DEMO • ENTERPRISE TRAFFIC SYSTEM
             </span>
           </div>
 
@@ -146,7 +146,7 @@ export default function LandingPage() {
             <Link href="/login" className="btn-primary" style={{ fontSize: '16px', padding: '14px 32px' }}>
               Live Demo →
             </Link>
-            <a href="https://github.com/grsanudeep42-cmd/railtrack-ai" target="_blank" rel="noopener noreferrer" className="btn-ghost" style={{ fontSize: '16px', padding: '14px 32px' }}>
+            <a href="https://github.com/Amitrajeetpaul/railtrack-ai" target="_blank" rel="noopener noreferrer" className="btn-ghost" style={{ fontSize: '16px', padding: '14px 32px' }}>
               View on GitHub
             </a>
           </div>
@@ -253,10 +253,9 @@ export default function LandingPage() {
           RAILTRACK AI
         </div>
         <div style={{ display: 'flex', gap: '24px' }}>
-          <a href="https://github.com/grsanudeep42-cmd/railtrack-ai" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--text-secondary)', textDecoration: 'none', fontSize: '13px', fontFamily: 'var(--font-space-mono)' }}>GitHub</a>
-          <span style={{ color: 'var(--text-secondary)', fontSize: '13px', fontFamily: 'var(--font-space-mono)' }}>SIH 2024</span>
+          <a href="https://github.com/Amitrajeetpaul/railtrack-ai" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--text-secondary)', textDecoration: 'none', fontSize: '13px', fontFamily: 'var(--font-space-mono)' }}>GitHub</a>
           <span style={{ background: 'rgba(0,212,255,0.1)', border: '1px solid rgba(0,212,255,0.2)', borderRadius: '4px', padding: '2px 10px', fontSize: '11px', fontFamily: 'var(--font-space-mono)', color: 'var(--accent-primary)' }}>
-            SMART INDIA HACKATHON
+            ENTERPRISE PLATFORM
           </span>
         </div>
       </footer>
