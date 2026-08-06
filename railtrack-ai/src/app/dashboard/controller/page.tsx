@@ -1115,7 +1115,7 @@ export default function ControllerDashboard() {
         </main>
 
         {/* ── RIGHT COLUMN (320px) ── */}
-        <aside style={{ width: '320px', flexShrink: 0, background: 'var(--bg-surface)', borderLeft: '1px solid var(--bg-border)', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+        <aside style={{ width: '320px', flexShrink: 0, background: 'var(--bg-surface)', borderLeft: '1px solid var(--bg-border)', display: 'flex', flexDirection: 'column', overflowY: 'auto', overflowX: 'hidden' }}>
 
           {/* Active Conflicts */}
           <div style={{ borderBottom: '1px solid var(--bg-border)' }}>
