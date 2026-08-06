@@ -45,7 +45,7 @@ interface Props {
   conflictSegment?: string | null;
   onTrainClick?: (id: string) => void;
   liveTrainData?: Record<string, {
-    status: 'ok' | 'not_running' | 'loading';
+    status: 'ok' | 'not_running' | 'unavailable' | 'loading';
     delay?: number;
     lastUpdated?: string;
     isLive: boolean;

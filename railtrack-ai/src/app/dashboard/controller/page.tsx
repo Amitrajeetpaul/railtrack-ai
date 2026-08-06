@@ -73,7 +73,7 @@ export default function ControllerDashboard() {
   const [decisions, setDecisions] = useState<any[]>([]);
   // State for tracking live data from RapidAPI
   const [liveTrainData, setLiveTrainData] = useState<Record<string, {
-    status: 'ok' | 'not_running' | 'loading';
+    status: 'ok' | 'not_running' | 'unavailable' | 'loading';
     message?: string;
     delay?: number;
     currentStation?: string;
@@ -125,7 +125,9 @@ export default function ControllerDashboard() {
         origin: trainInfo.origin || data.current_station_name || 'NDLS',
         destination: trainInfo.destination || data.next_station || 'AGC',
         section: user?.section || 'NR-42',
-        status: data.status === 'not_running' ? 'HALTED' : (data.delay_minutes > 0 ? 'DELAYED' : 'ON_TIME'),
+        status: data.status === 'not_running' ? 'HALTED'
+          : data.status === 'unavailable' ? 'SCHEDULED'
+          : (data.delay_minutes > 0 ? 'DELAYED' : 'ON_TIME'),
         delay: data.delay_minutes || 0,
         speed: 75.0,
         platform: 1,
@@ -157,8 +159,8 @@ export default function ControllerDashboard() {
       setSelectedTrain(num);
       if (data.status === 'ok') {
         setSearchNotification(`Fetched Train ${num} (${newTrain.name}): @ ${data.current_station_name || 'En Route'} → Next: ${data.next_station || 'Transit'} (${data.delay_minutes === 0 ? '● ON TIME' : `+${data.delay_minutes}m delay`})`);
-      } else if (data.message?.includes('429') || data.message?.includes('rate limit')) {
-        setSearchNotification(`⚡ Train ${num} added to queue: RapidAPI daily limit reached — Section Timetable Active.`);
+      } else if (data.status === 'unavailable') {
+        setSearchNotification(`⚠ Train ${num} added from timetable — live position unavailable: ${data.message || 'live tracking service unreachable'}`);
       } else {
         setSearchNotification(`Train ${num} added to queue: ${data.message || 'Scheduled'}`);
       }
@@ -247,6 +249,22 @@ export default function ControllerDashboard() {
         return;
       }
 
+      // Live tracking service failed (quota/outage/unrecognized response) — the
+      // backend no longer fabricates position/delay in this case, so surface
+      // that honestly instead of rendering blank fields as if they were live.
+      if (data.status === 'unavailable') {
+        setLiveTrainData(prev => ({
+          ...prev,
+          [trainId]: {
+            status: 'unavailable',
+            message: data.message || 'Live tracking service unavailable',
+            isLive: false,
+            loading: false
+          }
+        }));
+        return;
+      }
+
       // Also silently fetch name/origin/destination to update DB and local state
       try {
         await fetch(`${API_BASE}/api/trains/info/${num}`, {
@@ -287,7 +305,7 @@ export default function ControllerDashboard() {
     }
   };
 
-  const { data: trains = DEFAULT_DEMO_TRAINS, error: trainsErr } = useQuery<Train[]>({
+  const { data: trains = DEFAULT_DEMO_TRAINS } = useQuery<Train[]>({
     queryKey: ['trains'],
     queryFn: async () => {
       const token = getClientToken();
@@ -310,7 +328,7 @@ export default function ControllerDashboard() {
     placeholderData: (previousData: any) => previousData,
   });
 
-  const { data: serverConflicts = DEFAULT_DEMO_CONFLICTS, error: confsErr } = useQuery({
+  const { data: serverConflicts = DEFAULT_DEMO_CONFLICTS } = useQuery({
     queryKey: ['conflicts'],
     queryFn: async () => {
       const token = getClientToken();
@@ -379,8 +397,11 @@ export default function ControllerDashboard() {
 
     const connect = () => {
       try {
-        const wsUrl = process.env.NEXT_PUBLIC_WS_URL ||
+        const wsToken = getClientToken();
+        if (!wsToken) return; // no session — don't attempt an unauthenticated connection
+        const base = process.env.NEXT_PUBLIC_WS_URL ||
           `${API_BASE.replace('https', 'wss').replace('http', 'ws')}/ws/telemetry`;
+        const wsUrl = `${base}${base.includes('?') ? '&' : '?'}token=${encodeURIComponent(wsToken)}`;
         ws = new WebSocket(wsUrl);
 
         ws.onopen = () => {
@@ -608,12 +629,33 @@ export default function ControllerDashboard() {
 
   const hoveredTrain = selectedTrain ? trains.find(t => t.id === selectedTrain) : null;
 
+  // Detect whether any feed is silently showing sample data instead of a real
+  // backend response (fetch failure, timeout, or empty result) — the queries
+  // return these exact constant references on fallback, so an identity check
+  // is enough to tell fake data apart from a real (possibly empty) response.
+  const usingFallbackTrains = trains === DEFAULT_DEMO_TRAINS;
+  const usingFallbackConflicts = serverConflicts === DEFAULT_DEMO_CONFLICTS;
+  const usingFallbackDisruptions = disruptions === DEFAULT_DEMO_DISRUPTIONS;
+  const fallbackFeeds = [
+    usingFallbackTrains && 'trains',
+    usingFallbackConflicts && 'conflicts',
+    usingFallbackDisruptions && 'disruptions',
+  ].filter(Boolean) as string[];
+
   return (
     <div style={{ height: '100vh', display: 'flex', flexDirection: 'column', overflow: 'hidden', background: 'var(--bg-base)' }}>
       {/* Demo Banner */}
       {user?.isDemo && (
         <div className="demo-banner">
           ⚠ DEMO MODE — Section {user?.section || 'NR-42'} &nbsp;|&nbsp; User: {user.name} [{user.role}]
+        </div>
+      )}
+      {/* Sample-data banner: shown even for a real logged-in session if one or
+          more feeds couldn't be fetched live, so sample data is never mistaken
+          for real telemetry. */}
+      {!user?.isDemo && fallbackFeeds.length > 0 && (
+        <div className="demo-banner">
+          ⚠ Showing sample data for {fallbackFeeds.join(', ')} — live backend unreachable
         </div>
       )}
 
@@ -772,22 +814,25 @@ export default function ControllerDashboard() {
                       </span>
                     </span>
                     <span className={
-                      liveTrainData[train.id]?.status === 'not_running' ? 'badge-rail'
-                        : liveTrainData[train.id]?.isLive 
+                      liveTrainData[train.id]?.status === 'not_running' || liveTrainData[train.id]?.status === 'unavailable' ? 'badge-rail'
+                        : liveTrainData[train.id]?.isLive
                           ? (liveTrainData[train.id].delay === 0 ? 'badge-safe' : (liveTrainData[train.id].delay ?? 0) <= 30 ? 'badge-warn' : 'badge-conflict')
                           : train.status === 'CONFLICT' ? 'badge-conflict' :
                             train.status === 'DELAYED'  ? 'badge-warn' :
                             train.status === 'ON_TIME'  ? 'badge-safe' : 'badge-rail'
-                    } style={{ 
+                    } style={{
                       fontSize: '9px',
-                      opacity: liveTrainData[train.id]?.status === 'not_running' ? 0.6 : 1
+                      opacity: (liveTrainData[train.id]?.status === 'not_running' || liveTrainData[train.id]?.status === 'unavailable') ? 0.6 : 1
                     }}
-                    title={liveTrainData[train.id]?.status === 'not_running' 
-                      ? (liveTrainData[train.id].message || 'Train not running today or data unavailable') 
-                      : undefined
+                    title={liveTrainData[train.id]?.status === 'not_running'
+                      ? (liveTrainData[train.id].message || 'Train not running today or data unavailable')
+                      : liveTrainData[train.id]?.status === 'unavailable'
+                        ? (liveTrainData[train.id].message || 'Live tracking service unavailable — showing timetable data')
+                        : undefined
                     }>
                       {liveTrainData[train.id]?.status === 'not_running' ? 'NO DATA'
-                        : liveTrainData[train.id]?.isLive 
+                        : liveTrainData[train.id]?.status === 'unavailable' ? 'LIVE N/A'
+                        : liveTrainData[train.id]?.isLive
                           ? (liveTrainData[train.id].delay === 0 ? '● ON TIME' : `+${liveTrainData[train.id].delay}m`)
                           : (train.status === 'ON_TIME' ? '●' : train.status === 'DELAYED' ? `+${train.delay}m` : train.status)
                       }
@@ -795,44 +840,46 @@ export default function ControllerDashboard() {
                   </div>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
                     <div style={{ fontSize: '11px', color: 'var(--text-secondary)' }}>
-                      {liveTrainData[train.id]?.isLive 
+                      {liveTrainData[train.id]?.isLive
                         ? liveTrainData[train.id].terminated
                           ? <span style={{ color: '#94A3B8', fontStyle: 'italic' }}>Terminated</span>
                           : <span style={{ color: 'var(--accent-primary)', fontWeight: 600 }}>@ {liveTrainData[train.id].currentStationName || liveTrainData[train.id].currentStation}</span>
-                        : liveTrainData[train.id]?.status === 'not_running'
+                        : (liveTrainData[train.id]?.status === 'not_running' || liveTrainData[train.id]?.status === 'unavailable')
                           ? <span style={{ color: 'var(--text-muted)', fontStyle: 'italic' }}>{train.origin} → {train.destination}</span>
                           : `${train.origin} → ${train.destination}`
                       }
                     </div>
-                    <button 
+                    <button
                       onClick={(e) => fetchLiveTrainData(e, train.id)}
                       disabled={liveTrainData[train.id]?.loading}
-                      title={liveTrainData[train.id]?.status === 'not_running' 
-                        ? 'Train not running today or data unavailable' 
-                        : undefined}
-                      style={{ 
+                      title={liveTrainData[train.id]?.status === 'not_running'
+                        ? 'Train not running today or data unavailable'
+                        : liveTrainData[train.id]?.status === 'unavailable'
+                          ? (liveTrainData[train.id].message || 'Live tracking service unavailable')
+                          : undefined}
+                      style={{
                         fontSize: '9px', padding: '2px 6px', borderRadius: '4px',
-                        background: liveTrainData[train.id]?.isLive 
-                          ? 'rgba(34, 197, 94, 0.15)' 
-                          : liveTrainData[train.id]?.status === 'not_running'
+                        background: liveTrainData[train.id]?.isLive
+                          ? 'rgba(34, 197, 94, 0.15)'
+                          : (liveTrainData[train.id]?.status === 'not_running' || liveTrainData[train.id]?.status === 'unavailable')
                             ? 'rgba(148, 163, 184, 0.08)'
                             : 'var(--bg-elevated)',
-                        color: liveTrainData[train.id]?.isLive 
-                          ? 'var(--accent-safe)' 
-                          : liveTrainData[train.id]?.status === 'not_running'
+                        color: liveTrainData[train.id]?.isLive
+                          ? 'var(--accent-safe)'
+                          : (liveTrainData[train.id]?.status === 'not_running' || liveTrainData[train.id]?.status === 'unavailable')
                             ? 'var(--text-muted)'
                             : 'var(--text-secondary)',
-                        border: liveTrainData[train.id]?.isLive 
-                          ? '1px solid var(--accent-safe)' 
+                        border: liveTrainData[train.id]?.isLive
+                          ? '1px solid var(--accent-safe)'
                           : '1px solid var(--bg-border)',
                         cursor: liveTrainData[train.id]?.loading ? 'wait' : 'pointer',
                         fontFamily: 'var(--font-space-mono)',
                         fontWeight: 600
                       }}
                     >
-                      {liveTrainData[train.id]?.loading ? '...' 
-                        : liveTrainData[train.id]?.isLive ? 'REFRESH' 
-                        : liveTrainData[train.id]?.status === 'not_running' ? 'RETRY'
+                      {liveTrainData[train.id]?.loading ? '...'
+                        : liveTrainData[train.id]?.isLive ? 'REFRESH'
+                        : (liveTrainData[train.id]?.status === 'not_running' || liveTrainData[train.id]?.status === 'unavailable') ? 'RETRY'
                         : 'Fetch'}
                     </button>
                   </div>
