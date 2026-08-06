@@ -128,12 +128,28 @@ def get_train_meta(train_number: str):
     for candidate in candidates:
         if candidate in IR_TRAINS:
             t = IR_TRAINS[candidate]
+            is_local = any(candidate.startswith(p) for p in ["38", "37", "31", "34", "97", "96", "40", "68", "58"])
             return {
                 "name": t.get("name") or f"Express {train_number}",
                 "origin": t.get("src_name") or t.get("src_code") or "New Delhi (NDLS)",
                 "destination": t.get("dst_name") or t.get("dst_code") or "Bhopal (BPL)",
-                "priority": "EXPRESS"
+                "priority": "LOCAL" if is_local else "EXPRESS"
             }
+
+    # Smart Indian Railways Suburban EMU series decoder
+    if train_number.startswith("38"):
+        return {"name": f"Howrah - Kharagpur Local ({train_number})", "origin": "Howrah Jn (HWH)", "destination": "Kharagpur Jn (KGP)", "priority": "LOCAL"}
+    if train_number.startswith("37"):
+        return {"name": f"Howrah - Bandel Local ({train_number})", "origin": "Howrah Jn (HWH)", "destination": "Bandel Jn (BDC)", "priority": "LOCAL"}
+    if train_number.startswith("31"):
+        return {"name": f"Sealdah - Ranaghat Local ({train_number})", "origin": "Sealdah (SDAH)", "destination": "Ranaghat Jn (RHA)", "priority": "LOCAL"}
+    if train_number.startswith("34"):
+        return {"name": f"Sealdah - Diamond Harbour Local ({train_number})", "origin": "Sealdah (SDAH)", "destination": "Diamond Harbour (DH)", "priority": "LOCAL"}
+    if train_number.startswith("97") or train_number.startswith("96"):
+        return {"name": f"Mumbai Suburban Local ({train_number})", "origin": "CSMT (Mumbai)", "destination": "Kalyan Jn (KYN)", "priority": "LOCAL"}
+    if train_number.startswith("40"):
+        return {"name": f"Chennai Suburban Local ({train_number})", "origin": "Chennai Beach (MSB)", "destination": "Tambaram (TBM)", "priority": "LOCAL"}
+
     return {
         "name": f"Express {train_number}",
         "origin": "New Delhi (NDLS)",

@@ -19731,5 +19731,54 @@
     "src_code": "NDLS",
     "dst_name": "Trivandrum Central",
     "dst_code": "TVC"
+  },
+  "38721": {
+    "name": "Howrah - Kharagpur Local",
+    "src_name": "Howrah Jn",
+    "src_code": "HWH",
+    "dst_name": "Kharagpur Jn",
+    "dst_code": "KGP"
+  },
+  "38711": {
+    "name": "Howrah - Kharagpur Local",
+    "src_name": "Howrah Jn",
+    "src_code": "HWH",
+    "dst_name": "Kharagpur Jn",
+    "dst_code": "KGP"
+  },
+  "38701": {
+    "name": "Howrah - Kharagpur Local",
+    "src_name": "Howrah Jn",
+    "src_code": "HWH",
+    "dst_name": "Kharagpur Jn",
+    "dst_code": "KGP"
+  },
+  "38401": {
+    "name": "Howrah - Panskura Local",
+    "src_name": "Howrah Jn",
+    "src_code": "HWH",
+    "dst_name": "Panskura Jn",
+    "dst_code": "PKU"
+  },
+  "37211": {
+    "name": "Howrah - Bandel Local",
+    "src_name": "Howrah Jn",
+    "src_code": "HWH",
+    "dst_name": "Bandel Jn",
+    "dst_code": "BDC"
+  },
+  "31211": {
+    "name": "Sealdah - Ranaghat Local",
+    "src_name": "Sealdah",
+    "src_code": "SDAH",
+    "dst_name": "Ranaghat Jn",
+    "dst_code": "RHA"
+  },
+  "34123": {
+    "name": "Sealdah - Diamond Harbour Local",
+    "src_name": "Sealdah",
+    "src_code": "SDAH",
+    "dst_name": "Diamond Harbour",
+    "dst_code": "DH"
   }
 }
