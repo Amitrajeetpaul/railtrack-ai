@@ -35,7 +35,7 @@ export default function AIRecommendation({ visible, conflict, onDismiss, onAccep
       <div style={{ padding: '16px 20px', borderBottom: '1px solid var(--bg-border)', display: 'flex', alignItems: 'center', gap: '10px', background: 'var(--bg-elevated)' }}>
         <span className="signal-lamp signal-lamp-green" style={{ width: '10px', height: '10px' }} />
         <span style={{ fontFamily: 'var(--font-headline)', fontSize: '13px', fontWeight: 800, color: 'var(--accent-primary)', letterSpacing: '0.04em' }}>
-          AI RECOMMENDATION (XAI)
+          SECTION CONTROL RECOMMENDATION
         </span>
         <button onClick={onDismiss} className="btn-icon" style={{ marginLeft: 'auto', width: '28px', height: '28px', fontSize: '12px', border: 'none' }}>
           ✕
@@ -88,7 +88,7 @@ export default function AIRecommendation({ visible, conflict, onDismiss, onAccep
               color: 'var(--accent-primary)', fontFamily: 'var(--font-headline)', fontSize: '12px', fontWeight: 600,
               display: 'flex', alignItems: 'center', justifyContent: 'space-between', cursor: 'pointer'
             }}>
-            <span>💡 {showXai ? 'Hide AI Logic Breakdown' : 'Explain Operational Logic (XAI)'}</span>
+            <span>💡 {showXai ? 'Hide Recommendation Logic' : 'Explain Recommendation Logic'}</span>
             <span>{showXai ? '▲' : '▼'}</span>
           </button>
 
@@ -99,7 +99,7 @@ export default function AIRecommendation({ visible, conflict, onDismiss, onAccep
               color: 'var(--text-primary)', lineHeight: 1.6
             }}>
               <div style={{ fontFamily: 'var(--font-headline)', fontWeight: 700, color: 'var(--accent-primary)', marginBottom: '6px' }}>
-                OR-Tools CP-SAT Rationale:
+                Standard Precedence Rules Applied:
               </div>
               <ul style={{ paddingLeft: '16px', margin: 0, display: 'flex', flexDirection: 'column', gap: '6px' }}>
                 <li><b>Priority Rule:</b> Express train {conflict.trainA} prioritized over lower-tier {conflict.trainB}.</li>
@@ -113,7 +113,7 @@ export default function AIRecommendation({ visible, conflict, onDismiss, onAccep
         {/* Confidence bar */}
         <div style={{ marginBottom: '18px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
-            <span style={{ fontFamily: 'var(--font-headline)', fontSize: '11px', fontWeight: 700, color: 'var(--text-secondary)', letterSpacing: '0.06em' }}>CONFIDENCE SCORE</span>
+            <span style={{ fontFamily: 'var(--font-headline)', fontSize: '11px', fontWeight: 700, color: 'var(--text-secondary)', letterSpacing: '0.06em' }} title="Reflects priority-rule strength for this scenario, not a live-computed model confidence score.">PRIORITY SCORE</span>
             <span style={{ fontFamily: 'var(--font-mono)', fontSize: '14px', color: 'var(--accent-primary)', fontWeight: 700 }}>{conflict.confidence}%</span>
           </div>
           <div style={{ height: '8px', background: 'var(--bg-border)', borderRadius: '4px', overflow: 'hidden' }}>

@@ -480,7 +480,7 @@ export default function ControllerDashboard() {
   const [chatInput, setChatInput] = useState('');
   const [chatLoading, setChatLoading] = useState(false);
   const [chatHistory, setChatHistory] = useState<{ role: 'user' | 'ai'; text: string }[]>([
-    { role: 'ai', text: 'Hello! I\'m your AI assistant powered by Claude. Ask me about conflicts, train status, or optimization suggestions for your section.' }
+    { role: 'ai', text: 'Hello! I\'m your AI assistant powered by Llama 3.1. Ask me about conflicts, train status, or optimization suggestions for your section.' }
   ]);
 
   const triggerDemoScenario = useCallback((preset: 'overtake' | 'headon' | 'bottleneck') => {
