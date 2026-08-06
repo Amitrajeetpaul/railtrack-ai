@@ -118,12 +118,16 @@ export default function ControllerDashboard() {
         console.warn('Info API error:', e);
       }
 
+      // RailRadar's own train metadata (returned alongside live position) is
+      // fresher than the static local dataset — IR renumbers/renames trains
+      // (e.g. Yesvantpur → SMVT Bengaluru) and the offline file goes stale.
+      // Prefer it when a live fetch actually succeeded.
       const newTrain: Train = {
         id: num,
-        name: trainInfo.name || `Train ${num}`,
+        name: (data.status === 'ok' && data.train_name) || trainInfo.name || `Train ${num}`,
         priority: 'EXPRESS',
-        origin: trainInfo.origin || data.current_station_name || 'NDLS',
-        destination: trainInfo.destination || data.next_station || 'AGC',
+        origin: (data.status === 'ok' && data.origin_name) || trainInfo.origin || data.current_station_name || 'NDLS',
+        destination: (data.status === 'ok' && data.destination_name) || trainInfo.destination || data.next_station || 'AGC',
         section: user?.section || 'NR-42',
         status: data.status === 'not_running' ? 'HALTED'
           : data.status === 'unavailable' ? 'SCHEDULED'

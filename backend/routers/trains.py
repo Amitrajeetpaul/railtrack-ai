@@ -67,7 +67,7 @@ class StatusUpdateRequest(BaseModel):
 
 class LiveTrainResponse(BaseModel):
     train_number: str
-    status: str = "ok"  # "ok" | "not_running"
+    status: str = "ok"  # "ok" | "not_running" | "unavailable"
     message: Optional[str] = None
     current_station: Optional[str] = None
     current_station_name: Optional[str] = None
@@ -76,6 +76,13 @@ class LiveTrainResponse(BaseModel):
     last_updated: Optional[str] = None
     next_station: Optional[str] = None
     expected_arrival_ndls: Optional[str] = None
+    # Populated from RailRadar's own train metadata when a live fetch
+    # succeeds — this is more current than the static local dataset used
+    # by /info (e.g. reflects real IR renumbering/renaming), so the
+    # frontend should prefer these over /info's values when present.
+    train_name: Optional[str] = None
+    origin_name: Optional[str] = None
+    destination_name: Optional[str] = None
 
 
 # ─── Endpoints ────────────────────────────────────────────────────────────────
@@ -194,6 +201,7 @@ async def get_live_train_status(
 
     current = data.get("currentLocation") or {}
     next_halt = data.get("nextHalt") or {}
+    train_meta = data.get("train") or {}
     route_by_seq = {r.get("sequence"): r for r in data.get("route", [])}
     current_name = route_by_seq.get(current.get("sequence"), {}).get("stationName") or current.get("stationCode", "")
 
@@ -207,6 +215,9 @@ async def get_live_train_status(
         last_updated=data.get("lastUpdatedAt"),
         next_station=next_halt.get("stationName", ""),
         expected_arrival_ndls=None,
+        train_name=data.get("trainName"),
+        origin_name=(train_meta.get("source") or {}).get("name"),
+        destination_name=(train_meta.get("destination") or {}).get("name"),
     )
 
 
