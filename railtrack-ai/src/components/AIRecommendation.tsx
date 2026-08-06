@@ -16,50 +16,50 @@ export default function AIRecommendation({ visible, conflict, onDismiss, onAccep
   if (!visible || !conflict) return null;
 
   return (
-    <div className="animate-slide-in" style={{
+    <div className="animate-slide-in card-elevated" style={{
       position: 'absolute',
-      right: 0,
-      top: 0,
-      bottom: 0,
-      width: '340px',
-      background: 'var(--bg-elevated)',
-      border: '1px solid var(--bg-border)',
-      borderLeft: '3px solid var(--accent-primary)',
-      borderRadius: '8px 0 0 8px',
+      right: '16px',
+      top: '16px',
+      bottom: '16px',
+      width: '360px',
+      background: '#FFFFFF',
+      border: '1.5px solid var(--bg-border)',
+      borderLeft: '4px solid var(--accent-primary)',
+      borderRadius: '12px',
       display: 'flex',
       flexDirection: 'column',
       zIndex: 10,
       overflow: 'hidden',
     }}>
       {/* Header */}
-      <div style={{ padding: '16px', borderBottom: '1px solid var(--bg-border)', display: 'flex', alignItems: 'center', gap: '10px' }}>
-        <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: 'var(--accent-primary)', display: 'inline-block' }} className="animate-pulse-live" />
-        <span style={{ fontFamily: 'var(--font-space-mono)', fontSize: '11px', fontWeight: 700, color: 'var(--accent-primary)', letterSpacing: '0.1em' }}>
+      <div style={{ padding: '16px 20px', borderBottom: '1px solid var(--bg-border)', display: 'flex', alignItems: 'center', gap: '10px', background: 'var(--bg-elevated)' }}>
+        <span className="signal-lamp signal-lamp-green" style={{ width: '10px', height: '10px' }} />
+        <span style={{ fontFamily: 'var(--font-headline)', fontSize: '13px', fontWeight: 800, color: 'var(--accent-primary)', letterSpacing: '0.04em' }}>
           AI RECOMMENDATION (XAI)
         </span>
-        <button onClick={onDismiss} className="btn-icon" style={{ marginLeft: 'auto', width: '24px', height: '24px', fontSize: '12px', border: 'none' }}>
+        <button onClick={onDismiss} className="btn-icon" style={{ marginLeft: 'auto', width: '28px', height: '28px', fontSize: '12px', border: 'none' }}>
           ✕
         </button>
       </div>
 
       {/* Content */}
-      <div style={{ padding: '16px', flex: 1, overflowY: 'auto' }}>
+      <div style={{ padding: '20px', flex: 1, overflowY: 'auto' }}>
         {/* Conflict info */}
-        <div style={{ marginBottom: '16px' }}>
-          <div style={{ fontFamily: 'var(--font-space-mono)', fontSize: '10px', color: 'var(--text-muted)', letterSpacing: '0.1em', marginBottom: '8px' }}>
+        <div style={{ marginBottom: '18px' }}>
+          <div style={{ fontFamily: 'var(--font-headline)', fontSize: '11px', fontWeight: 700, color: 'var(--text-secondary)', letterSpacing: '0.06em', marginBottom: '8px' }}>
             CONFLICT DETECTED
           </div>
           <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginBottom: '8px' }}>
-            <span style={{ fontFamily: 'var(--font-jetbrains)', fontSize: '13px', color: 'var(--accent-primary)', fontWeight: 700 }}>{conflict.trainA}</span>
-            <span style={{ color: 'var(--text-muted)' }}>↔</span>
-            <span style={{ fontFamily: 'var(--font-jetbrains)', fontSize: '13px', color: 'var(--accent-primary)', fontWeight: 700 }}>{conflict.trainB}</span>
+            <span style={{ fontFamily: 'var(--font-mono)', fontSize: '14px', color: 'var(--accent-primary)', fontWeight: 700 }}>{conflict.trainA}</span>
+            <span style={{ color: 'var(--text-secondary)' }}>↔</span>
+            <span style={{ fontFamily: 'var(--font-mono)', fontSize: '14px', color: 'var(--accent-primary)', fontWeight: 700 }}>{conflict.trainB}</span>
           </div>
-          <div style={{ fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '8px' }}>📍 {conflict.location}</div>
+          <div style={{ fontSize: '13px', color: 'var(--text-primary)', marginBottom: '10px' }}>📍 Location: {conflict.location}</div>
           <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
             <span className={`badge-${conflict.severity === 'HIGH' ? 'conflict' : conflict.severity === 'MEDIUM' ? 'warn' : 'rail'}`}>
-              {conflict.severity}
+              {conflict.severity} SEVERITY
             </span>
-            <span className="badge-warn" style={{ fontFamily: 'var(--font-jetbrains)' }}>
+            <span className="badge-warn font-mono">
               T-{Math.floor(conflict.timeToConflict / 60)}:{String(conflict.timeToConflict % 60).padStart(2, '0')}
             </span>
           </div>
@@ -69,23 +69,23 @@ export default function AIRecommendation({ visible, conflict, onDismiss, onAccep
         <div style={{ height: '1px', background: 'var(--bg-border)', margin: '16px 0' }} />
 
         {/* Recommendation text */}
-        <div style={{ marginBottom: '16px' }}>
-          <div style={{ fontFamily: 'var(--font-space-mono)', fontSize: '10px', color: 'var(--text-muted)', letterSpacing: '0.1em', marginBottom: '8px' }}>
+        <div style={{ marginBottom: '18px' }}>
+          <div style={{ fontFamily: 'var(--font-headline)', fontSize: '11px', fontWeight: 700, color: 'var(--text-secondary)', letterSpacing: '0.06em', marginBottom: '8px' }}>
             RECOMMENDED ACTION
           </div>
-          <p style={{ fontSize: '13px', color: 'var(--text-primary)', lineHeight: 1.6 }}>
+          <p style={{ fontSize: '13.5px', color: 'var(--text-primary)', lineHeight: 1.6, fontWeight: 500 }}>
             {conflict.recommendation}
           </p>
         </div>
 
         {/* Explain Logic Toggle Button */}
-        <div style={{ marginBottom: '16px' }}>
+        <div style={{ marginBottom: '18px' }}>
           <button
             onClick={() => setShowXai(!showXai)}
             style={{
-              width: '100%', padding: '8px 12px', borderRadius: '6px',
-              border: '1px solid rgba(0,212,255,0.3)', background: showXai ? 'rgba(0,212,255,0.15)' : 'rgba(0,212,255,0.05)',
-              color: 'var(--accent-primary)', fontFamily: 'var(--font-space-mono)', fontSize: '11px',
+              width: '100%', padding: '10px 14px', borderRadius: '8px',
+              border: '1px solid #C5DCF2', background: showXai ? '#EBF3FA' : '#F8FAFC',
+              color: 'var(--accent-primary)', fontFamily: 'var(--font-headline)', fontSize: '12px', fontWeight: 600,
               display: 'flex', alignItems: 'center', justifyContent: 'space-between', cursor: 'pointer'
             }}>
             <span>💡 {showXai ? 'Hide AI Logic Breakdown' : 'Explain Operational Logic (XAI)'}</span>
@@ -94,48 +94,48 @@ export default function AIRecommendation({ visible, conflict, onDismiss, onAccep
 
           {showXai && (
             <div style={{
-              marginTop: '8px', padding: '12px', background: 'var(--bg-base)',
-              border: '1px solid var(--bg-border)', borderRadius: '6px', fontSize: '11px',
-              color: 'var(--text-secondary)', lineHeight: 1.6
+              marginTop: '10px', padding: '14px', background: '#FAFAF7',
+              border: '1px solid var(--bg-border)', borderRadius: '8px', fontSize: '12px',
+              color: 'var(--text-primary)', lineHeight: 1.6
             }}>
-              <div style={{ fontFamily: 'var(--font-space-mono)', fontWeight: 700, color: 'var(--accent-primary)', marginBottom: '4px' }}>
+              <div style={{ fontFamily: 'var(--font-headline)', fontWeight: 700, color: 'var(--accent-primary)', marginBottom: '6px' }}>
                 OR-Tools CP-SAT Rationale:
               </div>
-              <ul style={{ paddingLeft: '16px', margin: 0, display: 'flex', flexDirection: 'column', gap: '4px' }}>
+              <ul style={{ paddingLeft: '16px', margin: 0, display: 'flex', flexDirection: 'column', gap: '6px' }}>
                 <li><b>Priority Rule:</b> Express train {conflict.trainA} prioritized over lower-tier {conflict.trainB}.</li>
                 <li><b>Safety Headway:</b> Maintains mandatory 3-min signal block buffer.</li>
-                <li><b>Cascading Delay Prevention:</b> Holding {conflict.trainB} at Loop Line avoids a 24+ min delay ripple on 3 trailing passenger trains.</li>
+                <li><b>Cascading Delay Prevention:</b> Holding {conflict.trainB} at Loop Line avoids a 24+ min delay ripple on trailing passenger trains.</li>
               </ul>
             </div>
           )}
         </div>
 
         {/* Confidence bar */}
-        <div style={{ marginBottom: '16px' }}>
+        <div style={{ marginBottom: '18px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
-            <span style={{ fontFamily: 'var(--font-space-mono)', fontSize: '10px', color: 'var(--text-muted)', letterSpacing: '0.1em' }}>CONFIDENCE</span>
-            <span style={{ fontFamily: 'var(--font-jetbrains)', fontSize: '13px', color: 'var(--accent-primary)', fontWeight: 700 }}>{conflict.confidence}%</span>
+            <span style={{ fontFamily: 'var(--font-headline)', fontSize: '11px', fontWeight: 700, color: 'var(--text-secondary)', letterSpacing: '0.06em' }}>CONFIDENCE SCORE</span>
+            <span style={{ fontFamily: 'var(--font-mono)', fontSize: '14px', color: 'var(--accent-primary)', fontWeight: 700 }}>{conflict.confidence}%</span>
           </div>
-          <div style={{ height: '6px', background: 'var(--bg-border)', borderRadius: '3px', overflow: 'hidden' }}>
-            <div style={{ height: '100%', width: `${conflict.confidence}%`, background: 'linear-gradient(90deg, var(--accent-primary), #00a8cc)', borderRadius: '3px', transition: 'width 0.5s ease' }} />
+          <div style={{ height: '8px', background: 'var(--bg-border)', borderRadius: '4px', overflow: 'hidden' }}>
+            <div style={{ height: '100%', width: `${conflict.confidence}%`, background: 'var(--accent-primary)', borderRadius: '4px', transition: 'width 0.5s ease' }} />
           </div>
         </div>
 
         {/* Time saving */}
-        <div style={{ background: 'rgba(16,185,129,0.08)', border: '1px solid rgba(16,185,129,0.2)', borderRadius: '6px', padding: '12px', marginBottom: '16px' }}>
-          <div style={{ fontFamily: 'var(--font-space-mono)', fontSize: '10px', color: 'var(--accent-safe)', letterSpacing: '0.1em', marginBottom: '4px' }}>EST. TIME SAVING</div>
-          <div style={{ fontFamily: 'var(--font-jetbrains)', fontSize: '24px', fontWeight: 700, color: 'var(--accent-safe)' }}>
+        <div style={{ background: '#E8F5E9', border: '1px solid #C8E6C9', borderRadius: '10px', padding: '14px', marginBottom: '18px' }}>
+          <div style={{ fontFamily: 'var(--font-headline)', fontSize: '11px', fontWeight: 700, color: 'var(--accent-safe)', letterSpacing: '0.06em', marginBottom: '4px' }}>ESTIMATED TIME SAVED</div>
+          <div style={{ fontFamily: 'var(--font-mono)', fontSize: '26px', fontWeight: 700, color: 'var(--accent-safe)' }}>
             +{conflict.timeSaving} min
           </div>
         </div>
       </div>
 
       {/* Actions */}
-      <div style={{ padding: '16px', borderTop: '1px solid var(--bg-border)', display: 'flex', gap: '8px' }}>
-        <button className="btn-primary" style={{ flex: 1, justifyContent: 'center', fontSize: '13px', padding: '10px' }} onClick={() => onAccept?.(conflict)}>
-          ✓ Accept
+      <div style={{ padding: '16px 20px', borderTop: '1px solid var(--bg-border)', display: 'flex', gap: '10px', background: '#FFFFFF' }}>
+        <button className="btn-primary" style={{ flex: 1, justifyContent: 'center', fontSize: '13.5px', padding: '11px', background: 'var(--accent-safe)', borderRadius: '8px' }} onClick={() => onAccept?.(conflict)}>
+          ✓ Accept Recommendation
         </button>
-        <button className="btn-ghost" style={{ flex: 1, justifyContent: 'center', fontSize: '13px', padding: '10px' }} onClick={() => onOverride?.(conflict)}>
+        <button className="btn-ghost" style={{ flex: 1, justifyContent: 'center', fontSize: '13.5px', padding: '11px', borderRadius: '8px' }} onClick={() => onOverride?.(conflict)}>
           Override
         </button>
       </div>

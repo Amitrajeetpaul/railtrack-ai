@@ -132,21 +132,20 @@ export default function LiveTrackMap({ conflictSegment, onTrainClick, liveTrainD
   const segmentColors: Record<string, string> = {};
   for (const seg of TRACK_SEGMENTS) {
     if (seg.id === conflictSegment) {
-      segmentColors[seg.id] = conflictFlash ? '#EF4444' : '#2A3344';
+      segmentColors[seg.id] = conflictFlash ? '#C62828' : '#CBD5E1';
     } else {
-      // Check if any train is on this segment
       const occupied = trains.some(t => t.segFrom === seg.from && t.segTo === seg.to);
-      segmentColors[seg.id] = occupied ? '#00D4FF' : '#2A3344';
+      segmentColors[seg.id] = occupied ? '#1A5490' : '#CBD5E1';
     }
   }
 
   return (
-    <div className="track-map-canvas" style={{ borderRadius: '8px', border: '1px solid var(--bg-border)', overflow: 'hidden', position: 'relative' }}>
+    <div className="card-elevated" style={{ borderRadius: '12px', background: '#FFFFFF', overflow: 'hidden', position: 'relative' }}>
       {/* Grid overlay */}
-      <svg width="100%" height="100%" style={{ position: 'absolute', inset: 0, opacity: 0.3 }} preserveAspectRatio="none">
+      <svg width="100%" height="100%" style={{ position: 'absolute', inset: 0, opacity: 0.4 }} preserveAspectRatio="none">
         <defs>
           <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
-            <path d="M 40 0 L 0 0 0 40" fill="none" stroke="var(--grid-line)" strokeWidth="0.5" />
+            <path d="M 40 0 L 0 0 0 40" fill="none" stroke="var(--grid-line)" strokeWidth="0.8" />
           </pattern>
         </defs>
         <rect width="100%" height="100%" fill="url(#grid)" />
@@ -157,7 +156,7 @@ export default function LiveTrackMap({ conflictSegment, onTrainClick, liveTrainD
         viewBox={`0 0 ${SVG_W} ${SVG_H}`}
         width="100%"
         height="280"
-        style={{ display: 'block' }}
+        style={{ display: 'block', position: 'relative', zIndex: 1 }}
       >
         {/* Track segments */}
         {TRACK_SEGMENTS.map(seg => {
@@ -166,27 +165,18 @@ export default function LiveTrackMap({ conflictSegment, onTrainClick, liveTrainD
           const color = segmentColors[seg.id];
           return (
             <g key={seg.id}>
-              {/* Shadow/blur track line */}
+              {/* Shadow track line */}
               <line
                 x1={from.x} y1={from.y} x2={to.x} y2={to.y}
-                stroke={color} strokeWidth={color === '#00D4FF' ? 8 : 1}
-                strokeOpacity={color === '#00D4FF' ? 0.12 : 0}
+                stroke={color} strokeWidth={color === '#1A5490' ? 6 : 1}
+                strokeOpacity={color === '#1A5490' ? 0.15 : 0}
               />
               {/* Main track line */}
               <line
                 x1={from.x} y1={from.y} x2={to.x} y2={to.y}
-                stroke={color} strokeWidth={2}
+                stroke={color} strokeWidth={2.5}
                 style={seg.track === 'BRANCH' ? { strokeDasharray: '6 4' } : {}}
               />
-              {/* Animated flow for occupied segments */}
-              {color === '#00D4FF' && (
-                <line
-                  x1={from.x} y1={from.y} x2={to.x} y2={to.y}
-                  stroke="#00D4FF" strokeWidth="2" strokeDasharray="12 20"
-                  style={{ animation: 'dash-flow 0.8s linear infinite' }}
-                  strokeOpacity="0.6"
-                />
-              )}
             </g>
           );
         })}
@@ -198,20 +188,20 @@ export default function LiveTrackMap({ conflictSegment, onTrainClick, liveTrainD
             <g key={station.id}>
               {/* Station box */}
               <rect
-                x={pos.x - 24} y={pos.y - 14}
-                width={48} height={28}
-                rx={4}
-                fill="var(--bg-elevated)"
+                x={pos.x - 26} y={pos.y - 14}
+                width={52} height={28}
+                rx={6}
+                fill="#FFFFFF"
                 stroke="var(--bg-border)"
-                strokeWidth={1}
+                strokeWidth={1.5}
               />
               {/* Station code */}
               <text
                 x={pos.x} y={pos.y + 4}
                 textAnchor="middle"
-                fill="var(--text-secondary)"
-                fontSize="10"
-                fontFamily="var(--font-space-mono)"
+                fill="var(--accent-primary)"
+                fontSize="11"
+                fontFamily="var(--font-headline)"
                 fontWeight="700"
               >
                 {station.name}
@@ -220,36 +210,27 @@ export default function LiveTrackMap({ conflictSegment, onTrainClick, liveTrainD
               <text
                 x={pos.x} y={pos.y + 32}
                 textAnchor="middle"
-                fill="var(--text-muted)"
-                fontSize="9"
-                fontFamily="var(--font-space-mono)"
+                fill="var(--text-secondary)"
+                fontSize="10"
+                fontFamily="var(--font-body)"
+                fontWeight="500"
               >
                 {station.label}
               </text>
-              {/* Junction diamond for junctions */}
-              {['ST-3', 'ST-5', 'ST-6'].includes(station.id) && (
-                <polygon
-                  points={`${pos.x},${pos.y - 20} ${pos.x + 8},${pos.y - 14} ${pos.x},${pos.y - 8} ${pos.x - 8},${pos.y - 14}`}
-                  fill="none"
-                  stroke="var(--accent-primary)"
-                  strokeWidth="1.5"
-                  opacity="0.6"
-                />
-              )}
             </g>
           );
         })}
 
-        {/* Signals */}
+        {/* Signature Circular Signal Lamps */}
         {TRACK_SIGNALS.map(sig => {
-          const signalColor = sig.state === 'GREEN' ? '#10B981' : sig.state === 'RED' ? '#EF4444' : '#F59E0B';
+          const signalColor = sig.state === 'GREEN' ? '#2E7D32' : sig.state === 'RED' ? '#C62828' : '#F2A65A';
           return (
             <g key={sig.id}>
               {/* Glow ring */}
-              <circle cx={sig.x} cy={sig.y} r={10} fill={signalColor} fillOpacity={0.15} />
-              {/* Signal circle */}
-              <circle cx={sig.x} cy={sig.y} r={5} fill={signalColor} />
-              <text x={sig.x} y={sig.y - 14} textAnchor="middle" fill={signalColor} fontSize="8" fontFamily="var(--font-space-mono)">
+              <circle cx={sig.x} cy={sig.y} r={11} fill={signalColor} fillOpacity={0.2} />
+              {/* Signal circle lamp */}
+              <circle cx={sig.x} cy={sig.y} r={6} fill={signalColor} stroke="#FFFFFF" strokeWidth={1.5} />
+              <text x={sig.x} y={sig.y - 15} textAnchor="middle" fill={signalColor} fontSize="9" fontFamily="var(--font-mono)" fontWeight="700">
                 {sig.id.replace('SIG-0', 'S')}
               </text>
             </g>
@@ -258,7 +239,6 @@ export default function LiveTrackMap({ conflictSegment, onTrainClick, liveTrainD
 
         {/* Train tokens */}
         {trains.map(train => {
-          // Find segment positions
           const from = stationMap[train.segFrom];
           const to   = stationMap[train.segTo];
           if (!from || !to) return null;
@@ -270,37 +250,30 @@ export default function LiveTrackMap({ conflictSegment, onTrainClick, liveTrainD
           return (
             <g
               key={train.trainId}
-              transform={`translate(${pos.x - 14}, ${pos.y - 7})`}
+              transform={`translate(${pos.x - 16}, ${pos.y - 8})`}
               style={{ cursor: 'pointer' }}
               onMouseEnter={() => setHovered(train.trainId)}
               onMouseLeave={() => setHovered(null)}
               onClick={() => onTrainClick?.(train.trainId)}
             >
-              {/* Glow for express trains */}
-              {train.priority === 'EXPRESS' && (
-                <rect x={-2} y={-2} width={32} height={18} rx={5}
-                  fill={color} fillOpacity={isHovered ? 0.3 : 0.15}
-                  style={{ animation: 'train-glow 2s ease-in-out infinite' }}
-                />
-              )}
               {/* Token body */}
-              <rect width={28} height={14} rx={3} fill={color} />
+              <rect width={32} height={16} rx={4} fill={color} stroke="#FFFFFF" strokeWidth={1.5} />
               {/* Train ID */}
-              <text x={14} y={9.5} textAnchor="middle" fill="#0A0C10"
-                fontSize="7.5" fontFamily="var(--font-jetbrains)" fontWeight="700">
+              <text x={16} y={11} textAnchor="middle" fill="#FFFFFF"
+                fontSize="8.5" fontFamily="var(--font-mono)" fontWeight="700">
                 {train.trainId.replace('TN-', '')}
               </text>
               {/* Tooltip */}
               {isHovered && (
-                <g transform="translate(0, -44)">
-                  <rect x={-20} y={0} width={80} height={28} rx={4}
-                    fill="var(--bg-elevated)" stroke={color} strokeWidth="1" />
-                  <text x={20} y={12} textAnchor="middle" fill={color} fontSize="9"
-                    fontFamily="var(--font-space-mono)" fontWeight="700">
+                <g transform="translate(0, -46)">
+                  <rect x={-20} y={0} width={84} height={30} rx={6}
+                    fill="#FFFFFF" stroke={color} strokeWidth="1.5" filter="drop-shadow(0 4px 6px rgba(0,0,0,0.1))" />
+                  <text x={22} y={14} textAnchor="middle" fill={color} fontSize="10"
+                    fontFamily="var(--font-headline)" fontWeight="700">
                     {train.trainId}
                   </text>
-                  <text x={20} y={23} textAnchor="middle" fill="var(--text-muted)" fontSize="8"
-                    fontFamily="var(--font-space-mono)">
+                  <text x={22} y={24} textAnchor="middle" fill="var(--text-secondary)" fontSize="8.5"
+                    fontFamily="var(--font-body)">
                     {train.priority}
                   </text>
                 </g>
@@ -311,16 +284,16 @@ export default function LiveTrackMap({ conflictSegment, onTrainClick, liveTrainD
       </svg>
 
       {/* Legend */}
-      <div style={{ padding: '8px 16px', borderTop: '1px solid var(--bg-border)', display: 'flex', gap: '24px', flexWrap: 'wrap' }}>
+      <div style={{ padding: '12px 20px', borderTop: '1px solid var(--bg-border)', display: 'flex', gap: '24px', flexWrap: 'wrap', background: '#FFFFFF', position: 'relative', zIndex: 1 }}>
         {Object.entries(PRIORITY_COLORS).map(([k, v]) => (
-          <div key={k} style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-            <div style={{ width: '16px', height: '8px', borderRadius: '2px', background: v }} />
-            <span style={{ fontFamily: 'var(--font-space-mono)', fontSize: '10px', color: 'var(--text-muted)' }}>{k}</span>
+          <div key={k} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <div style={{ width: '16px', height: '8px', borderRadius: '3px', background: v }} />
+            <span style={{ fontFamily: 'var(--font-headline)', fontSize: '11px', fontWeight: 600, color: 'var(--text-secondary)' }}>{k}</span>
           </div>
         ))}
-        <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: '6px' }}>
-          <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: 'var(--accent-primary)' }} className="animate-pulse-live" />
-          <span style={{ fontFamily: 'var(--font-space-mono)', fontSize: '10px', color: 'var(--accent-primary)' }}>LIVE</span>
+        <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <span className="signal-lamp signal-lamp-green" style={{ width: '10px', height: '10px' }} />
+          <span style={{ fontFamily: 'var(--font-headline)', fontSize: '11px', fontWeight: 700, color: 'var(--accent-safe)' }}>LIVE SIGNAL-BOARD</span>
         </div>
       </div>
     </div>

@@ -1,27 +1,34 @@
 import type { Metadata } from "next";
-import { Space_Mono, JetBrains_Mono, DM_Sans } from 'next/font/google';
+import { Plus_Jakarta_Sans, Inter, JetBrains_Mono, Space_Mono } from 'next/font/google';
 import { AuthProvider } from "@/lib/auth";
 import Providers from "@/components/Providers";
 import "./globals.css";
 
-const spaceMono = Space_Mono({
+const plusJakartaSans = Plus_Jakarta_Sans({
   subsets: ['latin'],
-  weight: ['400', '700'],
-  variable: '--font-space-mono',
+  weight: ['500', '600', '700', '800'],
+  variable: '--font-headline',
+  display: 'swap',
+});
+
+const inter = Inter({
+  subsets: ['latin'],
+  weight: ['400', '500', '600'],
+  variable: '--font-body',
   display: 'swap',
 });
 
 const jetbrainsMono = JetBrains_Mono({
   subsets: ['latin'],
-  weight: ['400', '500', '700'],
-  variable: '--font-jetbrains',
+  weight: ['400', '500', '600', '700'],
+  variable: '--font-mono',
   display: 'swap',
 });
 
-const dmSans = DM_Sans({
+const spaceMono = Space_Mono({
   subsets: ['latin'],
-  weight: ['400', '500', '700'],
-  variable: '--font-dm-sans',
+  weight: ['400', '700'],
+  variable: '--font-space-mono',
   display: 'swap',
 });
 
@@ -37,7 +44,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${spaceMono.variable} ${jetbrainsMono.variable} ${dmSans.variable}`}>
+    <html lang="en" className={`${plusJakartaSans.variable} ${inter.variable} ${jetbrainsMono.variable} ${spaceMono.variable}`}>
       <body>
         <Providers>
           <AuthProvider>

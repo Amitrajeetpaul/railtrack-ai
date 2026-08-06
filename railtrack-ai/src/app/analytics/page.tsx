@@ -252,12 +252,16 @@ export default function AnalyticsPage() {
   return (
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', background: 'var(--bg-base)' }}>
       {/* Top Nav */}
-      <header style={{ height: '52px', background: 'var(--bg-surface)', borderBottom: '1px solid var(--bg-border)', display: 'flex', alignItems: 'center', padding: '0 16px', gap: '16px', flexShrink: 0 }}>
-        <div style={{ fontFamily: 'var(--font-space-mono)', fontSize: '14px', fontWeight: 700, color: 'var(--accent-primary)', letterSpacing: '0.05em' }}>
-          RAILTRACK AI
+      {/* Top Nav */}
+      <header style={{ height: '56px', background: '#FFFFFF', borderBottom: '1.5px solid var(--bg-border)', display: 'flex', alignItems: 'center', padding: '0 20px', gap: '20px', flexShrink: 0, boxShadow: '0 2px 8px rgba(0,0,0,0.03)' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <span className="signal-lamp signal-lamp-green" style={{ width: '12px', height: '12px' }} />
+          <div style={{ fontFamily: 'var(--font-headline)', fontSize: '16px', fontWeight: 800, color: 'var(--accent-primary)', letterSpacing: '-0.02em' }}>
+            RAILTRACK AI
+          </div>
         </div>
         <div style={{ width: '1px', height: '24px', background: 'var(--bg-border)' }} />
-        <nav style={{ display: 'flex', gap: '4px' }}>
+        <nav style={{ display: 'flex', gap: '6px' }}>
           {[
             { label: 'Dashboard', href: '/dashboard/controller' },
             { label: 'Simulate', href: '/simulate' },
@@ -265,10 +269,10 @@ export default function AnalyticsPage() {
             { label: 'Admin', href: '/admin' },
           ].map(item => (
             <Link key={item.href} href={item.href} style={{
-              padding: '6px 12px', borderRadius: '6px', fontSize: '13px', textDecoration: 'none',
-              background: item.active ? 'rgba(0,212,255,0.1)' : 'transparent',
+              padding: '7px 14px', borderRadius: '8px', fontSize: '13px', textDecoration: 'none',
+              background: item.active ? '#EBF3FA' : 'transparent',
               color: item.active ? 'var(--accent-primary)' : 'var(--text-secondary)',
-              fontFamily: 'var(--font-space-mono)',
+              fontFamily: 'var(--font-headline)', fontWeight: item.active ? 700 : 500,
               transition: 'all 0.15s ease',
             }}>
               {item.label}

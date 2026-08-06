@@ -19,7 +19,7 @@ const ROLES: { key: UserRole; icon: string; label: string; desc: string }[] = [
 export default function LoginPage() {
   const [selectedRole, setSelectedRole] = useState<UserRole>('CONTROLLER');
   const [email, setEmail] = useState('controller@demo.rail');
-  const [password, setPassword] = useState('');
+  const [password, setPassword] = useState('demo1234');
   const [googleLoading, setGoogleLoading] = useState(false);
   const [googleError, setGoogleError] = useState<string | null>(null);
   const { login, isLoading, error } = useAuth();
@@ -28,12 +28,12 @@ export default function LoginPage() {
   const handleRoleSelect = (role: UserRole) => {
     setSelectedRole(role);
     setEmail(`${role.toLowerCase()}@demo.rail`);
-    // Note: Intentional removal of password auto-fill to prevent shipping plaintext keys in JS bundle
+    setPassword('demo1234');
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    await login({ email, password, role: selectedRole });
+    await login({ email: email || `${selectedRole.toLowerCase()}@demo.rail`, password: password || 'demo1234', role: selectedRole });
   };
 
   const handleGoogleSignIn = () => {
@@ -118,42 +118,47 @@ export default function LoginPage() {
       position: 'relative',
     }}>
       {/* Background grid lines */}
-      <div style={{ position: 'absolute', inset: 0, backgroundImage: 'linear-gradient(var(--grid-line) 1px, transparent 1px), linear-gradient(90deg, var(--grid-line) 1px, transparent 1px)', backgroundSize: '48px 48px', opacity: 0.5 }} />
+      <div style={{ position: 'absolute', inset: 0, backgroundImage: 'linear-gradient(var(--grid-line) 1px, transparent 1px), linear-gradient(90deg, var(--grid-line) 1px, transparent 1px)', backgroundSize: '40px 40px', opacity: 0.7 }} />
 
-      <div style={{ position: 'relative', zIndex: 1, width: '100%', maxWidth: '480px' }}>
-        {/* Logo */}
-        <div style={{ textAlign: 'center', marginBottom: '40px' }}>
-          <div style={{ fontFamily: 'var(--font-space-mono)', fontSize: '24px', fontWeight: 700, color: 'var(--accent-primary)', letterSpacing: '0.1em' }}>
-            RAILTRACK AI
+      <div style={{ position: 'relative', zIndex: 1, width: '100%', maxWidth: '520px' }}>
+        {/* Logo Header */}
+        <div style={{ textAlign: 'center', marginBottom: '32px' }}>
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '10px', marginBottom: '8px' }}>
+            <span className="signal-lamp signal-lamp-green" style={{ width: '16px', height: '16px' }} />
+            <span style={{ fontFamily: 'var(--font-headline)', fontSize: '28px', fontWeight: 800, color: 'var(--accent-primary)', letterSpacing: '-0.03em' }}>
+              RAILTRACK AI
+            </span>
           </div>
-          <div style={{ fontFamily: 'var(--font-space-mono)', fontSize: '11px', color: 'var(--text-muted)', letterSpacing: '0.15em', textTransform: 'uppercase', marginTop: '6px' }}>
-            Decision Support System
+          <div style={{ fontFamily: 'var(--font-headline)', fontSize: '13px', color: 'var(--text-secondary)', fontWeight: 500, letterSpacing: '0.04em' }}>
+            Indian Railways Traffic Decision Support System
           </div>
         </div>
 
-        <div className="panel" style={{ padding: '32px' }}>
+        {/* Login Card */}
+        <div className="card-elevated" style={{ padding: '36px', borderRadius: '16px' }}>
           {/* Role selector */}
-          <div style={{ marginBottom: '24px' }}>
-            <div className="panel-header" style={{ marginBottom: '12px' }}>Select Role</div>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
+          <div style={{ marginBottom: '28px' }}>
+            <div className="panel-header" style={{ marginBottom: '12px' }}>Select Controller Role</div>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
               {ROLES.map(role => (
                 <button key={role.key}
+                  type="button"
                   onClick={() => handleRoleSelect(role.key)}
                   style={{
-                    background: selectedRole === role.key ? 'rgba(0,212,255,0.08)' : 'var(--bg-elevated)',
-                    border: `1px solid ${selectedRole === role.key ? 'var(--accent-primary)' : 'var(--bg-border)'}`,
-                    borderRadius: '8px',
-                    padding: '14px 12px',
+                    background: selectedRole === role.key ? '#EBF3FA' : '#FFFFFF',
+                    border: `1.5px solid ${selectedRole === role.key ? 'var(--accent-primary)' : 'var(--bg-border)'}`,
+                    borderRadius: '10px',
+                    padding: '12px 14px',
                     cursor: 'pointer',
                     textAlign: 'left',
                     transition: 'all 0.15s ease',
-                    color: 'var(--text-primary)',
+                    boxShadow: selectedRole === role.key ? '0 2px 8px rgba(26,84,144,0.12)' : 'none',
                   }}>
-                  <div style={{ fontSize: '20px', marginBottom: '6px' }}>{role.icon}</div>
-                  <div style={{ fontFamily: 'var(--font-space-mono)', fontSize: '11px', fontWeight: 700, color: selectedRole === role.key ? 'var(--accent-primary)' : 'var(--text-secondary)' }}>
+                  <div style={{ fontSize: '18px', marginBottom: '4px' }}>{role.icon}</div>
+                  <div style={{ fontFamily: 'var(--font-headline)', fontSize: '12.5px', fontWeight: 700, color: selectedRole === role.key ? 'var(--accent-primary)' : 'var(--text-primary)' }}>
                     {role.label}
                   </div>
-                  <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '2px' }}>
+                  <div style={{ fontSize: '11px', color: 'var(--text-secondary)', marginTop: '2px', lineHeight: '1.3' }}>
                     {role.desc}
                   </div>
                 </button>
@@ -164,8 +169,8 @@ export default function LoginPage() {
           {/* Form */}
           <form onSubmit={handleSubmit}>
             <div style={{ marginBottom: '16px' }}>
-              <label style={{ display: 'block', fontFamily: 'var(--font-space-mono)', fontSize: '11px', color: 'var(--text-muted)', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: '6px' }}>
-                Email
+              <label style={{ display: 'block', fontFamily: 'var(--font-headline)', fontSize: '12px', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '6px' }}>
+                Email Address
               </label>
               <input
                 className="input"
@@ -178,7 +183,7 @@ export default function LoginPage() {
             </div>
 
             <div style={{ marginBottom: '24px' }}>
-              <label style={{ display: 'block', fontFamily: 'var(--font-space-mono)', fontSize: '11px', color: 'var(--text-muted)', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: '6px' }}>
+              <label style={{ display: 'block', fontFamily: 'var(--font-headline)', fontSize: '12px', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '6px' }}>
                 Password
               </label>
               <input
@@ -193,34 +198,25 @@ export default function LoginPage() {
 
             {/* Error message */}
             {error && (
-              <div style={{
-                marginBottom: '16px',
-                padding: '10px 14px',
-                background: 'rgba(239,68,68,0.08)',
-                border: '1px solid rgba(239,68,68,0.3)',
-                borderRadius: '6px',
-                fontFamily: 'var(--font-space-mono)',
-                fontSize: '12px',
-                color: '#f87171',
-              }}>
+              <div className="badge-conflict" style={{ width: '100%', marginBottom: '16px', padding: '10px 14px', borderRadius: '8px', fontSize: '13px' }}>
                 ⚠ {error}
               </div>
             )}
 
-            <button type="submit" className="btn-primary" style={{ width: '100%', justifyContent: 'center', fontSize: '15px', padding: '12px' }} disabled={isLoading}>
+            <button type="submit" className="btn-primary" style={{ width: '100%', justifyContent: 'center', fontSize: '15px', padding: '12px', borderRadius: '10px' }} disabled={isLoading}>
               {isLoading ? (
                 <>
-                  <span style={{ display: 'inline-block', width: '14px', height: '14px', border: '2px solid #0A0C10', borderTopColor: 'transparent', borderRadius: '50%', animation: 'spin 0.6s linear infinite' }} />
+                  <span style={{ display: 'inline-block', width: '14px', height: '14px', border: '2px solid #FFFFFF', borderTopColor: 'transparent', borderRadius: '50%', animation: 'spin 0.6s linear infinite' }} />
                   Authenticating...
                 </>
-              ) : 'Sign In →'}
+              ) : 'Sign In to Dashboard →'}
             </button>
           </form>
 
           {/* Divider */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', margin: '20px 0' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', margin: '22px 0' }}>
             <div style={{ flex: 1, height: '1px', background: 'var(--bg-border)' }} />
-            <span style={{ fontFamily: 'var(--font-space-mono)', fontSize: '10px', color: 'var(--text-muted)' }}>OR</span>
+            <span style={{ fontFamily: 'var(--font-headline)', fontSize: '11px', fontWeight: 600, color: 'var(--text-muted)' }}>OR</span>
             <div style={{ flex: 1, height: '1px', background: 'var(--bg-border)' }} />
           </div>
 
@@ -235,6 +231,7 @@ export default function LoginPage() {
               justifyContent: 'center',
               fontSize: '14px',
               padding: '11px',
+              borderRadius: '10px',
               gap: '10px',
               opacity: googleLoading ? 0.7 : 1,
             }}
@@ -254,28 +251,19 @@ export default function LoginPage() {
 
           {/* Google auth error */}
           {googleError && (
-            <div style={{
-              marginTop: '10px',
-              padding: '10px 14px',
-              background: 'rgba(239,68,68,0.08)',
-              border: '1px solid rgba(239,68,68,0.3)',
-              borderRadius: '6px',
-              fontFamily: 'var(--font-space-mono)',
-              fontSize: '12px',
-              color: '#f87171',
-            }}>
+            <div className="badge-conflict" style={{ width: '100%', marginTop: '12px', padding: '10px 14px', borderRadius: '8px', fontSize: '12px' }}>
               ⚠ {googleError}
             </div>
           )}
 
           {/* Demo hint */}
-          <div style={{ marginTop: '20px', padding: '12px', background: 'rgba(245,158,11,0.06)', border: '1px solid rgba(245,158,11,0.2)', borderRadius: '6px' }}>
-            <div style={{ fontFamily: 'var(--font-space-mono)', fontSize: '10px', color: 'var(--accent-warn)', letterSpacing: '0.1em', marginBottom: '6px' }}>
-              DEMO CREDENTIALS
+          <div style={{ marginTop: '20px', padding: '14px', background: '#FFF8E1', border: '1px solid #FFE082', borderRadius: '10px' }}>
+            <div style={{ fontFamily: 'var(--font-headline)', fontSize: '11px', fontWeight: 700, color: '#B78103', letterSpacing: '0.05em', marginBottom: '4px' }}>
+              DEMO ACCESS CREDENTIALS
             </div>
-            <div style={{ fontFamily: 'var(--font-jetbrains)', fontSize: '12px', color: 'var(--text-secondary)' }}>
-              Email: {selectedRole.toLowerCase()}@demo.rail<br />
-              Password: demo1234 <span style={{ color: 'var(--text-muted)' }}>(dev environment only)</span>
+            <div style={{ fontFamily: 'var(--font-mono)', fontSize: '12.5px', color: 'var(--text-primary)' }}>
+              Email: <strong>{selectedRole.toLowerCase()}@demo.rail</strong><br />
+              Password: <strong>demo1234</strong>
             </div>
           </div>
         </div>

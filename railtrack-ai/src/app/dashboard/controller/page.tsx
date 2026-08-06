@@ -15,10 +15,10 @@ function getClientToken() {
 }
 
 const PRIORITY_COLORS: Record<TrainPriority, string> = {
-  EXPRESS:     '#00D4FF',
-  FREIGHT:     '#F59E0B',
-  LOCAL:       '#6366F1',
-  MAINTENANCE: '#94A3B8',
+  EXPRESS:     '#1A5490',
+  FREIGHT:     '#F2A65A',
+  LOCAL:       '#2E7D32',
+  MAINTENANCE: '#6B6B80',
 };
 
 function LiveClock() {
@@ -358,6 +358,55 @@ export default function ControllerDashboard() {
     { role: 'ai', text: 'Hello! I\'m your AI assistant powered by Claude. Ask me about conflicts, train status, or optimization suggestions for your section.' }
   ]);
 
+  const triggerDemoScenario = useCallback((preset: 'overtake' | 'headon' | 'bottleneck') => {
+    let demoConflict: Conflict;
+    if (preset === 'overtake') {
+      demoConflict = {
+        id: `DEMO-OVR-${Date.now().toString().slice(-4)}`,
+        trainA: '12002',
+        trainB: '54321',
+        location: 'ST-3 Junction (Main Line 1)',
+        severity: 'HIGH',
+        type: 'PRECEDENCE',
+        timeToConflict: 180,
+        recommendation: 'Hold Freight 54321 at Loop Line PF 2 for 8 mins; dispatch Shatabdi 12002 on Main Line.',
+        confidence: 96,
+        timeSaving: 14,
+      };
+    } else if (preset === 'headon') {
+      demoConflict = {
+        id: `DEMO-HDN-${Date.now().toString().slice(-4)}`,
+        trainA: '12424',
+        trainB: '12004',
+        location: 'Single-Track Segment SEG-04',
+        severity: 'HIGH',
+        type: 'CROSSING',
+        timeToConflict: 120,
+        recommendation: 'Route Train 12424 to ST-4 Loop Line siding; grant clear signal headway to 12004.',
+        confidence: 98,
+        timeSaving: 22,
+      };
+    } else {
+      demoConflict = {
+        id: `DEMO-BTN-${Date.now().toString().slice(-4)}`,
+        trainA: '12951',
+        trainB: '12260',
+        location: 'ST-5 Platform Bottleneck',
+        severity: 'MEDIUM',
+        type: 'PLATFORM',
+        timeToConflict: 240,
+        recommendation: 'Reassign Train 12260 to Platform 3; clear Platform 1 for 12951 Rajdhani Express.',
+        confidence: 92,
+        timeSaving: 10,
+      };
+    }
+
+    setConflicts(prev => [demoConflict, ...prev.filter(c => c.id !== demoConflict.id)]);
+    setActiveConflict(demoConflict);
+    setShowAI(true);
+    setSearchNotification(`⚡ Demo Scenario loaded: "${demoConflict.location}" — AI Recommendation modal active!`);
+  }, []);
+
   // Trigger a conflict scenario every 30 seconds
   useEffect(() => {
     if (!aiAssist) return;
@@ -473,12 +522,15 @@ export default function ControllerDashboard() {
       )}
 
       {/* Top Nav */}
-      <header style={{ height: '52px', background: 'var(--bg-surface)', borderBottom: '1px solid var(--bg-border)', display: 'flex', alignItems: 'center', padding: '0 16px', gap: '16px', flexShrink: 0 }}>
-        <div style={{ fontFamily: 'var(--font-space-mono)', fontSize: '14px', fontWeight: 700, color: 'var(--accent-primary)', letterSpacing: '0.05em' }}>
-          RAILTRACK AI
+      <header style={{ height: '56px', background: '#FFFFFF', borderBottom: '1.5px solid var(--bg-border)', display: 'flex', alignItems: 'center', padding: '0 20px', gap: '20px', flexShrink: 0, boxShadow: '0 2px 8px rgba(0,0,0,0.03)' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <span className="signal-lamp signal-lamp-green" style={{ width: '12px', height: '12px' }} />
+          <div style={{ fontFamily: 'var(--font-headline)', fontSize: '16px', fontWeight: 800, color: 'var(--accent-primary)', letterSpacing: '-0.02em' }}>
+            RAILTRACK AI
+          </div>
         </div>
         <div style={{ width: '1px', height: '24px', background: 'var(--bg-border)' }} />
-        <nav style={{ display: 'flex', gap: '4px' }}>
+        <nav style={{ display: 'flex', gap: '6px' }}>
           {[
             { label: 'Dashboard', href: '/dashboard/controller', active: true },
             { label: 'Simulate', href: '/simulate' },
@@ -486,35 +538,36 @@ export default function ControllerDashboard() {
             { label: 'Admin', href: '/admin' },
           ].map(item => (
             <Link key={item.href} href={item.href} style={{
-              padding: '6px 12px', borderRadius: '6px', fontSize: '13px', textDecoration: 'none',
-              background: item.active ? 'rgba(0,212,255,0.1)' : 'transparent',
+              padding: '7px 14px', borderRadius: '8px', fontSize: '13px', textDecoration: 'none',
+              background: item.active ? '#EBF3FA' : 'transparent',
               color: item.active ? 'var(--accent-primary)' : 'var(--text-secondary)',
-              fontFamily: 'var(--font-space-mono)',
+              fontFamily: 'var(--font-headline)',
+              fontWeight: item.active ? 700 : 500,
               transition: 'all 0.15s ease',
             }}>
               {item.label}
             </Link>
           ))}
         </nav>
-        <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', fontFamily: 'var(--font-space-mono)',
-            color: wsStatus === 'reconnecting' ? '#F59E0B' : wsStatus === 'reconnected' ? 'var(--accent-safe)' : 'var(--text-muted)' }}>
+        <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: '14px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', fontFamily: 'var(--font-headline)', fontWeight: 600,
+            color: wsStatus === 'reconnecting' ? 'var(--accent-warn)' : wsStatus === 'reconnected' ? 'var(--accent-safe)' : 'var(--accent-safe)' }}>
             <span style={{
-              width: '6px', height: '6px', borderRadius: '50%',
-              background: wsStatus === 'reconnecting' ? '#F59E0B' : wsStatus === 'reconnected' ? 'var(--accent-safe)' : connectionState === 'ws' ? 'var(--accent-safe)' : 'var(--accent-warn)',
+              width: '8px', height: '8px', borderRadius: '50%',
+              background: wsStatus === 'reconnecting' ? 'var(--accent-warn)' : wsStatus === 'reconnected' ? 'var(--accent-safe)' : connectionState === 'ws' ? 'var(--accent-safe)' : 'var(--accent-warn)',
             }} className="animate-pulse-live" />
-            {wsStatus === 'reconnecting' ? 'RECONNECTING…' : wsStatus === 'reconnected' ? 'RECONNECTED ✓' : connectionState === 'ws' ? 'LIVE' : 'LIVE (polling)'}
+            {wsStatus === 'reconnecting' ? 'RECONNECTING…' : wsStatus === 'reconnected' ? 'LIVE FEED ✓' : connectionState === 'ws' ? 'LIVE TELEMETRY' : 'LIVE (POLLING)'}
           </div>
           <button
             onClick={logout}
             className="btn-ghost"
-            style={{ padding: '6px 12px', fontSize: '12px', fontFamily: 'var(--font-space-mono)' }}>
+            style={{ padding: '6px 14px', fontSize: '12.5px', fontFamily: 'var(--font-headline)', borderRadius: '8px' }}>
             Sign Out
           </button>
           <button
             onClick={() => setSidebarOpen(o => !o)}
             className="btn-ghost"
-            style={{ padding: '6px 8px', fontSize: '14px', marginRight: '4px' }}
+            style={{ padding: '6px 10px', fontSize: '14px', marginRight: '4px', borderRadius: '8px' }}
             title={sidebarOpen ? 'Hide sidebar' : 'Show sidebar'}
           >
             {sidebarOpen ? '◀' : '▶'}
@@ -567,14 +620,14 @@ export default function ControllerDashboard() {
             </form>
 
             {/* Informational note about live data */}
-            <div style={{ padding: '6px 16px', background: 'rgba(0,212,255,0.04)', borderBottom: '1px solid var(--bg-border)', display: 'flex', alignItems: 'center', gap: '6px' }}>
-              <span style={{ fontSize: '10px', color: 'var(--text-muted)', fontFamily: 'var(--font-space-mono)' }}>
+            <div style={{ padding: '6px 16px', background: '#EBF3FA', borderBottom: '1px solid var(--bg-border)', display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <span style={{ fontSize: '11px', color: 'var(--accent-primary)', fontFamily: 'var(--font-headline)', fontWeight: 600 }}>
                 ℹ Search any Indian Railways train number to fetch live IRCTC tracking
               </span>
             </div>
 
             {searchNotification && (
-              <div style={{ padding: '8px 12px', background: 'rgba(0,212,255,0.12)', borderBottom: '1px solid var(--accent-primary)', color: 'var(--accent-primary)', fontSize: '11px', fontFamily: 'var(--font-jetbrains)', lineHeight: 1.4 }}>
+              <div style={{ padding: '8px 12px', background: '#EBF3FA', borderBottom: '1px solid var(--accent-primary)', color: 'var(--accent-primary)', fontSize: '11px', fontFamily: 'var(--font-mono)', lineHeight: 1.4 }}>
                 {searchNotification}
               </div>
             )}
@@ -588,7 +641,7 @@ export default function ControllerDashboard() {
                     padding: '10px 16px',
                     borderBottom: '1px solid var(--bg-border)',
                     cursor: 'pointer',
-                    background: selectedTrain === train.id ? 'rgba(0,212,255,0.05)' : 'transparent',
+                    background: selectedTrain === train.id ? '#EBF3FA' : 'transparent',
                     borderLeft: selectedTrain === train.id ? '3px solid var(--accent-primary)' : '3px solid transparent',
                     transition: 'all 0.15s ease',
                   }}>
@@ -761,6 +814,34 @@ export default function ControllerDashboard() {
               NR / {user?.section || 'NR-42'} / <span style={{ color: 'var(--text-secondary)' }}>Controller View</span>
             </div>
             <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: '12px' }}>
+              {/* Demo Scenario Presets Dropdown / Buttons */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', background: 'rgba(0, 212, 255, 0.08)', padding: '4px 8px', borderRadius: '6px', border: '1px solid rgba(0, 212, 255, 0.2)' }}>
+                <span style={{ fontSize: '11px', fontFamily: 'var(--font-space-mono)', color: 'var(--accent-primary)', fontWeight: 700 }}>
+                  ⚡ DEMO PRESETS:
+                </span>
+                <button
+                  onClick={() => triggerDemoScenario('overtake')}
+                  title="Test Overtake: Express vs Freight at ST-3"
+                  className="btn-ghost"
+                  style={{ fontSize: '10px', padding: '3px 8px', borderRadius: '4px', background: 'var(--bg-elevated)', color: 'var(--text-primary)', border: '1px solid var(--bg-border)' }}>
+                  1. Overtake
+                </button>
+                <button
+                  onClick={() => triggerDemoScenario('headon')}
+                  title="Test Crossing: Head-on single track SEG-04"
+                  className="btn-ghost"
+                  style={{ fontSize: '10px', padding: '3px 8px', borderRadius: '4px', background: 'var(--bg-elevated)', color: 'var(--accent-danger)', border: '1px solid var(--bg-border)' }}>
+                  2. Head-on
+                </button>
+                <button
+                  onClick={() => triggerDemoScenario('bottleneck')}
+                  title="Test Bottleneck: Multi-train platform conflict at ST-5"
+                  className="btn-ghost"
+                  style={{ fontSize: '10px', padding: '3px 8px', borderRadius: '4px', background: 'var(--bg-elevated)', color: 'var(--accent-warn)', border: '1px solid var(--bg-border)' }}>
+                  3. Bottleneck
+                </button>
+              </div>
+
               {conflicts.length > 0 && (
                 <span className="badge-conflict" style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
                   <span style={{ animation: 'pulse-live 1s ease-in-out infinite', display: 'inline-block', width: '6px', height: '6px', borderRadius: '50%', background: 'var(--accent-danger)' }} />
@@ -897,6 +978,26 @@ export default function ControllerDashboard() {
                 {conflicts.length}
               </span>
             </div>
+
+            {/* Quick Demo Trigger Box */}
+            <div style={{ padding: '8px 16px', background: 'rgba(0, 212, 255, 0.05)', borderBottom: '1px solid var(--bg-border)' }}>
+              <div style={{ fontSize: '10px', color: 'var(--text-muted)', fontFamily: 'var(--font-space-mono)', marginBottom: '6px' }}>
+                ⚡ TEST DEMO CONFLICTS:
+              </div>
+              <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
+                <button
+                  onClick={() => triggerDemoScenario('overtake')}
+                  style={{ fontSize: '10px', padding: '4px 8px', background: 'rgba(0, 212, 255, 0.15)', color: 'var(--accent-primary)', border: '1px solid var(--accent-primary)', borderRadius: '4px', cursor: 'pointer', fontFamily: 'var(--font-space-mono)', fontWeight: 700 }}>
+                  + Overtake Conflict
+                </button>
+                <button
+                  onClick={() => triggerDemoScenario('headon')}
+                  style={{ fontSize: '10px', padding: '4px 8px', background: 'rgba(239, 68, 68, 0.15)', color: 'var(--accent-danger)', border: '1px solid var(--accent-danger)', borderRadius: '4px', cursor: 'pointer', fontFamily: 'var(--font-space-mono)', fontWeight: 700 }}>
+                  + Head-on Conflict
+                </button>
+              </div>
+            </div>
+
             {conflicts.map(c => (
               <div key={c.id} style={{ padding: '10px 16px', borderBottom: '1px solid var(--bg-border)', cursor: 'pointer' }}
                 onClick={() => { setActiveConflict(c); setShowAI(true); }}>
@@ -975,15 +1076,15 @@ export default function ControllerDashboard() {
                   borderRadius: '6px',
                   fontSize: '12px',
                   lineHeight: 1.5,
-                  background: msg.role === 'ai' ? 'rgba(0,212,255,0.06)' : 'var(--bg-elevated)',
-                  border: `1px solid ${msg.role === 'ai' ? 'rgba(0,212,255,0.15)' : 'var(--bg-border)'}`,
+                  background: msg.role === 'ai' ? '#EBF3FA' : '#F4F4F0',
+                  border: `1px solid ${msg.role === 'ai' ? '#C5DCF2' : 'var(--bg-border)'}`,
                   color: msg.role === 'ai' ? 'var(--text-primary)' : 'var(--text-secondary)',
-                  fontFamily: msg.role === 'ai' ? 'var(--font-jetbrains)' : 'inherit',
+                  fontFamily: msg.role === 'ai' ? 'var(--font-mono)' : 'inherit',
                   alignSelf: msg.role === 'user' ? 'flex-end' : 'flex-start',
                   maxWidth: '90%',
                 }}>
                   {msg.role === 'ai' && (
-                    <span style={{ fontFamily: 'var(--font-space-mono)', fontSize: '9px', color: 'var(--accent-primary)', display: 'block', marginBottom: '4px' }}>AI ▸</span>
+                    <span style={{ fontFamily: 'var(--font-headline)', fontSize: '10px', fontWeight: 700, color: 'var(--accent-primary)', display: 'block', marginBottom: '4px' }}>AI ▸</span>
                   )}
                   {msg.text}
                 </div>
@@ -992,10 +1093,10 @@ export default function ControllerDashboard() {
               {chatLoading && (
                 <div style={{
                   padding: '8px 12px', borderRadius: '6px', fontSize: '12px',
-                  background: 'rgba(0,212,255,0.06)', border: '1px solid rgba(0,212,255,0.15)',
+                  background: '#EBF3FA', border: '1px solid #C5DCF2',
                   alignSelf: 'flex-start', display: 'flex', alignItems: 'center', gap: '6px',
                 }}>
-                  <span style={{ fontFamily: 'var(--font-space-mono)', fontSize: '9px', color: 'var(--accent-primary)' }}>AI ▸</span>
+                  <span style={{ fontFamily: 'var(--font-headline)', fontSize: '10px', fontWeight: 700, color: 'var(--accent-primary)' }}>AI ▸</span>
                   {[0, 1, 2].map(i => (
                     <span key={i} style={{
                       width: '5px', height: '5px', borderRadius: '50%', background: 'var(--accent-primary)',
