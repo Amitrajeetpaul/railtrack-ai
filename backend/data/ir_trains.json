@@ -1484,11 +1484,11 @@
     "dst_name": "LOKMANYATILAK T"
   },
   "11077": {
-    "name": "JHELUM EXPRESS",
+    "name": "Jhelum Express",
+    "src_name": "Pune Jn",
     "src_code": "PUNE",
-    "src_name": "PUNE JN",
-    "dst_code": "JAT",
-    "dst_name": "JAMMU TAWI"
+    "dst_name": "Jammu Tawi",
+    "dst_code": "JAT"
   },
   "11078": {
     "name": "JHELUM EXPRESS",
@@ -2051,11 +2051,11 @@
     "dst_name": "NEW DELHI"
   },
   "12002": {
-    "name": "BHOPAL SHTBDI",
+    "name": "Bhopal Shatabdi Express",
+    "src_name": "New Delhi",
     "src_code": "NDLS",
-    "src_name": "NEW DELHI",
-    "dst_code": "HBJ",
-    "dst_name": "HABIBGANJ"
+    "dst_name": "Rani Kamlapati (Bhopal)",
+    "dst_code": "RKB"
   },
   "12003": {
     "name": "LJN SWRAN SHTBD",
@@ -5936,18 +5936,18 @@
     "dst_name": "NEW DELHI"
   },
   "12626": {
-    "name": "KERALA EXPRESS",
+    "name": "Kerala Express",
+    "src_name": "New Delhi",
     "src_code": "NDLS",
-    "src_name": "NEW DELHI",
-    "dst_code": "TVC",
-    "dst_name": "TRIVANDRUM CNTL"
+    "dst_name": "Trivandrum Central",
+    "dst_code": "TVC"
   },
   "12627": {
-    "name": "KARNATAKA EXP",
-    "src_code": "SBC",
-    "src_name": "BANGALORE CY JN",
-    "dst_code": "NDLS",
-    "dst_name": "NEW DELHI"
+    "name": "Karnataka Express",
+    "src_name": "New Delhi",
+    "src_code": "NDLS",
+    "dst_name": "KSR Bengaluru",
+    "dst_code": "SBC"
   },
   "12628": {
     "name": "KARNATAKA EXP",
@@ -6125,11 +6125,11 @@
     "dst_name": "MADURAI JN"
   },
   "12655": {
-    "name": "NAVJEEVAN EXP",
+    "name": "Navjeevan Express",
+    "src_name": "Ahmedabad Jn",
     "src_code": "ADI",
-    "src_name": "AHMEDABAD JN",
-    "dst_code": "MAS",
-    "dst_name": "CHENNAI CENTRAL"
+    "dst_name": "Chennai Central",
+    "dst_code": "MAS"
   },
   "12656": {
     "name": "NAVAJIVAN EXP",
@@ -6587,11 +6587,11 @@
     "dst_name": "HYDERABAD DECAN"
   },
   "12723": {
-    "name": "A P EXP",
+    "name": "Telangana Express",
+    "src_name": "Hyderabad Deccan",
     "src_code": "HYB",
-    "src_name": "HYDERABAD DECAN",
-    "dst_code": "NDLS",
-    "dst_name": "NEW DELHI"
+    "dst_name": "New Delhi",
+    "dst_code": "NDLS"
   },
   "12724": {
     "name": "A P EXPRESS",
@@ -6965,11 +6965,11 @@
     "dst_name": "KACHEGUDA"
   },
   "12801": {
-    "name": "PURUSHOTTAM EXP",
+    "name": "Purushottam Express",
+    "src_name": "Puri",
     "src_code": "PURI",
-    "src_name": "PURI",
-    "dst_code": "NDLS",
-    "dst_name": "NEW DELHI"
+    "dst_name": "New Delhi",
+    "dst_code": "NDLS"
   },
   "12802": {
     "name": "PURSHOTTAM EXP",
@@ -7763,11 +7763,11 @@
     "dst_name": "H NIZAMUDDIN"
   },
   "12918": {
-    "name": "GUJRAT S KRANTI",
-    "src_code": "NZM",
-    "src_name": "H NIZAMUDDIN",
-    "dst_code": "ADI",
-    "dst_name": "AHMEDABAD JN"
+    "name": "Gujarat Sampark Kranti",
+    "src_name": "Ahmedabad Jn",
+    "src_code": "ADI",
+    "dst_name": "H Nizamuddin",
+    "dst_code": "NZM"
   },
   "12919": {
     "name": "MALWA EXPRESS",
@@ -7812,11 +7812,11 @@
     "dst_name": "INDORE JN BG"
   },
   "12925": {
-    "name": "PASCHIM EXPRESS",
+    "name": "Paschim Express",
+    "src_name": "Bandra Terminus",
     "src_code": "BDTS",
-    "src_name": "BANDRA TERMINUS",
-    "dst_code": "ASR",
-    "dst_name": "AMRITSAR JN"
+    "dst_name": "Amritsar Jn",
+    "dst_code": "ASR"
   },
   "12926": {
     "name": "PASCHIM EXPRESS",
@@ -7980,11 +7980,11 @@
     "dst_name": "PORBANDAR"
   },
   "12951": {
-    "name": "MUMBAI RAJDHANI",
-    "src_code": "BCT",
-    "src_name": "MUMBAI CENTRAL",
-    "dst_code": "NDLS",
-    "dst_name": "NEW DELHI"
+    "name": "Mumbai Rajdhani Express",
+    "src_name": "Mumbai Central",
+    "src_code": "MMCT",
+    "dst_name": "New Delhi",
+    "dst_code": "NDLS"
   },
   "12952": {
     "name": "MUMBAI RAJDHANI",
@@ -9891,11 +9891,11 @@
     "dst_name": "UJJAIN JN"
   },
   "14311": {
-    "name": "ALA HAZRAT EXP",
+    "name": "Ala Hazrat Express",
+    "src_name": "Bareilly",
     "src_code": "BE",
-    "src_name": "BAREILLY",
-    "dst_code": "BHUJ",
-    "dst_name": "BHUJ"
+    "dst_name": "Bhuj",
+    "dst_code": "BHUJ"
   },
   "14312": {
     "name": "ALA HAZRAT EXP",
@@ -17199,11 +17199,11 @@
     "dst_name": "MADURAI JN"
   },
   "22691": {
-    "name": "RAJDHANI EXP",
+    "name": "SBC Rajdhani Express",
+    "src_name": "KSR Bengaluru",
     "src_code": "SBC",
-    "src_name": "BANGALORE CY JN",
-    "dst_code": "NZM",
-    "dst_name": "H NIZAMUDDIN"
+    "dst_name": "H Nizamuddin",
+    "dst_code": "NZM"
   },
   "22692": {
     "name": "BANGLORE RJDHNI",
@@ -19668,5 +19668,68 @@
     "src_name": "BARWADIH JN",
     "dst_code": "BE",
     "dst_name": "BAREILLY"
+  },
+  "68007": {
+    "name": "TATA-ROU MEMU Passenger",
+    "src_name": "Tatanagar Jn",
+    "src_code": "TATA",
+    "dst_name": "Rourkela Jn",
+    "dst_code": "ROU"
+  },
+  "58181": {
+    "name": "TATA-KIR Passenger",
+    "src_name": "Tatanagar Jn",
+    "src_code": "TATA",
+    "dst_name": "Katihar Jn",
+    "dst_code": "KIR"
+  },
+  "04061": {
+    "name": "NDLS-LKO Summer Special",
+    "src_name": "New Delhi",
+    "src_code": "NDLS",
+    "dst_name": "Lucknow Charbagh",
+    "dst_code": "LKO"
+  },
+  "63187": {
+    "name": "Sealdah - Lalkuan Express",
+    "src_name": "Sealdah",
+    "src_code": "SDAH",
+    "dst_name": "Lalkuan Jn",
+    "dst_code": "LKU"
+  },
+  "58201": {
+    "name": "TATA-BSP Passenger",
+    "src_name": "Tatanagar Jn",
+    "src_code": "TATA",
+    "dst_name": "Bilaspur Jn",
+    "dst_code": "BSP"
+  },
+  "2925": {
+    "name": "Paschim Express",
+    "src_name": "Bandra Terminus",
+    "src_code": "BDTS",
+    "dst_name": "Amritsar Jn",
+    "dst_code": "ASR"
+  },
+  "2723": {
+    "name": "Telangana Express",
+    "src_name": "Hyderabad Deccan",
+    "src_code": "HYB",
+    "dst_name": "New Delhi",
+    "dst_code": "NDLS"
+  },
+  "58301": {
+    "name": "Koraput-Sambalpur Passenger",
+    "src_name": "Koraput",
+    "src_code": "KRPU",
+    "dst_name": "Sambalpur",
+    "dst_code": "SBP"
+  },
+  "2626": {
+    "name": "Kerala Express",
+    "src_name": "New Delhi",
+    "src_code": "NDLS",
+    "dst_name": "Trivandrum Central",
+    "dst_code": "TVC"
   }
 }

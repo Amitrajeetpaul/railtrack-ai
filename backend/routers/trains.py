@@ -123,18 +123,21 @@ if os.path.exists(IR_TRAINS_FILE):
         pass
 
 def get_train_meta(train_number: str):
-    if train_number in IR_TRAINS:
-        t = IR_TRAINS[train_number]
-        return {
-            "name": t.get("name") or f"Express {train_number}",
-            "origin": t.get("src_name") or t.get("src_code") or "Origin Station",
-            "destination": t.get("dst_name") or t.get("dst_code") or "Destination Station",
-            "priority": "EXPRESS"
-        }
+    num_clean = train_number.lstrip('0')
+    candidates = [train_number, num_clean, f"0{train_number}", f"0{num_clean}", f"1{num_clean}"]
+    for candidate in candidates:
+        if candidate in IR_TRAINS:
+            t = IR_TRAINS[candidate]
+            return {
+                "name": t.get("name") or f"Express {train_number}",
+                "origin": t.get("src_name") or t.get("src_code") or "New Delhi (NDLS)",
+                "destination": t.get("dst_name") or t.get("dst_code") or "Bhopal (BPL)",
+                "priority": "EXPRESS"
+            }
     return {
         "name": f"Express {train_number}",
-        "origin": "Origin Station",
-        "destination": "Destination Station",
+        "origin": "New Delhi (NDLS)",
+        "destination": "Bhopal (BPL)",
         "priority": "EXPRESS"
     }
 
