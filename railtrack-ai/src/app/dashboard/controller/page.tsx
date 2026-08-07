@@ -59,6 +59,13 @@ const DEFAULT_DEMO_CONFLICTS: Conflict[] = [
   }
 ];
 
+// Ids that exist only in the browser (demo presets, the client-side
+// fallback conflict) and never as a real backend row — resolving one of
+// these against POST /api/conflicts/{id}/resolve 404s. Derived from
+// DEFAULT_DEMO_CONFLICTS itself so it can't drift if that list changes.
+const NON_BACKEND_CONFLICT_IDS = new Set(DEFAULT_DEMO_CONFLICTS.map(c => c.id));
+const isBackendConflict = (id: string) => !id.startsWith('DEMO-') && !NON_BACKEND_CONFLICT_IDS.has(id);
+
 const DEFAULT_DEMO_DISRUPTIONS = [
   { icon: '⚡', text: 'OHE Voltage Drop reported near Mathura (MTJ) UP Line — Speed restricted to 90 km/h', time: '10 min ago', severity: 'medium' },
   { icon: '🛠️', text: 'Scheduled Track Maintenance active on Track #4 (AGC-DHO)', time: '25 min ago', severity: 'low' },
@@ -390,8 +397,22 @@ export default function ControllerDashboard() {
   });
 
   useEffect(() => {
-    if (serverConflicts.length > 0 && conflicts.length === 0) setConflicts(serverConflicts);
-  }, [serverConflicts, conflicts.length]);
+    // Previously only synced once ever (`conflicts.length === 0`), but
+    // `conflicts` starts pre-seeded with the 1-item fallback, so that
+    // condition was never true — real backend conflict data never made it
+    // into the UI, the whole session, regardless of how many real conflicts
+    // existed server-side. Now re-syncs on every serverConflicts change,
+    // while preserving Demo Preset conflicts the user manually triggered —
+    // those are ('DEMO-' prefixed) truly local-only and would otherwise be
+    // wiped by the next refetch. NOT the same check as isBackendConflict()
+    // used for Accept/Override: the CONF-01 fallback also fails that check,
+    // but it already arrives via `serverConflicts` on every render where
+    // the real fetch is unavailable — preserving it here too would double it.
+    setConflicts(prev => {
+      const demoPresetsOnly = prev.filter(c => c.id.startsWith('DEMO-'));
+      return [...demoPresetsOnly, ...serverConflicts];
+    });
+  }, [serverConflicts]);
 
   useEffect(() => {
     let ws: WebSocket;
@@ -549,23 +570,32 @@ export default function ControllerDashboard() {
 
   const handleAccept = useCallback(async (conflict: Conflict) => {
     try {
-      const token = getClientToken();
-      const res = await fetch(`${API_BASE}/api/conflicts/${conflict.id}/resolve`, {
-        method: 'POST',
-        headers: { 
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify({
-          action: 'ACCEPT_AI',
-          operator_id: user?.id ?? 'system',
-          source: 'AI',
-          notes: `AI recommendation accepted — ${conflict.trainA} vs ${conflict.trainB} resolved`
-        })
-      });
-      
-      if (!res.ok) throw new Error('Failed to resolve');
-      
+      // "Demo Preset" conflicts (Overtake/Head-on/Bottleneck buttons) and
+      // the client-side fallback conflict (shown when the backend is
+      // unreachable) only ever exist in browser state — their ids were
+      // never written to the database, so calling /resolve on one 404s.
+      // The catch-all error handling swallowed that silently: clicking
+      // Accept/Override on either visibly did nothing, no error shown.
+      // Skip the backend call for these — there's nothing there to
+      // resolve — and just update local state, which is what they are.
+      if (isBackendConflict(conflict.id)) {
+        const token = getClientToken();
+        const res = await fetch(`${API_BASE}/api/conflicts/${conflict.id}/resolve`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({
+            action: 'ACCEPT_AI',
+            operator_id: user?.id ?? 'system',
+            source: 'AI',
+            notes: `AI recommendation accepted — ${conflict.trainA} vs ${conflict.trainB} resolved`
+          })
+        });
+        if (!res.ok) throw new Error('Failed to resolve');
+      }
+
       const newDecision = {
         id: `D-${Date.now()}`,
         timestamp: new Date().toLocaleTimeString('en-IN', { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' }),
@@ -583,19 +613,46 @@ export default function ControllerDashboard() {
     }
   }, [user]);
 
-  const handleOverride = useCallback((conflict: Conflict) => {
-    const newDecision = {
-      id: `D-${Date.now()}`,
-      timestamp: new Date().toLocaleTimeString('en-IN', { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' }),
-      action: `Manual override — ${conflict.trainA} vs ${conflict.trainB}`,
-      operator: user?.name ?? 'Controller',
-      source: 'MANUAL' as const,
-      trains: [conflict.trainA, conflict.trainB],
-    };
-    setDecisions(prev => [newDecision, ...prev.slice(0, 4)]);
-    setConflicts(prev => prev.filter(c => c.id !== conflict.id));
-    setShowAI(false);
-    setActiveConflict(null);
+  const handleOverride = useCallback(async (conflict: Conflict) => {
+    // Previously client-side-only (setDecisions/setConflicts, no backend
+    // call) — the conflict looked resolved in the UI but the database
+    // never changed, so it silently reappeared on the next refetch. Now
+    // mirrors handleAccept, including the same DEMO- skip (see handleAccept
+    // for why: demo-preset conflicts don't exist in the backend at all).
+    try {
+      if (isBackendConflict(conflict.id)) {
+        const token = getClientToken();
+        const res = await fetch(`${API_BASE}/api/conflicts/${conflict.id}/resolve`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({
+            action: 'MANUAL_OVERRIDE',
+            operator_id: user?.id ?? 'system',
+            source: 'MANUAL',
+            notes: `Manual override — ${conflict.trainA} vs ${conflict.trainB}`
+          })
+        });
+        if (!res.ok) throw new Error('Failed to override');
+      }
+
+      const newDecision = {
+        id: `D-${Date.now()}`,
+        timestamp: new Date().toLocaleTimeString('en-IN', { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' }),
+        action: `Manual override — ${conflict.trainA} vs ${conflict.trainB}`,
+        operator: user?.name ?? 'Controller',
+        source: 'MANUAL' as const,
+        trains: [conflict.trainA, conflict.trainB],
+      };
+      setDecisions(prev => [newDecision, ...prev.slice(0, 4)]);
+      setConflicts(prev => prev.filter(c => c.id !== conflict.id));
+      setShowAI(false);
+      setActiveConflict(null);
+    } catch (err) {
+      console.error('Failed to override conflict', err);
+    }
   }, [user]);
 
   const handleChat = useCallback(async (e: React.FormEvent) => {
