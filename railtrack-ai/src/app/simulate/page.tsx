@@ -6,7 +6,7 @@ import LiveTrackMap from '@/components/LiveTrackMap';
 import SystemFeedsModal from '@/components/SystemFeedsModal';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Train } from '@/lib/mockData';
-import { API_BASE } from '@/lib/api';
+import { API_BASE, trainsQueryFor } from '@/lib/api';
 import { useAuth } from '@/lib/auth';
 
 function getClientToken() {
@@ -46,7 +46,7 @@ export default function SimulatePage() {
     queryFn: async () => {
       const token = getClientToken();
       if (!token) return [];
-      const res = await fetch(`${API_BASE}/api/trains/?section=${user?.section || 'NR-42'}`, {
+      const res = await fetch(`${API_BASE}/api/trains/${trainsQueryFor(user?.section)}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (!res.ok) return [];

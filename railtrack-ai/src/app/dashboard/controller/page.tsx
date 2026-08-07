@@ -6,7 +6,7 @@ import { useAuth } from '@/lib/auth';
 import LiveTrackMap from '@/components/LiveTrackMap';
 import AIRecommendation from '@/components/AIRecommendation';
 import { Train, Conflict, TrainPriority } from '@/lib/mockData';
-import { API_BASE } from '@/lib/api';
+import { API_BASE, trainsQueryFor } from '@/lib/api';
 
 // Helper to grab token on the client
 function getClientToken() {
@@ -315,7 +315,7 @@ export default function ControllerDashboard() {
       const token = getClientToken();
       if (!token) return DEFAULT_DEMO_TRAINS;
       try {
-        const res = await fetch(`${API_BASE}/api/trains/?section=${user?.section || 'NR-42'}`, {
+        const res = await fetch(`${API_BASE}/api/trains/${trainsQueryFor(user?.section)}`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         if (res.ok) {

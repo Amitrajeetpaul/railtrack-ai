@@ -2,7 +2,7 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { TRACK_STATIONS, TRACK_SEGMENTS, TRACK_SIGNALS, TrainPriority } from '@/lib/mockData';
-import { API_BASE } from '@/lib/api';
+import { API_BASE, trainsQueryFor } from '@/lib/api';
 import { useAuth } from '@/lib/auth';
 
 // Helper to grab token on the client
@@ -67,7 +67,7 @@ export default function LiveTrackMap({ conflictSegment, onTrainClick, liveTrainD
     queryFn: async () => {
       const token = getClientToken();
       if (!token) return [];
-      const res = await fetch(`${API_BASE}/api/trains/?section=${user?.section || 'NR-42'}`, {
+      const res = await fetch(`${API_BASE}/api/trains/${trainsQueryFor(user?.section)}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (!res.ok) return [];
