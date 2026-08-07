@@ -47,28 +47,43 @@ class PrecedenceOptimizer:
             platforms.append(platform)
 
         # ── 1. Single Track / Section Headway & Precedence Constraints ──
+        priority_violations = []
         if self.track_capacity == 1:
             # Enforce headway buffer between consecutive trains on single track
             for i in range(num_trains):
                 for j in range(i + 1, num_trains):
                     # b_ij == True if train i runs before train j
                     b_ij = self.model.NewBoolVar(f'precedence_{i}_{j}')
-                    
+
                     # If i before j: start_j >= end_i + headway
                     self.model.Add(starts[j] >= ends[i] + self.headway_minutes).OnlyEnforceIf(b_ij)
                     # If j before i: start_i >= end_j + headway
                     self.model.Add(starts[i] >= ends[j] + self.headway_minutes).OnlyEnforceIf(b_ij.Not())
 
-                    # Loop line overtake rule: If high-priority express follows lower priority freight/local,
-                    # force lower priority train to use Loop Line (PF >= 2) while express takes Main Line (PF 1).
+                    # Loop line overtake preference: higher-priority trains should
+                    # go first. This used to be a HARD constraint
+                    # (model.Add(b_ij == 1/0)) — forcing a rigid priority-only
+                    # total order regardless of each train's actual scheduled
+                    # time/distance often contradicted the headway/interval
+                    # bounds above and made the model INFEASIBLE (verified: 5
+                    # trains of mixed priority reliably produced
+                    # status=INFEASIBLE, silently returning empty results for
+                    # every objective). Priority order is now a soft
+                    # preference — penalized in the objective below, not
+                    # forbidden — so the solver always finds a real schedule
+                    # and only deviates from strict priority order when the
+                    # timing genuinely requires it.
                     prio_i = priority_weights.get(str(self.trains[i].get('priority', 'FREIGHT')).upper(), 1)
                     prio_j = priority_weights.get(str(self.trains[j].get('priority', 'FREIGHT')).upper(), 1)
-                    
+
                     if prio_i > prio_j:
-                        # Train i has higher priority — prefer train i going first
-                        self.model.Add(b_ij == 1)
+                        violation = self.model.NewBoolVar(f'prio_violation_{i}_{j}')
+                        self.model.Add(violation == b_ij.Not())  # j went first though i has higher priority
+                        priority_violations.append(violation * (prio_i - prio_j))
                     elif prio_j > prio_i:
-                        self.model.Add(b_ij == 0)
+                        violation = self.model.NewBoolVar(f'prio_violation_{i}_{j}')
+                        self.model.Add(violation == b_ij)  # i went first though j has higher priority
+                        priority_violations.append(violation * (prio_j - prio_i))
 
         # Cumulative / NoOverlap constraint for platform occupancy
         if self.num_platforms == 1:
@@ -76,24 +91,41 @@ class PrecedenceOptimizer:
 
         # ── 2. Objective Function: Weighted Sum of Delays ──
         delay_vars = []
+        held_train_penalties = []
         for i, t in enumerate(self.trains):
             scheduled_arrival = int(t.get('scheduled_arrival', 0))
-            
+
             delay = self.model.NewIntVar(0, 4320, f'delay_{i}')
             self.model.Add(delay == starts[i] - scheduled_arrival)
-            
+
             priority_str = str(t.get('priority', 'FREIGHT')).upper()
             weight = priority_weights.get(priority_str, 1)
-            
-            # Objective penalty logic
+
+            # Objective penalty logic — each choice genuinely changes what the
+            # solver minimizes, not just a label:
             if self.objective == 'PRIORITIZE_EXPRESS' and priority_str == 'EXPRESS':
-                weight *= 3  # extra emphasis on Express trains
-            
+                weight *= 3  # extra emphasis on Express trains' delay specifically
+            elif self.objective == 'MAXIMIZE_THROUGHPUT':
+                # Minimizing total delay-minutes lets the solver spread small
+                # delays across many trains freely. Throughput instead cares
+                # about how many trains get touched at all — so add a flat
+                # per-train penalty for being held even slightly, pushing the
+                # solver toward "few trains delayed" over "everyone delayed a
+                # little", which is a materially different schedule.
+                is_held = self.model.NewBoolVar(f'held_{i}')
+                self.model.Add(delay > 0).OnlyEnforceIf(is_held)
+                self.model.Add(delay == 0).OnlyEnforceIf(is_held.Not())
+                held_train_penalties.append(is_held * 200)
+
             weighted_delay = self.model.NewIntVar(0, 4320 * 20, f'weighted_delay_{i}')
             self.model.Add(weighted_delay == delay * weight)
             delay_vars.append(weighted_delay)
             
-        self.model.Minimize(sum(delay_vars))
+        # Priority-order violations are a soft preference (see above — a hard
+        # constraint here made the model INFEASIBLE); a small weight keeps it
+        # a tiebreaker rather than overwhelming the actual delay objective.
+        objective_terms = delay_vars + [v * 5 for v in priority_violations] + held_train_penalties
+        self.model.Minimize(sum(objective_terms))
 
         # Solve
         solver = cp_model.CpSolver()

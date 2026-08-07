@@ -149,6 +149,42 @@ export default function SimulatePage() {
     }
   };
 
+  // Real per-train baseline delay and priority, cross-referenced from the
+  // solver's own schedule/trains data — the table previously showed a
+  // literal hardcoded string ("Calculated Base Delay") and a fixed "OP"
+  // badge for every single row, regardless of which train it was.
+  const scheduleByTrain: Record<string, any> = Object.fromEntries(
+    (simResults?.schedule || []).map((s: any) => [s.train, s])
+  );
+  const outcomeRows = (simResults?.actions || []).map((act: any) => {
+    const trainMeta = trains.find(t => t.id === act.train);
+    const schedEntry = scheduleByTrain[act.train];
+    const baselineDelay = schedEntry ? (schedEntry.delay_minutes ?? 0) - act.delta : null;
+    return {
+      ...act,
+      priority: trainMeta?.priority || '—',
+      baselineLabel: baselineDelay == null ? '—'
+        : baselineDelay > 0 ? `Delayed ${baselineDelay}m`
+        : 'On Time',
+    };
+  });
+
+  const handleExportCsv = () => {
+    if (outcomeRows.length === 0) return;
+    const header = ['Train ID', 'Priority', 'Baseline Delay (min)', 'AI Proposed Action', 'Delay Delta (min)'];
+    const rows = outcomeRows.map((r: any) => [r.train, r.priority, r.baselineLabel, r.action, r.delta]);
+    const csv = [header, ...rows].map(row => row.map((cell: any) => `"${String(cell).replace(/"/g, '""')}"`).join(',')).join('\n');
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `simulation_${simResults?.simulation_id ?? 'results'}.csv`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
   if (!isAuthReady) {
     return (
       <div style={{
@@ -448,24 +484,24 @@ export default function SimulatePage() {
               <div className="panel" style={{ overflow: 'hidden' }}>
                 <div style={{ padding: '16px', borderBottom: '1px solid var(--bg-border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <span className="panel-header">Train Outcomes (Baseline vs AI Optimized)</span>
-                  <button className="btn-ghost" style={{ fontSize: '11px', padding: '4px 12px' }}>Export CSV</button>
+                  <button className="btn-ghost" style={{ fontSize: '11px', padding: '4px 12px' }} onClick={handleExportCsv} disabled={outcomeRows.length === 0}>Export CSV</button>
                 </div>
                 <table className="data-table">
                   <thead>
                     <tr>
                       <th>Train ID</th>
                       <th>Priority</th>
-                      <th>Baseline Action</th>
+                      <th>Baseline</th>
                       <th>AI Proposed Action</th>
                       <th>Delay Delta</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {(simResults?.actions || []).map((act: any, i: number) => (
+                    {outcomeRows.map((act: any, i: number) => (
                       <tr key={i}>
                         <td style={{ fontFamily: 'var(--font-jetbrains)', fontWeight: 700, color: 'var(--accent-primary)' }}>{act.train}</td>
-                        <td><span className="badge-rail">OP</span></td>
-                        <td>Calculated Base Delay</td>
+                        <td><span className="badge-rail">{act.priority}</span></td>
+                        <td>{act.baselineLabel}</td>
                         <td>{act.action}</td>
                         <td style={{ fontFamily: 'var(--font-jetbrains)', color: act.delta < 0 ? 'var(--accent-safe)' : (act.delta > 0 ? 'var(--accent-danger)' : 'var(--text-secondary)') }}>
                           {act.delta > 0 ? '+' : ''}{act.delta} min
@@ -508,7 +544,6 @@ export default function SimulatePage() {
                     <svg style={{ width: '100%', height: '100%', overflow: 'visible' }}>
                      {(() => {
                         const schedule = simResults?.schedule || [];
-                        console.log('Gantt schedule data:', schedule);
                         if (schedule.length === 0) return (
                           <text x="50%" y="50%" fill="var(--text-muted)" fontSize="12" textAnchor="middle">
                             No schedule data returned from solver

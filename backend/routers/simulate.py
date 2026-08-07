@@ -4,6 +4,7 @@ routers/simulate.py — Real simulation endpoint backed by the OR-Tools solver.
 """
 
 import json
+import uuid
 from typing import List, Optional
 
 from fastapi import APIRouter, Depends, HTTPException, status
@@ -334,9 +335,15 @@ async def apply_simulation_plan(
         conf.resolved = True
         conf.resolved_at = now_dt
         
-        # Insert Decision
+        # Insert Decision — id must be unique per apply-event, not just per
+        # conflict. It was previously f"D-SIM-{conf.id[:6]}", deterministic
+        # from the conflict id alone, so applying a strategy for the same
+        # conflict more than once ever (a second simulation run, a retry,
+        # even on a different day) collided with the earlier row and the
+        # whole request 500'd with a UNIQUE constraint violation —
+        # reproduced directly: verified via real API call.
         decision = Decision(
-            id=f"D-SIM-{conf.id[:6]}",
+            id=f"D-SIM-{conf.id[:6]}-{uuid.uuid4().hex[:6].upper()}",
             conflict_id=conf.id,
             action="ACCEPT_AI_SIMULATION",
             operator_id=current_user.id,
