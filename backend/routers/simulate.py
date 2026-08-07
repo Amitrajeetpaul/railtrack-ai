@@ -137,12 +137,19 @@ async def run_simulation(
 
         if tr.schedules:
             sorted_schedules = sorted(tr.schedules, key=lambda s: s.sequence)
-            distance = sum((s.distance_km or 0.0) for s in sorted_schedules)
+            # Schedule.distance_km is the cumulative km-from-origin marker at
+            # each stop, not a per-leg distance — so total distance travelled
+            # is the last stop's marker, not a sum across all stops (summing
+            # cumulative markers inflates it several-fold).
+            distance = max((s.distance_km or 0.0) for s in sorted_schedules)
 
             first_dep = sorted_schedules[0].departure_time
             if first_dep:
                 now_dt = datetime.now(first_dep.tzinfo)
-                scheduled_arrival = int((first_dep - now_dt).total_seconds())
+                # Solver works in minutes throughout (durations, headway, horizon) —
+                # this must be minutes too, not raw seconds, or every downstream
+                # timing comparison is off by a factor of 60.
+                scheduled_arrival = int((first_dep - now_dt).total_seconds() / 60)
             else:
                 scheduled_arrival = 0
         else:
@@ -175,14 +182,14 @@ async def run_simulation(
         duration_minutes=req.disruption_duration_minutes,
     )
 
-    # Convert disruption penalty seconds → minutes and inject into scheduled_arrival
-    # so the solver actually knows trains are already delayed by the disruption
+    # Inject the disruption penalty (already in minutes — Train.delay and
+    # apply_disruption_penalties() both operate in minutes, see models.py) into
+    # scheduled_arrival so the solver knows trains are already delayed.
     for t in solver_trains:
-        penalty_mins = int(t["delay"] / 60)
-        t["scheduled_arrival"] = max(0, t["scheduled_arrival"] + penalty_mins)
+        t["scheduled_arrival"] = max(0, t["scheduled_arrival"] + int(t["delay"]))
 
     # Baseline = what total delay looks like if AI does nothing (in minutes)
-    baseline_delay = sum(int(t["delay"] / 60) for t in solver_trains)
+    baseline_delay = sum(int(t["delay"]) for t in solver_trains)
 
     # Run solver
     try:
@@ -223,12 +230,11 @@ async def run_simulation(
 
     actions = []
     for sched in schedule:
-        # t["delay"] is in seconds from apply_disruption_penalties
-        # sched["delay_minutes"] is in minutes from solver
+        # t["delay"] and sched["delay_minutes"] are both in minutes.
         # scheduled_arrival already has penalty baked in — so solver delay_minutes
         # IS the optimized result relative to the disrupted schedule
         original_delay_mins = int(
-            next((t["delay"] for t in solver_trains if t["id"] == sched["train"]), 0) / 60
+            next((t["delay"] for t in solver_trains if t["id"] == sched["train"]), 0)
         )
         delta = sched.get("delay_minutes", 0) - original_delay_mins
         actions.append(SimActionResult(
