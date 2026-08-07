@@ -252,7 +252,7 @@ export default function AnalyticsPage() {
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', background: 'var(--bg-base)' }}>
       {/* Top Nav */}
       {/* Top Nav */}
-      <header style={{ height: '56px', background: '#FFFFFF', borderBottom: '1.5px solid var(--bg-border)', display: 'flex', alignItems: 'center', padding: '0 20px', gap: '20px', flexShrink: 0, boxShadow: '0 2px 8px rgba(0,0,0,0.03)' }}>
+      <header className="app-header-row" style={{ height: '56px', background: '#FFFFFF', borderBottom: '1.5px solid var(--bg-border)', display: 'flex', alignItems: 'center', padding: '0 20px', gap: '20px', flexShrink: 0, boxShadow: '0 2px 8px rgba(0,0,0,0.03)' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
           <span className="signal-lamp signal-lamp-green" style={{ width: '12px', height: '12px' }} />
           <div style={{ fontFamily: 'var(--font-headline)', fontSize: '16px', fontWeight: 800, color: 'var(--accent-primary)', letterSpacing: '-0.02em' }}>
@@ -387,7 +387,7 @@ export default function AnalyticsPage() {
           )}
 
           {/* Charts Row 1 */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '24px' }}>
+          <div className="grid-2col-responsive" style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '24px' }}>
             
             <div className="panel" style={{ padding: '24px', height: '360px', display: 'flex', flexDirection: 'column' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '24px' }}>
@@ -457,7 +457,7 @@ export default function AnalyticsPage() {
           </div>
 
           {/* Charts Row 2 */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: '24px' }}>
+          <div className="grid-2col-responsive" style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: '24px' }}>
 
             {/* AI Acceptance Area */}
             <div className="panel" style={{ padding: '24px', height: '340px', display: 'flex', flexDirection: 'column' }}>

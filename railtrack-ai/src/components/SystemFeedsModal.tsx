@@ -75,7 +75,7 @@ export default function SystemFeedsModal({ isOpen, onClose }: { isOpen: boolean;
               Live telemetry bridge & protocol gateway status (COA / FOIS / TMS / IRCTC)
             </p>
           </div>
-          <button onClick={onClose} className="btn-ghost" style={{ fontSize: '18px', padding: '4px 8px' }}>
+          <button onClick={onClose} className="btn-ghost" aria-label="Close" style={{ fontSize: '18px', padding: '4px 8px' }}>
             ✕
           </button>
         </div>

@@ -362,6 +362,64 @@ h4 { font-size: 16px; font-weight: 600; }
   animation: pulse-live 2s ease-in-out infinite;
 }
 
+/* ---------- Responsive Layout (Controller Dashboard) ---------- */
+.main-3col-row {
+  display: flex;
+  overflow: hidden;
+}
+.sidebar-left {
+  width: 240px;
+  overflow: hidden;
+}
+.sidebar-right {
+  width: 320px;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+@media (max-width: 1200px) {
+  .sidebar-right { width: 280px; }
+}
+
+@media (max-width: 1024px) {
+  .sidebar-left { width: 200px; }
+  .sidebar-right { width: 260px; }
+}
+
+@media (max-width: 768px) {
+  .app-header-row {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .main-3col-row {
+    flex-direction: column;
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+  .sidebar-left, .sidebar-right {
+    width: 100%;
+    max-height: 40vh;
+  }
+  .main-content-col {
+    min-height: 420px;
+  }
+}
+
+/* ---------- Responsive Grids (content pages) ---------- */
+@media (max-width: 640px) {
+  .grid-2col-responsive {
+    grid-template-columns: 1fr !important;
+  }
+  .table-scroll-wrap {
+    overflow-x: auto;
+  }
+}
+
+.table-scroll-wrap {
+  width: 100%;
+  overflow-x: auto;
+}
+
 /* ---------- Demo Banner ---------- */
 .demo-banner {
   background: #FFF8E1;

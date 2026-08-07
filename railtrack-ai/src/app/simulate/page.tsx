@@ -207,7 +207,7 @@ export default function SimulatePage() {
   return (
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', background: 'var(--bg-base)' }}>
       {/* Top Nav */}
-      <header style={{ height: '56px', background: '#FFFFFF', borderBottom: '1.5px solid var(--bg-border)', display: 'flex', alignItems: 'center', padding: '0 20px', gap: '20px', flexShrink: 0, boxShadow: '0 2px 8px rgba(0,0,0,0.03)' }}>
+      <header className="app-header-row" style={{ height: '56px', background: '#FFFFFF', borderBottom: '1.5px solid var(--bg-border)', display: 'flex', alignItems: 'center', padding: '0 20px', gap: '20px', flexShrink: 0, boxShadow: '0 2px 8px rgba(0,0,0,0.03)' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
           <span className="signal-lamp signal-lamp-green" style={{ width: '12px', height: '12px' }} />
           <div style={{ fontFamily: 'var(--font-headline)', fontSize: '16px', fontWeight: 800, color: 'var(--accent-primary)', letterSpacing: '-0.02em' }}>
@@ -245,10 +245,10 @@ export default function SimulatePage() {
       </header>
 
       {/* Main Content */}
-      <div style={{ flex: 1, display: 'flex', overflow: 'hidden' }}>
+      <div className="main-3col-row" style={{ flex: 1 }}>
 
         {/* ── LEFT PANEL (Form) ── */}
-        <aside style={{ width: '320px', background: 'var(--bg-surface)', borderRight: '1px solid var(--bg-border)', display: 'flex', flexDirection: 'column', overflowY: 'auto' }}>
+        <aside className="sidebar-right" style={{ background: 'var(--bg-surface)', borderRight: '1px solid var(--bg-border)', display: 'flex', flexDirection: 'column' }}>
           <div style={{ padding: '16px', borderBottom: '1px solid var(--bg-border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <h2 style={{ fontFamily: 'var(--font-space-mono)', fontSize: '14px', fontWeight: 700 }}>Scenario Simulator</h2>
             <button className="btn-ghost" style={{ padding: '4px 8px', fontSize: '11px' }} onClick={() => { setSimState('IDLE'); setSimResults(null); setApplyMessage(null); }}>Reset</button>
@@ -295,7 +295,7 @@ export default function SimulatePage() {
             </div>
 
             {/* Parameters */}
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+            <div className="grid-2col-responsive" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
               <div>
                 <label style={{ display: 'block', fontFamily: 'var(--font-space-mono)', fontSize: '10px', color: 'var(--text-muted)', letterSpacing: '0.1em', marginBottom: '8px' }}>LOCATION</label>
                 <select className="input" value={disruptionLocation} onChange={e => setDisruptionLocation(e.target.value)}>
@@ -317,7 +317,7 @@ export default function SimulatePage() {
             </div>
 
             {/* Advanced Section Characteristics */}
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', borderTop: '1px solid var(--bg-border)', paddingTop: '16px' }}>
+            <div className="grid-2col-responsive" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', borderTop: '1px solid var(--bg-border)', paddingTop: '16px' }}>
               <div>
                 <label style={{ display: 'block', fontFamily: 'var(--font-space-mono)', fontSize: '10px', color: 'var(--text-muted)', letterSpacing: '0.1em', marginBottom: '8px' }}>PLATFORMS</label>
                 <input type="number" min="1" max="6" className="input" value={numPlatforms} onChange={e => setNumPlatforms(Number(e.target.value))} />
@@ -370,7 +370,7 @@ export default function SimulatePage() {
 
 
         {/* ── CENTER AREA (Map & Results) ── */}
-        <main style={{ flex: 1, display: 'flex', flexDirection: 'column', padding: '24px', overflowY: 'auto' }}>
+        <main className="main-content-col" style={{ flex: 1, display: 'flex', flexDirection: 'column', padding: '24px', overflowY: 'auto' }}>
           
           <div style={{ marginBottom: '24px' }}>
             <h3 style={{ fontFamily: 'var(--font-space-mono)', fontSize: '16px', marginBottom: '16px' }}>Scenario Context: T-0</h3>
@@ -418,7 +418,7 @@ export default function SimulatePage() {
               </div>
 
               {/* Metrics Header */}
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: '16px' }}>
                 <div className="panel" style={{ padding: '16px' }}>
                   <div className="panel-header" style={{ marginBottom: '8px' }}>Optimized Delay</div>
                   <div style={{ display: 'flex', alignItems: 'flex-end', gap: '12px' }}>
@@ -486,7 +486,8 @@ export default function SimulatePage() {
                   <span className="panel-header">Train Outcomes (Baseline vs AI Optimized)</span>
                   <button className="btn-ghost" style={{ fontSize: '11px', padding: '4px 12px' }} onClick={handleExportCsv} disabled={outcomeRows.length === 0}>Export CSV</button>
                 </div>
-                <table className="data-table">
+                <div className="table-scroll-wrap">
+                <table className="data-table" style={{ minWidth: '600px' }}>
                   <thead>
                     <tr>
                       <th>Train ID</th>
@@ -510,6 +511,7 @@ export default function SimulatePage() {
                     ))}
                   </tbody>
                 </table>
+                </div>
               </div>
 
               {/* Dynamic Gantt Timeline */}

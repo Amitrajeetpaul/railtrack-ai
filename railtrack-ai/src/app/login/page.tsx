@@ -139,7 +139,7 @@ export default function LoginPage() {
           {/* Role selector */}
           <div style={{ marginBottom: '28px' }}>
             <div className="panel-header" style={{ marginBottom: '12px' }}>Select Controller Role</div>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+            <div className="grid-2col-responsive" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
               {ROLES.map(role => (
                 <button key={role.key}
                   type="button"
@@ -169,10 +169,11 @@ export default function LoginPage() {
           {/* Form */}
           <form onSubmit={handleSubmit}>
             <div style={{ marginBottom: '16px' }}>
-              <label style={{ display: 'block', fontFamily: 'var(--font-headline)', fontSize: '12px', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '6px' }}>
+              <label htmlFor="login-email" style={{ display: 'block', fontFamily: 'var(--font-headline)', fontSize: '12px', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '6px' }}>
                 Email Address
               </label>
               <input
+                id="login-email"
                 className="input"
                 type="email"
                 value={email}
@@ -183,10 +184,11 @@ export default function LoginPage() {
             </div>
 
             <div style={{ marginBottom: '24px' }}>
-              <label style={{ display: 'block', fontFamily: 'var(--font-headline)', fontSize: '12px', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '6px' }}>
+              <label htmlFor="login-password" style={{ display: 'block', fontFamily: 'var(--font-headline)', fontSize: '12px', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '6px' }}>
                 Password
               </label>
               <input
+                id="login-password"
                 className="input"
                 type="password"
                 value={password}

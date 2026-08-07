@@ -15,7 +15,7 @@ const PRIORITY_COLORS: Record<TrainPriority, string> = {
   EXPRESS:     '#00D4FF',
   FREIGHT:     '#F59E0B',
   LOCAL:       '#6366F1',
-  MAINTENANCE: '#94A3B8',
+  MAINTENANCE: 'var(--text-muted)',
 };
 
 interface TrainPosition {
@@ -132,10 +132,10 @@ export default function LiveTrackMap({ conflictSegment, onTrainClick, liveTrainD
   const segmentColors: Record<string, string> = {};
   for (const seg of TRACK_SEGMENTS) {
     if (seg.id === conflictSegment) {
-      segmentColors[seg.id] = conflictFlash ? '#C62828' : '#CBD5E1';
+      segmentColors[seg.id] = conflictFlash ? 'var(--accent-danger)' : '#CBD5E1';
     } else {
       const occupied = trains.some(t => t.segFrom === seg.from && t.segTo === seg.to);
-      segmentColors[seg.id] = occupied ? '#1A5490' : '#CBD5E1';
+      segmentColors[seg.id] = occupied ? 'var(--accent-primary)' : '#CBD5E1';
     }
   }
 
@@ -168,8 +168,8 @@ export default function LiveTrackMap({ conflictSegment, onTrainClick, liveTrainD
               {/* Shadow track line */}
               <line
                 x1={from.x} y1={from.y} x2={to.x} y2={to.y}
-                stroke={color} strokeWidth={color === '#1A5490' ? 6 : 1}
-                strokeOpacity={color === '#1A5490' ? 0.15 : 0}
+                stroke={color} strokeWidth={color === 'var(--accent-primary)' ? 6 : 1}
+                strokeOpacity={color === 'var(--accent-primary)' ? 0.15 : 0}
               />
               {/* Main track line */}
               <line
@@ -223,7 +223,7 @@ export default function LiveTrackMap({ conflictSegment, onTrainClick, liveTrainD
 
         {/* Signature Circular Signal Lamps */}
         {TRACK_SIGNALS.map(sig => {
-          const signalColor = sig.state === 'GREEN' ? '#2E7D32' : sig.state === 'RED' ? '#C62828' : '#F2A65A';
+          const signalColor = sig.state === 'GREEN' ? 'var(--accent-safe)' : sig.state === 'RED' ? 'var(--accent-danger)' : 'var(--accent-warn)';
           return (
             <g key={sig.id}>
               {/* Glow ring */}

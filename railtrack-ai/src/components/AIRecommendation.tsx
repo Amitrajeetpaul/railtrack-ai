@@ -94,7 +94,7 @@ export default function AIRecommendation({ visible, conflict, onDismiss, onAccep
 
           {showXai && (
             <div style={{
-              marginTop: '10px', padding: '14px', background: '#FAFAF7',
+              marginTop: '10px', padding: '14px', background: 'var(--bg-base)',
               border: '1px solid var(--bg-border)', borderRadius: '8px', fontSize: '12px',
               color: 'var(--text-primary)', lineHeight: 1.6
             }}>

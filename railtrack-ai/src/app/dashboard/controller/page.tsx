@@ -15,10 +15,10 @@ function getClientToken() {
 }
 
 const PRIORITY_COLORS: Record<TrainPriority, string> = {
-  EXPRESS:     '#1A5490',
-  FREIGHT:     '#F2A65A',
-  LOCAL:       '#2E7D32',
-  MAINTENANCE: '#6B6B80',
+  EXPRESS:     'var(--accent-primary)',
+  FREIGHT:     'var(--accent-warn)',
+  LOCAL:       'var(--accent-safe)',
+  MAINTENANCE: 'var(--text-secondary)',
 };
 
 function LiveClock() {
@@ -668,8 +668,7 @@ export default function ControllerDashboard() {
         message: userMsg,
         section: user?.section || 'NR-42',
       };
-      console.log("AI payload:", JSON.stringify(payload));
-      
+
       const res = await fetch(`${API_BASE}/api/ai/chat`, {
         method: 'POST',
         headers: {
@@ -721,7 +720,7 @@ export default function ControllerDashboard() {
       )}
 
       {/* Top Nav */}
-      <header style={{ height: '56px', background: '#FFFFFF', borderBottom: '1.5px solid var(--bg-border)', display: 'flex', alignItems: 'center', padding: '0 20px', gap: '20px', flexShrink: 0, boxShadow: '0 2px 8px rgba(0,0,0,0.03)' }}>
+      <header className="app-header-row" style={{ height: '56px', background: '#FFFFFF', borderBottom: '1.5px solid var(--bg-border)', display: 'flex', alignItems: 'center', padding: '0 20px', gap: '20px', flexShrink: 0, boxShadow: '0 2px 8px rgba(0,0,0,0.03)' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
           <span className="signal-lamp signal-lamp-green" style={{ width: '12px', height: '12px' }} />
           <div style={{ fontFamily: 'var(--font-headline)', fontSize: '16px', fontWeight: 800, color: 'var(--accent-primary)', letterSpacing: '-0.02em' }}>
@@ -768,6 +767,7 @@ export default function ControllerDashboard() {
             className="btn-ghost"
             style={{ padding: '6px 10px', fontSize: '14px', marginRight: '4px', borderRadius: '8px' }}
             title={sidebarOpen ? 'Hide sidebar' : 'Show sidebar'}
+            aria-label={sidebarOpen ? 'Hide sidebar' : 'Show sidebar'}
           >
             {sidebarOpen ? '◀' : '▶'}
           </button>
@@ -775,11 +775,11 @@ export default function ControllerDashboard() {
       </header>
 
       {/* Main 3-column layout */}
-      <div style={{ flex: 1, display: 'flex', overflow: 'hidden' }}>
+      <div className="main-3col-row" style={{ flex: 1 }}>
 
         {/* ── LEFT COLUMN (240px) — hidden on mobile when closed ── */}
         {sidebarOpen && (
-        <aside style={{ width: '240px', flexShrink: 0, background: 'var(--bg-surface)', borderRight: '1px solid var(--bg-border)', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+        <aside className="sidebar-left" style={{ flexShrink: 0, background: 'var(--bg-surface)', borderRight: '1px solid var(--bg-border)', display: 'flex', flexDirection: 'column' }}>
           {/* Section info */}
           <div style={{ padding: '16px', borderBottom: '1px solid var(--bg-border)' }}>
             <div className="panel-header" style={{ marginBottom: '12px' }}>Section Info</div>
@@ -809,11 +809,12 @@ export default function ControllerDashboard() {
                 type="text"
                 className="input"
                 placeholder="Search 5-digit train no. (e.g. 12002)..."
+                aria-label="Search train number"
                 value={searchQuery}
                 onChange={e => setSearchQuery(e.target.value)}
                 style={{ padding: '6px 10px', fontSize: '11px', flex: 1, fontFamily: 'var(--font-jetbrains)' }}
               />
-              <button type="submit" className="btn-primary" disabled={isSearching} style={{ padding: '6px 10px', fontSize: '11px', whiteSpace: 'nowrap' }}>
+              <button type="submit" className="btn-primary" disabled={isSearching} aria-label="Fetch live train data" style={{ padding: '6px 10px', fontSize: '11px', whiteSpace: 'nowrap' }}>
                 {isSearching ? '...' : '🔍 Fetch'}
               </button>
             </form>
@@ -851,14 +852,14 @@ export default function ControllerDashboard() {
                         width: '6px', height: '6px', borderRadius: '50%', flexShrink: 0,
                         background: liveTrainData[train.id]?.isLive
                           ? (liveTrainData[train.id].terminated
-                              ? '#94A3B8'
+                              ? 'var(--text-muted)'
                               : liveTrainData[train.id].delay === 0
                                 ? 'var(--accent-safe)'
                                 : (liveTrainData[train.id].delay ?? 0) < 15
                                   ? '#F59E0B'
                                   : 'var(--accent-danger)')
                           : liveTrainData[train.id]?.status === 'not_running'
-                            ? '#94A3B8'
+                            ? 'var(--text-muted)'
                             : 'rgba(148,163,184,0.35)',
                         boxShadow: liveTrainData[train.id]?.isLive && !liveTrainData[train.id].terminated
                           ? `0 0 4px ${
@@ -903,7 +904,7 @@ export default function ControllerDashboard() {
                     <div style={{ fontSize: '11px', color: 'var(--text-secondary)' }}>
                       {liveTrainData[train.id]?.isLive
                         ? liveTrainData[train.id].terminated
-                          ? <span style={{ color: '#94A3B8', fontStyle: 'italic' }}>Terminated</span>
+                          ? <span style={{ color: 'var(--text-muted)', fontStyle: 'italic' }}>Terminated</span>
                           : <span style={{ color: 'var(--accent-primary)', fontWeight: 600 }}>@ {liveTrainData[train.id].currentStationName || liveTrainData[train.id].currentStation}</span>
                         : (liveTrainData[train.id]?.status === 'not_running' || liveTrainData[train.id]?.status === 'unavailable')
                           ? <span style={{ color: 'var(--text-muted)', fontStyle: 'italic' }}>{train.origin} → {train.destination}</span>
@@ -1011,7 +1012,7 @@ export default function ControllerDashboard() {
         )}
 
         {/* ── CENTER COLUMN ── */}
-        <main style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden', minWidth: 0 }}>
+        <main className="main-content-col" style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden', minWidth: 0 }}>
           {/* Section header */}
           <div style={{ padding: '12px 16px', borderBottom: '1px solid var(--bg-border)', display: 'flex', alignItems: 'center', gap: '12px', background: 'var(--bg-surface)' }}>
             <div style={{ fontSize: '13px', color: 'var(--text-muted)', fontFamily: 'var(--font-space-mono)' }}>
@@ -1172,7 +1173,7 @@ export default function ControllerDashboard() {
         </main>
 
         {/* ── RIGHT COLUMN (320px) ── */}
-        <aside style={{ width: '320px', flexShrink: 0, background: 'var(--bg-surface)', borderLeft: '1px solid var(--bg-border)', display: 'flex', flexDirection: 'column', overflowY: 'auto', overflowX: 'hidden' }}>
+        <aside className="sidebar-right" style={{ flexShrink: 0, background: 'var(--bg-surface)', borderLeft: '1px solid var(--bg-border)', display: 'flex', flexDirection: 'column' }}>
 
           {/* Active Conflicts */}
           <div style={{ borderBottom: '1px solid var(--bg-border)' }}>
@@ -1287,7 +1288,7 @@ export default function ControllerDashboard() {
                   borderRadius: '6px',
                   fontSize: '12px',
                   lineHeight: 1.5,
-                  background: msg.role === 'ai' ? '#EBF3FA' : '#F4F4F0',
+                  background: msg.role === 'ai' ? '#EBF3FA' : 'var(--bg-elevated)',
                   border: `1px solid ${msg.role === 'ai' ? '#C5DCF2' : 'var(--bg-border)'}`,
                   color: msg.role === 'ai' ? 'var(--text-primary)' : 'var(--text-secondary)',
                   fontFamily: msg.role === 'ai' ? 'var(--font-mono)' : 'inherit',
@@ -1324,6 +1325,7 @@ export default function ControllerDashboard() {
                 value={chatInput}
                 onChange={e => setChatInput(e.target.value)}
                 placeholder="Ask about your section..."
+                aria-label="Ask the AI assistant"
                 disabled={chatLoading}
                 style={{ fontSize: '12px', padding: '8px 12px', opacity: chatLoading ? 0.6 : 1 }}
               />

@@ -261,7 +261,7 @@ export default function AdminPage() {
   return (
     <div style={{ height: '100vh', display: 'flex', flexDirection: 'column', background: 'var(--bg-base)' }}>
       {/* Top Nav */}
-      <header style={{ height: '56px', background: '#FFFFFF', borderBottom: '1.5px solid var(--bg-border)', display: 'flex', alignItems: 'center', padding: '0 20px', gap: '20px', flexShrink: 0, boxShadow: '0 2px 8px rgba(0,0,0,0.03)' }}>
+      <header className="app-header-row" style={{ height: '56px', background: '#FFFFFF', borderBottom: '1.5px solid var(--bg-border)', display: 'flex', alignItems: 'center', padding: '0 20px', gap: '20px', flexShrink: 0, boxShadow: '0 2px 8px rgba(0,0,0,0.03)' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
           <span className="signal-lamp signal-lamp-green" style={{ width: '12px', height: '12px' }} />
           <div style={{ fontFamily: 'var(--font-headline)', fontSize: '16px', fontWeight: 800, color: 'var(--accent-primary)', letterSpacing: '-0.02em' }}>
@@ -328,8 +328,8 @@ export default function AdminPage() {
                   <button className="btn-primary" style={{ padding: '8px 16px', fontSize: '13px' }} onClick={() => setShowInviteModal(true)}>+ Invite User</button>
                 </div>
 
-                <div className="panel" style={{ overflow: 'hidden' }}>
-                  <table className="data-table">
+                <div className="panel table-scroll-wrap">
+                  <table className="data-table" style={{ minWidth: '640px' }}>
                     <thead>
                       <tr>
                         <th>User</th>
@@ -435,7 +435,7 @@ export default function AdminPage() {
                         <span className={service.status === 'UP' ? 'badge-safe' : 'badge-danger'}>{service.status}</span>
                       </div>
                       {service.latency_ms > 0 && (
-                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+                        <div className="grid-2col-responsive" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
                           <div>
                             <div style={{ fontSize: '11px', color: 'var(--text-muted)', fontFamily: 'var(--font-space-mono)', marginBottom: '4px' }}>LATENCY</div>
                             <div style={{ fontFamily: 'var(--font-jetbrains)', fontSize: '20px', color: service.latency_ms > 200 ? 'var(--accent-warn)' : 'var(--text-primary)' }}>
@@ -469,28 +469,28 @@ export default function AdminPage() {
       {showInviteModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70" style={{ position: 'fixed', inset: 0, zIndex: 50, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(0,0,0,0.7)' }}>
           <div className="bg-[#13161e] border border-[#1e2330] rounded-lg p-8 w-full max-w-md relative" style={{ background: '#13161e', border: '1px solid #1e2330', borderRadius: '8px', padding: '32px', width: '100%', maxWidth: '448px', position: 'relative' }}>
-            <button onClick={() => setShowInviteModal(false)} className="absolute top-4 right-4 text-gray-400 hover:text-white" style={{ position: 'absolute', top: '16px', right: '16px', color: '#6b7280', background: 'none', border: 'none', cursor: 'pointer', fontSize: '16px' }}>✕</button>
+            <button onClick={() => setShowInviteModal(false)} aria-label="Close invite dialog" className="absolute top-4 right-4 text-gray-400 hover:text-white" style={{ position: 'absolute', top: '16px', right: '16px', color: '#6b7280', background: 'none', border: 'none', cursor: 'pointer', fontSize: '16px' }}>✕</button>
             <h2 className="text-white font-mono text-xl mb-1" style={{ color: '#e8eaf0', fontFamily: 'var(--font-space-mono)', fontSize: '20px', margin: '0 0 4px 0' }}>Invite User</h2>
             <p className="text-gray-400 text-sm mb-6" style={{ color: '#6b7280', fontSize: '14px', margin: '0 0 24px 0' }}>Send an invite link to grant system access.</p>
             
             <form onSubmit={handleInviteSubmit} className="space-y-4" style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-              <input required placeholder="Full Name" value={inviteForm.name}
+              <input required aria-label="Full Name" placeholder="Full Name" value={inviteForm.name}
                 onChange={e => setInviteForm({...inviteForm, name: e.target.value})}
                 style={{ width: '100%', background: '#0d0f14', border: '1px solid #1e2330', borderRadius: '6px', padding: '8px 16px', color: '#e8eaf0', outline: 'none', boxSizing: 'border-box' }} />
-              
-              <input required type="email" placeholder="Email Address" value={inviteForm.email}
+
+              <input required type="email" aria-label="Email Address" placeholder="Email Address" value={inviteForm.email}
                 onChange={e => setInviteForm({...inviteForm, email: e.target.value})}
                 style={{ width: '100%', background: '#0d0f14', border: '1px solid #1e2330', borderRadius: '6px', padding: '8px 16px', color: '#e8eaf0', outline: 'none', boxSizing: 'border-box' }} />
-              
-              <select value={inviteForm.role} onChange={e => setInviteForm({...inviteForm, role: e.target.value})}
+
+              <select aria-label="Role" value={inviteForm.role} onChange={e => setInviteForm({...inviteForm, role: e.target.value})}
                 style={{ width: '100%', background: '#0d0f14', border: '1px solid #1e2330', borderRadius: '6px', padding: '8px 16px', color: '#e8eaf0', outline: 'none', boxSizing: 'border-box' }}>
                 <option value="CONTROLLER">CONTROLLER</option>
                 <option value="ADMIN">ADMIN</option>
                 <option value="SUPERVISOR">SUPERVISOR</option>
                 <option value="LOGISTICS">LOGISTICS</option>
               </select>
-              
-              <input required placeholder="Section (e.g. NR-42)" value={inviteForm.section}
+
+              <input required aria-label="Section" placeholder="Section (e.g. NR-42)" value={inviteForm.section}
                 onChange={e => setInviteForm({...inviteForm, section: e.target.value})}
                 style={{ width: '100%', background: '#0d0f14', border: '1px solid #1e2330', borderRadius: '6px', padding: '8px 16px', color: '#e8eaf0', outline: 'none', boxSizing: 'border-box' }} />
               
@@ -509,7 +509,7 @@ export default function AdminPage() {
       {editUser && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70" style={{ position: 'fixed', inset: 0, zIndex: 50, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(0,0,0,0.7)' }}>
           <div className="bg-[#13161e] border border-[#1e2330] rounded-lg p-8 w-full max-w-md relative" style={{ background: '#13161e', border: '1px solid #1e2330', borderRadius: '8px', padding: '32px', width: '100%', maxWidth: '448px', position: 'relative' }}>
-            <button onClick={() => setEditUser(null)} className="absolute top-4 right-4 text-gray-400 hover:text-white" style={{ position: 'absolute', top: '16px', right: '16px', color: '#6b7280', background: 'none', border: 'none', cursor: 'pointer', fontSize: '16px' }}>✕</button>
+            <button onClick={() => setEditUser(null)} aria-label="Close edit dialog" className="absolute top-4 right-4 text-gray-400 hover:text-white" style={{ position: 'absolute', top: '16px', right: '16px', color: '#6b7280', background: 'none', border: 'none', cursor: 'pointer', fontSize: '16px' }}>✕</button>
             <h2 className="text-white font-mono text-xl mb-1" style={{ color: '#e8eaf0', fontFamily: 'var(--font-space-mono)', fontSize: '20px', margin: '0 0 4px 0' }}>Edit User</h2>
             <p className="text-gray-400 text-sm mb-6" style={{ color: '#6b7280', fontSize: '14px', margin: '0 0 24px 0' }}>{editUser.name} ({editUser.email})</p>
             
