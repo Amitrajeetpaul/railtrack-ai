@@ -23,6 +23,29 @@ class PrecedenceOptimizer:
         
         num_trains = len(self.trains)
 
+        # Precompute every train's duration first, so the horizon (the upper
+        # bound on each start/end IntVar) can be sized for the WORST CASE
+        # where all trains end up sequenced one after another — e.g. 30
+        # trains x (60 min + headway) each. Previously each train's horizon
+        # was computed independently from only its own scheduled_arrival —
+        # a train with a small individual horizon could be mathematically
+        # required (by the global precedence ordering) to start later than
+        # its own IntVar range allowed, making the whole model unsatisfiable
+        # even though a valid schedule genuinely existed. One shared horizon,
+        # generous enough for every train, fixes that.
+        precomputed_durations = []
+        max_scheduled_arrival = 0
+        for t in self.trains:
+            speed = float(t.get('speed', 60.0))
+            if speed <= 0: speed = 60.0
+            duration = int(float(t.get('distance', 100)) / speed * 60)
+            duration = max(5, min(duration, 60))
+            precomputed_durations.append(duration)
+            max_scheduled_arrival = max(max_scheduled_arrival, int(t.get('scheduled_arrival', 0)))
+
+        worst_case_sequential = sum(precomputed_durations) + num_trains * self.headway_minutes
+        horizon = max(2880, max_scheduled_arrival + worst_case_sequential + 1440)
+
         for i, t in enumerate(self.trains):
             # Calculate duration in minutes — this models how long a train
             # occupies the SECTION being scheduled (the contested track/
@@ -35,15 +58,13 @@ class PrecedenceOptimizer:
             # section-transit-time range keeps relative speed differences
             # (faster trains still clear proportionally sooner) while modeling
             # the actual scheduling unit correctly.
-            speed = float(t.get('speed', 60.0))
-            if speed <= 0: speed = 60.0
-            duration = int(float(t.get('distance', 100)) / speed * 60)
-            duration = max(5, min(duration, 60))
+            duration = precomputed_durations[i]
             durations.append(duration)
-            
-            # Start and End times
+
+            # Start and End times — shared horizon (see above), not a
+            # per-train one, so no train's IntVar range can be too narrow
+            # for where the global ordering actually needs to place it.
             scheduled_arrival = int(t.get('scheduled_arrival', 0))
-            horizon = max(2880, scheduled_arrival + duration + 1440)
             start = self.model.NewIntVar(scheduled_arrival, horizon, f'start_{i}')
             end = self.model.NewIntVar(scheduled_arrival + duration, horizon + duration, f'end_{i}')
             interval = self.model.NewIntervalVar(start, duration, end, f'interval_{i}')
@@ -105,7 +126,12 @@ class PrecedenceOptimizer:
         for i, t in enumerate(self.trains):
             scheduled_arrival = int(t.get('scheduled_arrival', 0))
 
-            delay = self.model.NewIntVar(0, 4320, f'delay_{i}')
+            # Bound must scale with `horizon`, not a fixed constant — a large
+            # train batch's shared horizon (see above) can exceed a fixed
+            # 4320, and a delay IntVar too narrow for its own possible value
+            # range makes the model unsatisfiable, independent of anything
+            # else being otherwise schedulable.
+            delay = self.model.NewIntVar(0, horizon, f'delay_{i}')
             self.model.Add(delay == starts[i] - scheduled_arrival)
 
             priority_str = str(t.get('priority', 'FREIGHT')).upper()
@@ -127,7 +153,7 @@ class PrecedenceOptimizer:
                 self.model.Add(delay == 0).OnlyEnforceIf(is_held.Not())
                 held_train_penalties.append(is_held * 200)
 
-            weighted_delay = self.model.NewIntVar(0, 4320 * 20, f'weighted_delay_{i}')
+            weighted_delay = self.model.NewIntVar(0, horizon * 20, f'weighted_delay_{i}')
             self.model.Add(weighted_delay == delay * weight)
             delay_vars.append(weighted_delay)
             
