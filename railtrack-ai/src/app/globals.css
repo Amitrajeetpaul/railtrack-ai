@@ -439,6 +439,15 @@ h4 { font-size: 16px; font-weight: 600; }
     flex-direction: column;
     overflow-y: auto;
     overflow-x: hidden;
+    /* Fixed mobile-tab-bar (58px) + mobile-action-bar (~65px) sit on top
+       of this scrolling container via position:fixed — they don't push
+       content out of the way on their own, and padding on the OUTER
+       height:100vh/overflow:hidden wrapper does nothing here since that
+       wrapper never scrolls. This must be padding on the container that
+       actually scrolls, sized to clear both bars, or the last content
+       in it (the AI chat input) ends up genuinely unreachable — sized
+       for the worst case (both bars) even on pages with only one. */
+    padding-bottom: 130px;
   }
   .sidebar-left, .sidebar-right {
     width: 100%;
@@ -510,9 +519,6 @@ h4 { font-size: 16px; font-weight: 600; }
     font-size: 18px;
     line-height: 1;
   }
-  .has-mobile-tab-bar {
-    padding-bottom: 58px;
-  }
 }
 
 /* ---------- Mobile Bottom Action Bar (critical actions) ---------- */
@@ -537,9 +543,6 @@ h4 { font-size: 16px; font-weight: 600; }
     flex: 1;
     min-height: 44px;
     font-size: 12px;
-  }
-  .has-mobile-action-bar {
-    padding-bottom: 76px;
   }
 }
 
