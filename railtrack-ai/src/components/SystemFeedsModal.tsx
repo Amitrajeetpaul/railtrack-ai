@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { API_BASE } from '@/lib/api';
+import { Radio, X, RefreshCw } from 'lucide-react';
 
 function getClientToken() {
   const match = document.cookie.match(/(?:^|;\s*)railtrack_token=([^;]*)/);
@@ -66,7 +67,7 @@ export default function SystemFeedsModal({ isOpen, onClose }: { isOpen: boolean;
         }}>
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-              <span style={{ fontSize: '18px' }}>📡</span>
+              <Radio size={18} strokeWidth={2} style={{ color: 'var(--accent-primary)' }} />
               <h3 style={{ fontFamily: 'var(--font-space-mono)', fontSize: '16px', fontWeight: 700 }}>
                 Indian Railways Enterprise Systems Inspector
               </h3>
@@ -75,8 +76,8 @@ export default function SystemFeedsModal({ isOpen, onClose }: { isOpen: boolean;
               Live telemetry bridge & protocol gateway status (COA / FOIS / TMS / IRCTC)
             </p>
           </div>
-          <button onClick={onClose} className="btn-ghost" aria-label="Close" style={{ fontSize: '18px', padding: '4px 8px' }}>
-            ✕
+          <button onClick={onClose} className="btn-ghost" aria-label="Close" style={{ padding: '4px 8px' }}>
+            <X size={16} strokeWidth={2.25} />
           </button>
         </div>
 
@@ -165,8 +166,8 @@ export default function SystemFeedsModal({ isOpen, onClose }: { isOpen: boolean;
           <div style={{ fontSize: '11px', fontFamily: 'var(--font-space-mono)', color: 'var(--text-muted)' }}>
             STATUS: OVERALL HEALTH 100% OPERATIONAL | CRIS (CENTRE FOR RAILWAY INFORMATION SYSTEMS) BRIDGE ACTIVE
           </div>
-          <button onClick={() => refetch()} className="btn-ghost" style={{ fontSize: '11px', padding: '4px 10px', fontFamily: 'var(--font-space-mono)' }}>
-            🔄 Refresh Feeds
+          <button onClick={() => refetch()} className="btn-ghost" style={{ fontSize: '11px', padding: '4px 10px', fontFamily: 'var(--font-space-mono)', display: 'inline-flex', alignItems: 'center', gap: '5px' }}>
+            <RefreshCw size={12} strokeWidth={2.25} /> Refresh Feeds
           </button>
         </div>
       </div>

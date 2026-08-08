@@ -3,6 +3,10 @@ import { useState, useEffect } from 'react';
 import { API_BASE } from '@/lib/api';
 import Link from 'next/link';
 import { useAuth } from '@/lib/auth';
+import { SlidersHorizontal, Play, BarChart3, X, RefreshCw } from 'lucide-react';
+import OfficialUtilityBar from '@/components/OfficialUtilityBar';
+import Breadcrumb from '@/components/Breadcrumb';
+import SiteFooter from '@/components/SiteFooter';
 
 // Helper to grab token on the client
 function getClientToken() {
@@ -128,8 +132,8 @@ export default function AdminPage() {
       setShowInviteModal(false);
       setToast(
         data.message
-          ? `⚠ ${inviteForm.email}: ${data.message}`
-          : `✅ Invite sent to ${inviteForm.email} — they'll set their own password via the emailed link.`
+          ? `${inviteForm.email}: ${data.message}`
+          : `Invite sent to ${inviteForm.email} — they'll set their own password via the emailed link.`
       );
       setTimeout(() => setToast(''), 6000);
       setInviteForm({ name: '', email: '', role: 'CONTROLLER', section: '' });
@@ -163,7 +167,7 @@ export default function AdminPage() {
       if (res.status === 404 || res.status === 405) {
         // Endpoint not yet deployed in this environment
         setEditUser(null);
-        setToast('🔧 Edit saved locally — backend sync coming soon');
+        setToast('Edit saved locally — backend sync coming soon');
         setTimeout(() => setToast(''), 4000);
         queryClient.setQueryData(['users'], (old: any[]) =>
           old?.map(u => u.id === editUser.id ? { ...u, role: editUser.role, section: editUser.section, is_active: editUser.is_active } : u)
@@ -175,7 +179,7 @@ export default function AdminPage() {
         throw new Error(data.detail || data.error || 'Edit failed');
       }
       setEditUser(null);
-      setToast('✅ User updated successfully!');
+      setToast('User updated successfully');
       setTimeout(() => setToast(''), 4000);
       queryClient.invalidateQueries({ queryKey: ['users'] });
     } catch (err: any) {
@@ -199,12 +203,12 @@ export default function AdminPage() {
         body: JSON.stringify({ active: newActive }),
       });
       if (res.status === 404 || res.status === 405) {
-        setToast('🔧 Status toggled locally — backend sync coming soon');
+        setToast('Status toggled locally — backend sync coming soon');
         setTimeout(() => setToast(''), 4000);
         return;
       }
       if (!res.ok) throw new Error('Toggle failed');
-      setToast(`✅ ${u.name} marked ${newActive ? 'ACTIVE' : 'INACTIVE'}`);
+      setToast(`${u.name} marked ${newActive ? 'ACTIVE' : 'INACTIVE'}`);
       setTimeout(() => setToast(''), 3000);
       queryClient.invalidateQueries({ queryKey: ['users'] });
     } catch {
@@ -212,7 +216,7 @@ export default function AdminPage() {
       queryClient.setQueryData(['users'], (old: any[]) =>
         old?.map(usr => usr.id === u.id ? { ...usr, is_active: u.is_active } : usr)
       );
-      setToast('❌ Status toggle failed');
+      setToast('Status toggle failed');
       setTimeout(() => setToast(''), 3000);
     }
   };
@@ -236,7 +240,7 @@ export default function AdminPage() {
         throw new Error(data.detail || data.error || 'Delete failed');
       }
       setEditUser(null);
-      setToast(`🗑️ User deleted permanently!`);
+      setToast('User deleted permanently');
       setTimeout(() => setToast(''), 4000);
       queryClient.invalidateQueries({ queryKey: ['users'] });
     } catch (err: any) {
@@ -260,6 +264,7 @@ export default function AdminPage() {
 
   return (
     <div className="has-mobile-tab-bar" style={{ height: '100vh', display: 'flex', flexDirection: 'column', background: 'var(--bg-base)' }}>
+      <OfficialUtilityBar />
       {/* Top Nav */}
       <header className="app-header-row" style={{ height: '56px', background: '#FFFFFF', borderBottom: '1.5px solid var(--bg-border)', display: 'flex', alignItems: 'center', padding: '0 20px', gap: '20px', flexShrink: 0, boxShadow: '0 2px 8px rgba(0,0,0,0.03)' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
@@ -315,9 +320,12 @@ export default function AdminPage() {
         </aside>
 
         {/* Main Content */}
-        <main style={{ flex: 1, overflowY: 'auto', padding: '32px' }}>
+        <main id="main-content" style={{ flex: 1, overflowY: 'auto', padding: '32px' }}>
           <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
-            
+            <div style={{ marginBottom: '20px' }}>
+              <Breadcrumb items={[{ label: 'Admin' }, { label: TABS.find(t => t.id === activeTab)?.label || 'User Management' }]} />
+            </div>
+
             {activeTab === 'users' && (
               <div className="animate-slide-in">
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '24px' }}>
@@ -432,7 +440,8 @@ export default function AdminPage() {
                     style={{ padding: '6px 12px', fontSize: '12px', fontFamily: 'var(--font-space-mono)' }}
                     onClick={() => queryClient.invalidateQueries({ queryKey: ['admin-health'] })}
                   >
-                    ↻ Refresh
+                    <RefreshCw size={13} strokeWidth={2.25} style={{ display: 'inline', verticalAlign: '-2px', marginRight: '4px' }} />
+                    Refresh
                   </button>
                   {healthCheckedAt && (
                     <span style={{ fontSize: '11px', color: 'var(--text-muted)', fontFamily: 'var(--font-space-mono)' }}>
@@ -498,11 +507,12 @@ export default function AdminPage() {
           </div>
         </main>
       </div>
+      <SiteFooter />
       {/* Invite Modal */}
       {showInviteModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70" style={{ position: 'fixed', inset: 0, zIndex: 50, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(0,0,0,0.7)' }}>
           <div className="bg-[#13161e] border border-[#1e2330] rounded-lg p-8 w-full max-w-md relative" style={{ background: '#13161e', border: '1px solid #1e2330', borderRadius: 'var(--radius-xs)', padding: '32px', width: '100%', maxWidth: '448px', position: 'relative' }}>
-            <button onClick={() => setShowInviteModal(false)} aria-label="Close invite dialog" className="absolute top-4 right-4 text-gray-400 hover:text-white" style={{ position: 'absolute', top: '16px', right: '16px', color: '#6b7280', background: 'none', border: 'none', cursor: 'pointer', fontSize: '16px' }}>✕</button>
+            <button onClick={() => setShowInviteModal(false)} aria-label="Close invite dialog" className="absolute top-4 right-4 text-gray-400 hover:text-white" style={{ position: 'absolute', top: '16px', right: '16px', color: '#6b7280', background: 'none', border: 'none', cursor: 'pointer', fontSize: '16px' }}><X size={16} strokeWidth={2.25} /></button>
             <h2 className="text-white font-mono text-xl mb-1" style={{ color: '#e8eaf0', fontFamily: 'var(--font-space-mono)', fontSize: '20px', margin: '0 0 4px 0' }}>Invite User</h2>
             <p className="text-gray-400 text-sm mb-6" style={{ color: '#6b7280', fontSize: '14px', margin: '0 0 24px 0' }}>Send an invite link to grant system access.</p>
             
@@ -542,7 +552,7 @@ export default function AdminPage() {
       {editUser && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70" style={{ position: 'fixed', inset: 0, zIndex: 50, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(0,0,0,0.7)' }}>
           <div className="bg-[#13161e] border border-[#1e2330] rounded-lg p-8 w-full max-w-md relative" style={{ background: '#13161e', border: '1px solid #1e2330', borderRadius: 'var(--radius-xs)', padding: '32px', width: '100%', maxWidth: '448px', position: 'relative' }}>
-            <button onClick={() => setEditUser(null)} aria-label="Close edit dialog" className="absolute top-4 right-4 text-gray-400 hover:text-white" style={{ position: 'absolute', top: '16px', right: '16px', color: '#6b7280', background: 'none', border: 'none', cursor: 'pointer', fontSize: '16px' }}>✕</button>
+            <button onClick={() => setEditUser(null)} aria-label="Close edit dialog" className="absolute top-4 right-4 text-gray-400 hover:text-white" style={{ position: 'absolute', top: '16px', right: '16px', color: '#6b7280', background: 'none', border: 'none', cursor: 'pointer', fontSize: '16px' }}><X size={16} strokeWidth={2.25} /></button>
             <h2 className="text-white font-mono text-xl mb-1" style={{ color: '#e8eaf0', fontFamily: 'var(--font-space-mono)', fontSize: '20px', margin: '0 0 4px 0' }}>Edit User</h2>
             <p className="text-gray-400 text-sm mb-6" style={{ color: '#6b7280', fontSize: '14px', margin: '0 0 24px 0' }}>{editUser.name} ({editUser.email})</p>
             
@@ -599,10 +609,10 @@ export default function AdminPage() {
       )}
 
       <nav className="mobile-tab-bar">
-        <Link href="/dashboard/controller"><span className="mobile-tab-icon">🎛️</span>Dashboard</Link>
-        <Link href="/simulate"><span className="mobile-tab-icon">▶</span>Simulate</Link>
-        <Link href="/analytics"><span className="mobile-tab-icon">📊</span>Analytics</Link>
-        <Link href="/admin" className="mobile-tab-active"><span className="mobile-tab-icon">⚙️</span>Admin</Link>
+        <Link href="/dashboard/controller"><span className="mobile-tab-icon"><SlidersHorizontal size={18} strokeWidth={2} /></span>Dashboard</Link>
+        <Link href="/simulate"><span className="mobile-tab-icon"><Play size={18} strokeWidth={2} /></span>Simulate</Link>
+        <Link href="/analytics"><span className="mobile-tab-icon"><BarChart3 size={18} strokeWidth={2} /></span>Analytics</Link>
+        <Link href="/admin" className="mobile-tab-active"><span className="mobile-tab-icon"><Settings size={18} strokeWidth={2} /></span>Admin</Link>
       </nav>
     </div>
   );

@@ -2,6 +2,7 @@
 import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 import { API_BASE } from '@/lib/api';
+import { Zap, GitBranch, MessageSquareText, Users, ClipboardList, Satellite, type LucideIcon } from 'lucide-react';
 
 function AnimatedCounter({ target, suffix = '', duration = 2000 }: { target: number; suffix?: string; duration?: number }) {
   const [count, setCount] = useState(0);
@@ -24,51 +25,51 @@ function AnimatedCounter({ target, suffix = '', duration = 2000 }: { target: num
   return <span style={{ fontFamily: 'var(--font-jetbrains)', color: 'var(--accent-primary)' }}>{count}{suffix}</span>;
 }
 
-const FEATURES = [
+const FEATURES: { icon: LucideIcon; title: string; desc: string }[] = [
   {
-    icon: '⚡',
+    icon: Zap,
     title: 'Real-Time Conflict Detection',
-    desc: 'AI monitors every train movement and predicts crossing conflicts seconds before they occur, giving controllers actionable time to act.',
+    desc: 'The system checks every running train pair for shared-platform and crossing conflicts fresh on every request, so controllers always see current section state, not a stale snapshot.',
   },
   {
-    icon: '🧮',
+    icon: GitBranch,
     title: 'What-If Simulation',
-    desc: 'Simulate disruptions before they happen. Run scenarios with delays, breakdowns, or weather events and compare optimized outcomes side-by-side.',
+    desc: 'Simulate disruptions before they happen. Run scenarios with delays, breakdowns, or weather events through the same real solver and compare optimized outcomes side-by-side before applying anything live.',
   },
   {
-    icon: '📊',
-    title: 'Predictive Delay Engine',
-    desc: 'XGBoost + LSTM models trained on historical patterns forecast delays up to 2 hours ahead with station-level granularity.',
+    icon: MessageSquareText,
+    title: 'Explainable Recommendations',
+    desc: 'Every solver decision comes with a plain-language reason grounded in the actual schedule — no black-box output. The controller always sees why, and can Accept or Override.',
   },
   {
-    icon: '👥',
+    icon: Users,
     title: 'Multi-Role Access Control',
     desc: 'Purpose-built dashboards for Section Controllers, Traffic Supervisors, Logistics Operators, and Admins with role-scoped data.',
   },
   {
-    icon: '📋',
+    icon: ClipboardList,
     title: 'Immutable Audit Trail',
-    desc: 'Every AI recommendation, override, and manual decision is logged with operator ID, timestamp, and outcome — full regulatory compliance.',
+    desc: 'Every AI recommendation, override, and manual decision is logged with operator ID, timestamp, and outcome for accountability and review.',
   },
   {
-    icon: '🛰️',
-    title: 'Real-Time IoT Integration',
-    desc: 'Kafka-powered event stream ingests signalling, rolling stock telemetry, and weather APIs in real-time with sub-second latency.',
+    icon: Satellite,
+    title: 'Live Train Tracking',
+    desc: 'Real-time position, delay, and station data for any Indian Railways train number, pulled from a live tracking API — not simulated placeholder data.',
   },
 ];
 
 const TECH_STACK = [
-  'Next.js 14', 'FastAPI', 'PostgreSQL', 'TimescaleDB', 'Redis',
-  'Apache Kafka', 'OR-Tools', 'PyTorch', 'Docker', 'Tailwind CSS',
+  'Next.js', 'TypeScript', 'FastAPI', 'PostgreSQL', 'SQLAlchemy',
+  'Google OR-Tools', 'Groq / Llama 3.1', 'Vercel', 'Railway',
 ];
 
 const ARCH_NODES = [
   { label: 'Next.js Frontend', color: 'var(--accent-primary)', x: 50 },
   { label: 'FastAPI Backend', color: 'var(--accent-safe)', x: 50 },
-  { label: 'OR-Tools Solver', color: 'var(--accent-rail)', x: 20 },
-  { label: 'ML Inference', color: 'var(--accent-rail)', x: 80 },
-  { label: 'PostgreSQL + TimescaleDB', color: 'var(--accent-warn)', x: 30 },
-  { label: 'Redis + Kafka', color: 'var(--accent-warn)', x: 70 },
+  { label: 'OR-Tools CP-SAT Solver', color: 'var(--accent-rail)', x: 20 },
+  { label: 'Groq LLM (Llama 3.1)', color: 'var(--accent-rail)', x: 80 },
+  { label: 'PostgreSQL Database', color: 'var(--accent-warn)', x: 30 },
+  { label: 'RailRadar Live Data API', color: 'var(--accent-warn)', x: 70 },
 ];
 
 export default function LandingPage() {
@@ -195,7 +196,7 @@ export default function LandingPage() {
             <div key={i} className="panel" style={{ padding: '32px', transition: 'border-color 0.2s ease', cursor: 'default' }}
               onMouseEnter={e => (e.currentTarget.style.borderColor = 'var(--accent-primary)')}
               onMouseLeave={e => (e.currentTarget.style.borderColor = 'var(--bg-border)')}>
-              <div style={{ fontSize: '32px', marginBottom: '16px' }}>{f.icon}</div>
+              <div style={{ marginBottom: '16px', color: 'var(--accent-primary)' }}><f.icon size={28} strokeWidth={1.75} /></div>
               <h3 style={{ fontFamily: 'var(--font-space-mono)', fontSize: '16px', fontWeight: 700, marginBottom: '12px', color: 'var(--text-primary)' }}>
                 {f.title}
               </h3>
@@ -228,7 +229,7 @@ export default function LandingPage() {
           </div>
           {/* Arrow flow */}
           <div style={{ textAlign: 'center', marginTop: '32px', fontFamily: 'var(--font-space-mono)', fontSize: '12px', color: 'var(--text-muted)' }}>
-            IoT Sensors → Kafka → ML Pipeline → OR-Tools → WebSocket → Frontend
+            Live Train Data → Conflict Detection → OR-Tools Solver → WebSocket → Frontend
           </div>
         </div>
       </section>

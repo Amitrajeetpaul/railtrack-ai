@@ -52,14 +52,16 @@ async def get_recent_disruptions(
         }
         ui_severity = sev_map.get(c.severity, "warn")
 
-        # Map conflict type to an icon
+        # Semantic key for the frontend to map to a real icon component —
+        # not a raw emoji string (a government/formal-style UI should never
+        # render emoji directly; icons come from a proper icon library).
         icon_map = {
-            "HEAD_ON": "💥",
-            "REAR_END": "🚂",
-            "CROSSING": "🛤️",
-            "STATION_CAPACITY": "🚉",
+            "HEAD_ON": "collision",
+            "REAR_END": "rear-end",
+            "CROSSING": "crossing",
+            "STATION_CAPACITY": "station-capacity",
         }
-        icon = icon_map.get(c.conflict_type, "⚠️")
+        icon = icon_map.get(c.conflict_type, "warning")
 
         time_str = c.detected_at.strftime("%H:%M") if c.detected_at else "Now"
 

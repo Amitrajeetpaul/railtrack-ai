@@ -61,8 +61,32 @@
   --accent-primary-hover: #144272 !important;
   --text-primary: #22223B !important;
   --text-secondary: #6B6B80 !important;
-  --text-muted: #94A3B8 !important;
+  --text-muted: #5B6478 !important;
   --grid-line: #EBF0F5 !important;
+}
+
+/* ---------- High-Contrast Mode ---------- */
+:root[data-contrast="high"] {
+  --text-secondary: #3A3A50 !important;
+  --text-muted: #43485A !important;
+  --bg-border: #94A3B8 !important;
+  --accent-warn-text: #7A4400 !important;
+}
+:root[data-contrast="high"] * {
+  border-color: currentColor;
+}
+:root[data-contrast="high"] .panel,
+:root[data-contrast="high"] .card-elevated,
+:root[data-contrast="high"] .input,
+:root[data-contrast="high"] .btn-ghost {
+  border-width: 1.5px !important;
+  border-color: var(--text-primary) !important;
+}
+:root[data-contrast="high"] a:focus-visible,
+:root[data-contrast="high"] button:focus-visible,
+:root[data-contrast="high"] input:focus-visible {
+  outline: 3px solid var(--accent-primary) !important;
+  outline-offset: 2px !important;
 }
 
 * {

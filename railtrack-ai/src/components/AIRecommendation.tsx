@@ -1,6 +1,7 @@
 'use client';
 import { Conflict } from '@/lib/mockData';
 import { useState, useEffect } from 'react';
+import { X, MapPin, Lightbulb, Check } from 'lucide-react';
 
 interface Props {
   onAccept?: (conflict: Conflict) => void;
@@ -37,8 +38,8 @@ export default function AIRecommendation({ visible, conflict, onDismiss, onAccep
         <span style={{ fontFamily: 'var(--font-headline)', fontSize: '13px', fontWeight: 800, color: 'var(--accent-primary)', letterSpacing: '0.04em' }}>
           SECTION CONTROL RECOMMENDATION
         </span>
-        <button onClick={onDismiss} className="btn-icon" style={{ marginLeft: 'auto', width: '28px', height: '28px', fontSize: '12px', border: 'none' }}>
-          ✕
+        <button onClick={onDismiss} aria-label="Dismiss" className="btn-icon" style={{ marginLeft: 'auto', width: '28px', height: '28px', border: 'none' }}>
+          <X size={14} strokeWidth={2.25} />
         </button>
       </div>
 
@@ -54,7 +55,9 @@ export default function AIRecommendation({ visible, conflict, onDismiss, onAccep
             <span style={{ color: 'var(--text-secondary)' }}>↔</span>
             <span style={{ fontFamily: 'var(--font-mono)', fontSize: '14px', color: 'var(--accent-primary)', fontWeight: 700 }}>{conflict.trainB}</span>
           </div>
-          <div style={{ fontSize: '13px', color: 'var(--text-primary)', marginBottom: '10px' }}>📍 Location: {conflict.location}</div>
+          <div style={{ fontSize: '13px', color: 'var(--text-primary)', marginBottom: '10px', display: 'flex', alignItems: 'center', gap: '5px' }}>
+            <MapPin size={13} strokeWidth={2} /> Location: {conflict.location}
+          </div>
           <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
             <span className={`badge-${conflict.severity === 'HIGH' ? 'conflict' : conflict.severity === 'MEDIUM' ? 'warn' : 'rail'}`}>
               {conflict.severity} SEVERITY
@@ -88,7 +91,9 @@ export default function AIRecommendation({ visible, conflict, onDismiss, onAccep
               color: 'var(--accent-primary)', fontFamily: 'var(--font-headline)', fontSize: '12px', fontWeight: 600,
               display: 'flex', alignItems: 'center', justifyContent: 'space-between', cursor: 'pointer'
             }}>
-            <span>💡 {showXai ? 'Hide Recommendation Logic' : 'Explain Recommendation Logic'}</span>
+            <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+              <Lightbulb size={14} strokeWidth={2} /> {showXai ? 'Hide Recommendation Logic' : 'Explain Recommendation Logic'}
+            </span>
             <span>{showXai ? '▲' : '▼'}</span>
           </button>
 
@@ -132,8 +137,8 @@ export default function AIRecommendation({ visible, conflict, onDismiss, onAccep
 
       {/* Actions */}
       <div style={{ padding: '16px 20px', borderTop: '1px solid var(--bg-border)', display: 'flex', gap: '10px', background: '#FFFFFF' }}>
-        <button className="btn-primary" style={{ flex: 1, justifyContent: 'center', fontSize: '13.5px', padding: '11px', background: 'var(--accent-safe)', borderRadius: 'var(--radius-xs)' }} onClick={() => onAccept?.(conflict)}>
-          ✓ Accept Recommendation
+        <button className="btn-primary" style={{ flex: 1, justifyContent: 'center', fontSize: '13.5px', padding: '11px', background: 'var(--accent-safe)', borderRadius: 'var(--radius-xs)', display: 'inline-flex', alignItems: 'center', gap: '6px' }} onClick={() => onAccept?.(conflict)}>
+          <Check size={15} strokeWidth={2.5} /> Accept Recommendation
         </button>
         <button className="btn-ghost" style={{ flex: 1, justifyContent: 'center', fontSize: '13.5px', padding: '11px', borderRadius: 'var(--radius-xs)' }} onClick={() => onOverride?.(conflict)}>
           Override

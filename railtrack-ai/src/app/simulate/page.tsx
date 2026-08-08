@@ -8,6 +8,9 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Train } from '@/lib/mockData';
 import { API_BASE, trainsQueryFor } from '@/lib/api';
 import { useAuth } from '@/lib/auth';
+import { Radio, TriangleAlert, Zap, Rocket, Lightbulb, SlidersHorizontal, Play, BarChart3, Settings } from 'lucide-react';
+import OfficialUtilityBar from '@/components/OfficialUtilityBar';
+import Breadcrumb from '@/components/Breadcrumb';
 
 function getClientToken() {
   const match = document.cookie.match(/(?:^|;\s*)railtrack_token=([^;]*)/);
@@ -206,6 +209,7 @@ export default function SimulatePage() {
 
   return (
     <div className="has-mobile-tab-bar" style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', background: 'var(--bg-base)' }}>
+      <OfficialUtilityBar />
       {/* Top Nav */}
       <header className="app-header-row" style={{ height: '56px', background: '#FFFFFF', borderBottom: '1.5px solid var(--bg-border)', display: 'flex', alignItems: 'center', padding: '0 20px', gap: '20px', flexShrink: 0, boxShadow: '0 2px 8px rgba(0,0,0,0.03)' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
@@ -240,7 +244,7 @@ export default function SimulatePage() {
           style={{
             padding: '8px 14px', borderRadius: 'var(--radius-xs)', cursor: 'pointer', fontFamily: 'var(--font-headline)', fontSize: '12px'
           }}>
-          <span>📡</span> Railway Systems Feeds (COA/FOIS)
+          <Radio size={14} strokeWidth={2.25} style={{ display: 'inline', verticalAlign: '-2px', marginRight: '4px' }} /> Railway Systems Feeds (COA/FOIS)
         </button>
       </header>
 
@@ -370,8 +374,10 @@ export default function SimulatePage() {
 
 
         {/* ── CENTER AREA (Map & Results) ── */}
-        <main className="main-content-col" style={{ flex: 1, display: 'flex', flexDirection: 'column', padding: '24px', overflowY: 'auto' }}>
-          
+        <main id="main-content" className="main-content-col" style={{ flex: 1, display: 'flex', flexDirection: 'column', padding: '24px', overflowY: 'auto' }}>
+          <div style={{ marginBottom: '16px' }}>
+            <Breadcrumb items={[{ label: 'Simulate' }]} />
+          </div>
           <div style={{ marginBottom: '24px' }}>
             <h3 style={{ fontFamily: 'var(--font-space-mono)', fontSize: '16px', marginBottom: '16px' }}>Scenario Context: T-0</h3>
             <LiveTrackMap />
@@ -397,8 +403,8 @@ export default function SimulatePage() {
               padding: '20px', background: '#FFEBEE', border: '1px solid #FFCDD2',
               borderRadius: 'var(--radius-xs)', display: 'flex', flexDirection: 'column', gap: '8px',
             }}>
-              <div style={{ fontFamily: 'var(--font-space-mono)', fontSize: '13px', fontWeight: 700, color: 'var(--accent-danger)' }}>
-                ⚠ No Feasible Schedule Found ({simResults.status})
+              <div style={{ fontFamily: 'var(--font-space-mono)', fontSize: '13px', fontWeight: 700, color: 'var(--accent-danger)', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <TriangleAlert size={15} strokeWidth={2.25} /> No Feasible Schedule Found ({simResults.status})
               </div>
               <div style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>
                 The solver could not find any valid schedule that satisfies every safety constraint
@@ -418,8 +424,8 @@ export default function SimulatePage() {
                 display: 'flex', justifyContent: 'space-between', alignItems: 'center'
               }}>
                 <div>
-                  <div style={{ fontFamily: 'var(--font-space-mono)', fontSize: '13px', fontWeight: 700, color: 'var(--accent-primary)' }}>
-                    ⚡ AI OPTIMIZATION PLAN READY (SIMULATION #{simResults?.simulation_id})
+                  <div style={{ fontFamily: 'var(--font-space-mono)', fontSize: '13px', fontWeight: 700, color: 'var(--accent-primary)', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <Zap size={14} strokeWidth={2.25} /> AI OPTIMIZATION PLAN READY (SIMULATION #{simResults?.simulation_id})
                   </div>
                   <div style={{ fontSize: '12px', color: 'var(--text-secondary)', marginTop: '2px' }}>
                     {applyMessage ? applyMessage : 'Review recommendations below and apply directly to live section trains in PostgreSQL.'}
@@ -429,8 +435,8 @@ export default function SimulatePage() {
                   onClick={handleApplyStrategy}
                   disabled={isApplying}
                   className="btn-primary"
-                  style={{ padding: '10px 18px', fontSize: '13px', whiteSpace: 'nowrap' }}>
-                  {isApplying ? 'Applying Strategy...' : '🚀 Apply Strategy to Live Corridor'}
+                  style={{ padding: '10px 18px', fontSize: '13px', whiteSpace: 'nowrap', display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+                  {isApplying ? 'Applying Strategy...' : <><Rocket size={14} strokeWidth={2.25} /> Apply Strategy to Live Corridor</>}
                 </button>
               </div>
 
@@ -487,8 +493,8 @@ export default function SimulatePage() {
                           (Platform {item.platform || 1})
                         </span>
                         {item.xai_explanation && (
-                          <div style={{ fontSize: '12px', color: 'var(--text-primary)', marginTop: '2px', fontStyle: 'italic' }}>
-                            💡 Operational Reasoning: {item.xai_explanation}
+                          <div style={{ fontSize: '12px', color: 'var(--text-primary)', marginTop: '2px', fontStyle: 'italic', display: 'flex', alignItems: 'flex-start', gap: '6px' }}>
+                            <Lightbulb size={13} strokeWidth={2} style={{ flexShrink: 0, marginTop: '1px' }} /> Operational Reasoning: {item.xai_explanation}
                           </div>
                         )}
                       </li>
@@ -657,10 +663,10 @@ export default function SimulatePage() {
       <SystemFeedsModal isOpen={isSystemsModalOpen} onClose={() => setIsSystemsModalOpen(false)} />
 
       <nav className="mobile-tab-bar">
-        <Link href="/dashboard/controller"><span className="mobile-tab-icon">🎛️</span>Dashboard</Link>
-        <Link href="/simulate" className="mobile-tab-active"><span className="mobile-tab-icon">▶</span>Simulate</Link>
-        <Link href="/analytics"><span className="mobile-tab-icon">📊</span>Analytics</Link>
-        <Link href="/admin"><span className="mobile-tab-icon">⚙️</span>Admin</Link>
+        <Link href="/dashboard/controller"><span className="mobile-tab-icon"><SlidersHorizontal size={18} strokeWidth={2} /></span>Dashboard</Link>
+        <Link href="/simulate" className="mobile-tab-active"><span className="mobile-tab-icon"><Play size={18} strokeWidth={2} /></span>Simulate</Link>
+        <Link href="/analytics"><span className="mobile-tab-icon"><BarChart3 size={18} strokeWidth={2} /></span>Analytics</Link>
+        <Link href="/admin"><span className="mobile-tab-icon"><Settings size={18} strokeWidth={2} /></span>Admin</Link>
       </nav>
 
       <style>{`

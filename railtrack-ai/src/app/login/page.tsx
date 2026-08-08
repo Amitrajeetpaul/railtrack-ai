@@ -2,6 +2,9 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth, UserRole } from '@/lib/auth';
+import { SlidersHorizontal, TrendingUp, Truck, Settings, TriangleAlert, ArrowRight, type LucideIcon } from 'lucide-react';
+import OfficialUtilityBar from '@/components/OfficialUtilityBar';
+import SiteFooter from '@/components/SiteFooter';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8000';
 
@@ -9,11 +12,11 @@ function setCookie(name: string, value: string, maxAgeSeconds = 86400) {
   document.cookie = `${name}=${encodeURIComponent(value)}; path=/; max-age=${maxAgeSeconds}; SameSite=Lax`;
 }
 
-const ROLES: { key: UserRole; icon: string; label: string; desc: string }[] = [
-  { key: 'CONTROLLER',  icon: '🎛️', label: 'Section Controller',    desc: 'Live track map, conflict resolution' },
-  { key: 'SUPERVISOR',  icon: '📈', label: 'Traffic Supervisor',     desc: 'Aggregate KPIs, multi-section view' },
-  { key: 'LOGISTICS',   icon: '🚚', label: 'Logistics Operator',     desc: 'Freight scheduling, cargo ETAs' },
-  { key: 'ADMIN',       icon: '⚙️', label: 'System Administrator',   desc: 'Users, config, system health' },
+const ROLES: { key: UserRole; icon: LucideIcon; label: string; desc: string }[] = [
+  { key: 'CONTROLLER',  icon: SlidersHorizontal, label: 'Section Controller',    desc: 'Live track map, conflict resolution' },
+  { key: 'SUPERVISOR',  icon: TrendingUp,        label: 'Traffic Supervisor',     desc: 'Aggregate KPIs, multi-section view' },
+  { key: 'LOGISTICS',   icon: Truck,             label: 'Logistics Operator',     desc: 'Freight scheduling, cargo ETAs' },
+  { key: 'ADMIN',       icon: Settings,          label: 'System Administrator',   desc: 'Users, config, system health' },
 ];
 
 export default function LoginPage() {
@@ -107,22 +110,26 @@ export default function LoginPage() {
   };
 
   return (
-    <div style={{
-      minHeight: '100vh',
-      background: 'var(--bg-base)',
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center',
-      justifyContent: 'center',
-      padding: '24px',
-      position: 'relative',
-    }}>
+    <div style={{ minHeight: '100vh', background: 'var(--bg-base)', display: 'flex', flexDirection: 'column' }}>
+      <OfficialUtilityBar />
+      <div style={{
+        flex: 1,
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '24px',
+        position: 'relative',
+      }}>
       {/* Background grid lines */}
       <div style={{ position: 'absolute', inset: 0, backgroundImage: 'linear-gradient(var(--grid-line) 1px, transparent 1px), linear-gradient(90deg, var(--grid-line) 1px, transparent 1px)', backgroundSize: '40px 40px', opacity: 0.7 }} />
 
-      <div style={{ position: 'relative', zIndex: 1, width: '100%', maxWidth: '520px' }}>
-        {/* Logo Header */}
+      <div id="main-content" style={{ position: 'relative', zIndex: 1, width: '100%', maxWidth: '520px' }}>
+        {/* Formal Masthead */}
         <div style={{ textAlign: 'center', marginBottom: '32px' }}>
+          <div style={{ fontFamily: 'var(--font-headline)', fontSize: '11px', color: 'var(--text-muted)', fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: '10px' }}>
+            Ministry of Railways &middot; Problem Statement 25022
+          </div>
           <div style={{ display: 'inline-flex', alignItems: 'center', gap: '10px', marginBottom: '8px' }}>
             <span className="signal-lamp signal-lamp-green" style={{ width: '16px', height: '16px' }} />
             <span style={{ fontFamily: 'var(--font-headline)', fontSize: '28px', fontWeight: 800, color: 'var(--accent-primary)', letterSpacing: '-0.03em' }}>
@@ -130,7 +137,7 @@ export default function LoginPage() {
             </span>
           </div>
           <div style={{ fontFamily: 'var(--font-headline)', fontSize: '13px', color: 'var(--text-secondary)', fontWeight: 500, letterSpacing: '0.04em' }}>
-            Indian Railways Traffic Decision Support System
+            Decision Support System for Section Traffic Control
           </div>
         </div>
 
@@ -154,7 +161,7 @@ export default function LoginPage() {
                     transition: 'all 0.15s ease',
                     boxShadow: selectedRole === role.key ? '0 2px 8px rgba(26,84,144,0.12)' : 'none',
                   }}>
-                  <div style={{ fontSize: '18px', marginBottom: '4px' }}>{role.icon}</div>
+                  <div style={{ marginBottom: '6px', color: selectedRole === role.key ? 'var(--accent-primary)' : 'var(--text-secondary)' }}><role.icon size={20} strokeWidth={2} /></div>
                   <div style={{ fontFamily: 'var(--font-headline)', fontSize: '12.5px', fontWeight: 700, color: selectedRole === role.key ? 'var(--accent-primary)' : 'var(--text-primary)' }}>
                     {role.label}
                   </div>
@@ -200,8 +207,8 @@ export default function LoginPage() {
 
             {/* Error message */}
             {error && (
-              <div className="badge-conflict" style={{ width: '100%', marginBottom: '16px', padding: '10px 14px', borderRadius: 'var(--radius-xs)', fontSize: '13px' }}>
-                ⚠ {error}
+              <div className="badge-conflict" style={{ width: '100%', marginBottom: '16px', padding: '10px 14px', borderRadius: 'var(--radius-xs)', fontSize: '13px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <TriangleAlert size={14} strokeWidth={2.25} /> {error}
               </div>
             )}
 
@@ -211,7 +218,7 @@ export default function LoginPage() {
                   <span style={{ display: 'inline-block', width: '14px', height: '14px', border: '2px solid #FFFFFF', borderTopColor: 'transparent', borderRadius: '50%', animation: 'spin 0.6s linear infinite' }} />
                   Authenticating...
                 </>
-              ) : 'Sign In to Dashboard →'}
+              ) : <>Sign In to Dashboard <ArrowRight size={16} strokeWidth={2.25} /></>}
             </button>
           </form>
 
@@ -253,8 +260,8 @@ export default function LoginPage() {
 
           {/* Google auth error */}
           {googleError && (
-            <div className="badge-conflict" style={{ width: '100%', marginTop: '12px', padding: '10px 14px', borderRadius: 'var(--radius-xs)', fontSize: '12px' }}>
-              ⚠ {googleError}
+            <div className="badge-conflict" style={{ width: '100%', marginTop: '12px', padding: '10px 14px', borderRadius: 'var(--radius-xs)', fontSize: '12px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <TriangleAlert size={13} strokeWidth={2.25} /> {googleError}
             </div>
           )}
 
@@ -270,6 +277,8 @@ export default function LoginPage() {
           </div>
         </div>
       </div>
+      </div>
+      <SiteFooter />
 
       <style>{`
         @keyframes spin { to { transform: rotate(360deg); } }

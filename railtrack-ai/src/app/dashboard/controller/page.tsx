@@ -7,6 +7,19 @@ import LiveTrackMap from '@/components/LiveTrackMap';
 import AIRecommendation from '@/components/AIRecommendation';
 import { Train, Conflict, TrainPriority } from '@/lib/mockData';
 import { API_BASE, trainsQueryFor } from '@/lib/api';
+import { OctagonAlert, RefreshCw, TriangleAlert, Zap, Check, SlidersHorizontal, BarChart3, Settings, Wrench, Search, TrainFront, GitBranch, Building2, Info, Play, type LucideIcon } from 'lucide-react';
+import OfficialUtilityBar from '@/components/OfficialUtilityBar';
+import Breadcrumb from '@/components/Breadcrumb';
+
+const DISRUPTION_ICONS: Record<string, LucideIcon> = {
+  collision: OctagonAlert,
+  'rear-end': TrainFront,
+  crossing: GitBranch,
+  'station-capacity': Building2,
+  warning: TriangleAlert,
+  weather: Zap,
+  maintenance: Wrench,
+};
 
 // Helper to grab token on the client
 function getClientToken() {
@@ -67,8 +80,8 @@ const NON_BACKEND_CONFLICT_IDS = new Set(DEFAULT_DEMO_CONFLICTS.map(c => c.id));
 const isBackendConflict = (id: string) => !id.startsWith('DEMO-') && !NON_BACKEND_CONFLICT_IDS.has(id);
 
 const DEFAULT_DEMO_DISRUPTIONS = [
-  { icon: '⚡', text: 'OHE Voltage Drop reported near Mathura (MTJ) UP Line — Speed restricted to 90 km/h', time: '10 min ago', severity: 'medium' },
-  { icon: '🛠️', text: 'Scheduled Track Maintenance active on Track #4 (AGC-DHO)', time: '25 min ago', severity: 'low' },
+  { icon: 'weather', text: 'OHE Voltage Drop reported near Mathura (MTJ) UP Line — Speed restricted to 90 km/h', time: '10 min ago', severity: 'medium' },
+  { icon: 'maintenance', text: 'Scheduled Track Maintenance active on Track #4 (AGC-DHO)', time: '25 min ago', severity: 'low' },
 ];
 
 export default function ControllerDashboard() {
@@ -171,7 +184,7 @@ export default function ControllerDashboard() {
       if (data.status === 'ok') {
         setSearchNotification(`Fetched Train ${num} (${newTrain.name}): @ ${data.current_station_name || 'En Route'} → Next: ${data.next_station || 'Transit'} (${data.delay_minutes === 0 ? '● ON TIME' : `+${data.delay_minutes}m delay`})`);
       } else if (data.status === 'unavailable') {
-        setSearchNotification(`⚠ Train ${num} added from timetable — live position unavailable: ${data.message || 'live tracking service unreachable'}`);
+        setSearchNotification(`Train ${num} added from timetable — live position unavailable: ${data.message || 'live tracking service unreachable'}`);
       } else {
         setSearchNotification(`Train ${num} added to queue: ${data.message || 'Scheduled'}`);
       }
@@ -225,7 +238,7 @@ export default function ControllerDashboard() {
       }));
 
       setSelectedTrain(num);
-      setSearchNotification(`✓ Added Train ${num} (${name}): ${origin} → ${destination} (On Schedule)`);
+      setSearchNotification(`Added Train ${num} (${name}): ${origin} → ${destination} (On Schedule)`);
     } finally {
       setIsSearching(false);
     }
@@ -556,7 +569,7 @@ export default function ControllerDashboard() {
     setConflicts(prev => [demoConflict, ...prev.filter(c => c.id !== demoConflict.id)]);
     setActiveConflict(demoConflict);
     setShowAI(true);
-    setSearchNotification(`⚡ Demo Scenario loaded: "${demoConflict.location}" — AI Recommendation modal active!`);
+    setSearchNotification(`Demo Scenario loaded: "${demoConflict.location}" — AI Recommendation modal active`);
   }, []);
 
   // Previously auto-opened the AI Recommendation popup 5s after load and
@@ -713,10 +726,12 @@ export default function ControllerDashboard() {
 
   return (
     <div className="has-mobile-tab-bar has-mobile-action-bar" style={{ height: '100vh', display: 'flex', flexDirection: 'column', overflow: 'hidden', background: 'var(--bg-base)' }}>
+      <OfficialUtilityBar />
       {/* Demo Banner */}
       {user?.isDemo && (
         <div className="demo-banner">
-          ⚠ DEMO MODE — Section {user?.section || 'NR-42'} &nbsp;|&nbsp; User: {user.name} [{user.role}]
+          <TriangleAlert size={13} strokeWidth={2.25} style={{ display: 'inline', verticalAlign: '-2px', marginRight: '4px' }} />
+          DEMO MODE — Section {user?.section || 'NR-42'} &nbsp;|&nbsp; User: {user.name} [{user.role}]
         </div>
       )}
       {/* Sample-data banner: shown even for a real logged-in session if one or
@@ -724,7 +739,8 @@ export default function ControllerDashboard() {
           for real telemetry. */}
       {!user?.isDemo && fallbackFeeds.length > 0 && (
         <div className="demo-banner">
-          ⚠ Showing sample data for {fallbackFeeds.join(', ')} — live backend unreachable
+          <TriangleAlert size={13} strokeWidth={2.25} style={{ display: 'inline', verticalAlign: '-2px', marginRight: '4px' }} />
+          Showing sample data for {fallbackFeeds.join(', ')} — live backend unreachable
         </div>
       )}
 
@@ -823,21 +839,23 @@ export default function ControllerDashboard() {
                 onChange={e => setSearchQuery(e.target.value)}
                 style={{ padding: '6px 10px', fontSize: '11px', flex: 1, fontFamily: 'var(--font-jetbrains)' }}
               />
-              <button type="submit" className="btn-primary" disabled={isSearching} aria-label="Fetch live train data" style={{ padding: '6px 10px', fontSize: '11px', whiteSpace: 'nowrap' }}>
-                {isSearching ? '...' : '🔍 Fetch'}
+              <button type="submit" className="btn-primary" disabled={isSearching} aria-label="Fetch live train data" style={{ padding: '6px 10px', fontSize: '11px', whiteSpace: 'nowrap', display: 'inline-flex', alignItems: 'center', gap: '5px' }}>
+                {isSearching ? '...' : <><Search size={13} strokeWidth={2.25} /> Fetch</>}
               </button>
             </form>
 
             {/* Informational note about live data */}
             <div style={{ padding: '6px 16px', background: '#EBF3FA', borderBottom: '1px solid var(--bg-border)', display: 'flex', alignItems: 'center', gap: '6px' }}>
               <span style={{ fontSize: '11px', color: 'var(--accent-primary)', fontFamily: 'var(--font-headline)', fontWeight: 600 }}>
-                ℹ Search any Indian Railways train number to fetch live IRCTC tracking
+                <Info size={12} strokeWidth={2} style={{ display: 'inline', verticalAlign: '-2px', marginRight: '4px' }} />
+                Search any Indian Railways train number to fetch live IRCTC tracking
               </span>
             </div>
 
             {searchNotification && (
-              <div style={{ padding: '8px 12px', background: '#EBF3FA', borderBottom: '1px solid var(--accent-primary)', color: 'var(--accent-primary)', fontSize: '11px', fontFamily: 'var(--font-mono)', lineHeight: 1.4 }}>
-                {searchNotification}
+              <div style={{ padding: '8px 12px', background: '#EBF3FA', borderBottom: '1px solid var(--accent-primary)', color: 'var(--accent-primary)', fontSize: '11px', fontFamily: 'var(--font-mono)', lineHeight: 1.4, display: 'flex', alignItems: 'flex-start', gap: '6px' }}>
+                <Info size={13} strokeWidth={2} style={{ flexShrink: 0, marginTop: '1px' }} />
+                <span>{searchNotification}</span>
               </div>
             )}
 
@@ -968,9 +986,12 @@ export default function ControllerDashboard() {
                             fontFamily: 'var(--font-jetbrains)',
                             fontWeight: 700,
                             fontSize: '11px',
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '3px',
                           }}>
                             {liveTrainData[train.id].delay === 0
-                              ? '✓ On time'
+                              ? <><Check size={11} strokeWidth={3} /> On time</>
                               : `+${liveTrainData[train.id].delay}m delay`}
                           </span>
                           {liveTrainData[train.id].currentStation && (
@@ -1007,31 +1028,29 @@ export default function ControllerDashboard() {
           {/* Quick actions */}
           <div style={{ padding: '12px', borderTop: '1px solid var(--bg-border)', display: 'flex', flexDirection: 'column', gap: '8px' }}>
             <div className="panel-header" style={{ marginBottom: '4px' }}>Quick Actions</div>
-            <button className="btn-danger" style={{ fontSize: '12px', padding: '8px', justifyContent: 'center', width: '100%' }}>
-              🛑 Halt Selected
+            <button className="btn-danger" style={{ fontSize: '12px', padding: '8px', justifyContent: 'center', width: '100%', display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+              <OctagonAlert size={14} strokeWidth={2.25} /> Halt Selected
             </button>
-            <button className="btn-ghost" style={{ fontSize: '12px', padding: '8px', justifyContent: 'center', width: '100%' }}>
-              🔄 Clear Section
+            <button className="btn-ghost" style={{ fontSize: '12px', padding: '8px', justifyContent: 'center', width: '100%', display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+              <RefreshCw size={14} strokeWidth={2.25} /> Clear Section
             </button>
-            <button className="btn-danger" style={{ fontSize: '12px', padding: '8px', justifyContent: 'center', width: '100%', background: '#7f1d1d', color: '#fca5a5' }}>
-              ⚠ Emergency Stop
+            <button className="btn-danger" style={{ fontSize: '12px', padding: '8px', justifyContent: 'center', width: '100%', background: '#7f1d1d', color: '#fca5a5', display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+              <TriangleAlert size={14} strokeWidth={2.25} /> Emergency Stop
             </button>
           </div>
         </aside>
         )}
 
         {/* ── CENTER COLUMN ── */}
-        <main className="main-content-col" style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden', minWidth: 0 }}>
+        <main id="main-content" className="main-content-col" style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden', minWidth: 0 }}>
           {/* Section header */}
           <div style={{ padding: '12px 16px', borderBottom: '1px solid var(--bg-border)', display: 'flex', alignItems: 'center', gap: '12px', background: 'var(--bg-surface)' }}>
-            <div style={{ fontSize: '13px', color: 'var(--text-muted)', fontFamily: 'var(--font-space-mono)' }}>
-              NR / {user?.section || 'NR-42'} / <span style={{ color: 'var(--text-secondary)' }}>Controller View</span>
-            </div>
+            <Breadcrumb items={[{ label: user?.section || 'NR-42' }, { label: 'Controller View' }]} />
             <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: '12px' }}>
               {/* Demo Scenario Presets Dropdown / Buttons */}
               <div style={{ display: 'flex', alignItems: 'center', gap: '6px', background: 'rgba(0, 212, 255, 0.08)', padding: '4px 8px', borderRadius: 'var(--radius-xs)', border: '1px solid rgba(0, 212, 255, 0.2)' }}>
-                <span style={{ fontSize: '11px', fontFamily: 'var(--font-space-mono)', color: 'var(--accent-primary)', fontWeight: 700 }}>
-                  ⚡ DEMO PRESETS:
+                <span style={{ fontSize: '11px', fontFamily: 'var(--font-space-mono)', color: 'var(--accent-primary)', fontWeight: 700, display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                  <Zap size={12} strokeWidth={2.5} /> DEMO PRESETS:
                 </span>
                 <button
                   onClick={() => triggerDemoScenario('overtake')}
@@ -1195,8 +1214,8 @@ export default function ControllerDashboard() {
 
             {/* Quick Demo Trigger Box */}
             <div style={{ padding: '8px 16px', background: 'rgba(0, 212, 255, 0.05)', borderBottom: '1px solid var(--bg-border)' }}>
-              <div style={{ fontSize: '10px', color: 'var(--text-muted)', fontFamily: 'var(--font-space-mono)', marginBottom: '6px' }}>
-                ⚡ TEST DEMO CONFLICTS:
+              <div style={{ fontSize: '10px', color: 'var(--text-muted)', fontFamily: 'var(--font-space-mono)', marginBottom: '6px', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                <Zap size={11} strokeWidth={2.5} /> TEST DEMO CONFLICTS:
               </div>
               <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
                 <button
@@ -1231,8 +1250,8 @@ export default function ControllerDashboard() {
                 </div>
               ))}
               {conflicts.length === 0 && (
-                <div style={{ padding: '16px', fontSize: '12px', color: 'var(--accent-safe)', textAlign: 'center', fontFamily: 'var(--font-space-mono)' }}>
-                  ✓ NO ACTIVE CONFLICTS
+                <div style={{ padding: '16px', fontSize: '12px', color: 'var(--accent-safe)', textAlign: 'center', fontFamily: 'var(--font-space-mono)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
+                  <Check size={14} strokeWidth={2.5} /> NO ACTIVE CONFLICTS
                 </div>
               )}
             </div>
@@ -1250,19 +1269,22 @@ export default function ControllerDashboard() {
                   Loading...
                 </div>
               ) : disruptions.length === 0 ? (
-                <div style={{ padding: '16px', fontSize: '12px', color: 'var(--accent-safe)', textAlign: 'center', fontFamily: 'var(--font-space-mono)' }}>
-                  ✓ NO ACTIVE DISRUPTIONS
+                <div style={{ padding: '16px', fontSize: '12px', color: 'var(--accent-safe)', textAlign: 'center', fontFamily: 'var(--font-space-mono)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
+                  <Check size={14} strokeWidth={2.5} /> NO ACTIVE DISRUPTIONS
                 </div>
               ) : (
-                disruptions.map((d, i) => (
+                disruptions.map((d, i) => {
+                  const DIcon = DISRUPTION_ICONS[d.icon] || TriangleAlert;
+                  return (
                   <div key={i} style={{ padding: '10px 16px', borderBottom: '1px solid var(--bg-border)', display: 'flex', gap: '10px' }}>
-                    <span style={{ fontSize: '16px' }}>{d.icon}</span>
+                    <span style={{ color: 'var(--text-secondary)', flexShrink: 0 }}><DIcon size={16} strokeWidth={2} /></span>
                     <div>
                       <div style={{ fontSize: '12px', color: 'var(--text-secondary)', lineHeight: 1.4 }}>{d.text}</div>
                       <div style={{ fontFamily: 'var(--font-jetbrains)', fontSize: '11px', color: 'var(--text-muted)', marginTop: '2px' }}>{d.time}</div>
                     </div>
                   </div>
-                ))
+                  );
+                })
               )}
             </div>
           </div>
@@ -1346,23 +1368,27 @@ export default function ControllerDashboard() {
 
       {/* Mobile bottom action bar — critical actions, always reachable with one thumb */}
       <div className="mobile-action-bar">
-        <button className="btn-danger" aria-label="Halt selected train">🛑 Halt</button>
-        <button className="btn-danger" style={{ background: '#7f1d1d', color: '#fca5a5' }} aria-label="Emergency stop">⚠ Emergency Stop</button>
+        <button className="btn-danger" aria-label="Halt selected train" style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '5px' }}>
+          <OctagonAlert size={13} strokeWidth={2.25} /> Halt
+        </button>
+        <button className="btn-danger" style={{ background: '#7f1d1d', color: '#fca5a5', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '5px' }} aria-label="Emergency stop">
+          <TriangleAlert size={13} strokeWidth={2.25} /> Emergency Stop
+        </button>
       </div>
 
       {/* Mobile bottom tab bar navigation */}
       <nav className="mobile-tab-bar">
         <Link href="/dashboard/controller" className="mobile-tab-active">
-          <span className="mobile-tab-icon">🎛️</span>Dashboard
+          <span className="mobile-tab-icon"><SlidersHorizontal size={18} strokeWidth={2} /></span>Dashboard
         </Link>
         <Link href="/simulate">
-          <span className="mobile-tab-icon">▶</span>Simulate
+          <span className="mobile-tab-icon"><Play size={18} strokeWidth={2} /></span>Simulate
         </Link>
         <Link href="/analytics">
-          <span className="mobile-tab-icon">📊</span>Analytics
+          <span className="mobile-tab-icon"><BarChart3 size={18} strokeWidth={2} /></span>Analytics
         </Link>
         <Link href="/admin">
-          <span className="mobile-tab-icon">⚙️</span>Admin
+          <span className="mobile-tab-icon"><Settings size={18} strokeWidth={2} /></span>Admin
         </Link>
       </nav>
     </div>

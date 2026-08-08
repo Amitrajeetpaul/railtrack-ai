@@ -12,6 +12,10 @@ import {
   LineChart, Line, BarChart, Bar, AreaChart, Area,
   XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer
 } from 'recharts';
+import { SlidersHorizontal, Play, BarChart3, Settings } from 'lucide-react';
+import OfficialUtilityBar from '@/components/OfficialUtilityBar';
+import Breadcrumb from '@/components/Breadcrumb';
+import SiteFooter from '@/components/SiteFooter';
 
 function getClientToken() {
   const match = document.cookie.match(/(?:^|;\s*)railtrack_token=([^;]*)/);
@@ -255,7 +259,7 @@ export default function AnalyticsPage() {
 
   return (
     <div className="has-mobile-tab-bar" style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', background: 'var(--bg-base)' }}>
-      {/* Top Nav */}
+      <OfficialUtilityBar />
       {/* Top Nav */}
       <header className="app-header-row" style={{ height: '56px', background: '#FFFFFF', borderBottom: '1.5px solid var(--bg-border)', display: 'flex', alignItems: 'center', padding: '0 20px', gap: '20px', flexShrink: 0, boxShadow: '0 2px 8px rgba(0,0,0,0.03)' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
@@ -286,19 +290,20 @@ export default function AnalyticsPage() {
       </header>
 
       {/* Content */}
-      <main style={{ flex: 1, padding: '24px', overflowY: 'auto' }}>
+      <main id="main-content" style={{ padding: '24px' }}>
         <div style={{ maxWidth: '1400px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '32px' }}>
-          
+          <Breadcrumb items={[{ label: 'Analytics' }]} />
+
           {/* Controls Header */}
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px' }}>
             <div>
               <h1 style={{ fontFamily: 'var(--font-space-mono)', fontSize: '24px', fontWeight: 700 }}>Performance Analytics</h1>
               <p style={{ fontSize: '14px', color: 'var(--text-secondary)', marginTop: '4px' }}>Section {user?.section || 'NR-42'} · Last {period} Day{period === 1 ? '' : 's'} Overview</p>
             </div>
-            <div style={{ display: 'flex', gap: '12px' }}>
+            <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
               <select
                 className="input"
-                style={{ width: '200px', height: '36px', padding: '0 12px' }}
+                style={{ width: '160px', maxWidth: '100%', height: '36px', padding: '0 12px' }}
                 value={String(period)}
                 onChange={e => setPeriod(Number(e.target.value))}
               >
@@ -308,7 +313,7 @@ export default function AnalyticsPage() {
               </select>
               <select
                 className="input"
-                style={{ width: '200px', height: '36px', padding: '0 12px' }}
+                style={{ width: '160px', maxWidth: '100%', height: '36px', padding: '0 12px' }}
                 value={section}
                 onChange={e => setSection(e.target.value)}
               >
@@ -523,11 +528,12 @@ export default function AnalyticsPage() {
           </div>
 
           {/* Incidents Table */}
-          <div className="panel" style={{ overflow: 'hidden' }}>
+          <div className="panel" style={{ overflow: 'hidden', minWidth: 0 }}>
             <div style={{ padding: '16px 24px', borderBottom: '1px solid var(--bg-border)' }}>
               <span className="panel-header">Recent Section Incidents</span>
             </div>
-            <table className="data-table">
+            <div className="table-scroll-wrap">
+            <table className="data-table" style={{ minWidth: '640px' }}>
               <thead>
                 <tr>
                   <th>Incident ID</th>
@@ -557,16 +563,18 @@ export default function AnalyticsPage() {
                 ))}
               </tbody>
             </table>
+            </div>
           </div>
 
         </div>
       </main>
+      <SiteFooter />
 
       <nav className="mobile-tab-bar">
-        <Link href="/dashboard/controller"><span className="mobile-tab-icon">🎛️</span>Dashboard</Link>
-        <Link href="/simulate"><span className="mobile-tab-icon">▶</span>Simulate</Link>
-        <Link href="/analytics" className="mobile-tab-active"><span className="mobile-tab-icon">📊</span>Analytics</Link>
-        <Link href="/admin"><span className="mobile-tab-icon">⚙️</span>Admin</Link>
+        <Link href="/dashboard/controller"><span className="mobile-tab-icon"><SlidersHorizontal size={18} strokeWidth={2} /></span>Dashboard</Link>
+        <Link href="/simulate"><span className="mobile-tab-icon"><Play size={18} strokeWidth={2} /></span>Simulate</Link>
+        <Link href="/analytics" className="mobile-tab-active"><span className="mobile-tab-icon"><BarChart3 size={18} strokeWidth={2} /></span>Analytics</Link>
+        <Link href="/admin"><span className="mobile-tab-icon"><Settings size={18} strokeWidth={2} /></span>Admin</Link>
       </nav>
     </div>
   );
