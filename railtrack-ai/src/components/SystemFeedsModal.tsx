@@ -53,12 +53,14 @@ export default function SystemFeedsModal({ isOpen, onClose }: { isOpen: boolean;
     <div style={{
       position: 'fixed', inset: 0, zIndex: 100,
       background: 'rgba(10, 12, 16, 0.85)', backdropFilter: 'blur(8px)',
-      display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px'
+      display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px',
+      overflowY: 'auto',
     }}>
       <div style={{
         width: '100%', maxWidth: '840px', background: 'var(--bg-surface)',
         border: '1px solid var(--bg-border)', borderRadius: 'var(--radius-sm)', overflow: 'hidden',
-        boxShadow: '0 20px 50px rgba(0,0,0,0.6)', display: 'flex', flexDirection: 'column'
+        boxShadow: '0 20px 50px rgba(0,0,0,0.6)', display: 'flex', flexDirection: 'column',
+        margin: 'auto',
       }}>
         {/* Header */}
         <div style={{
@@ -82,9 +84,9 @@ export default function SystemFeedsModal({ isOpen, onClose }: { isOpen: boolean;
         </div>
 
         {/* Body */}
-        <div style={{ padding: '24px', display: 'flex', gap: '20px', minHeight: '380px' }}>
+        <div className="system-feeds-body" style={{ padding: '24px', minHeight: '380px' }}>
           {/* Left: Systems List */}
-          <div style={{ width: '260px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+          <div className="system-feeds-list" style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
             <div style={{ fontSize: '10px', fontFamily: 'var(--font-space-mono)', color: 'var(--text-muted)', letterSpacing: '0.1em', marginBottom: '4px' }}>
               CONNECTED GATEWAYS
             </div>
@@ -161,12 +163,12 @@ export default function SystemFeedsModal({ isOpen, onClose }: { isOpen: boolean;
         {/* Footer */}
         <div style={{
           padding: '12px 24px', background: 'var(--bg-base)', borderTop: '1px solid var(--bg-border)',
-          display: 'flex', justifyContent: 'space-between', alignItems: 'center'
+          display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '10px'
         }}>
-          <div style={{ fontSize: '11px', fontFamily: 'var(--font-space-mono)', color: 'var(--text-muted)' }}>
+          <div style={{ fontSize: '11px', fontFamily: 'var(--font-space-mono)', color: 'var(--text-muted)', minWidth: 0 }}>
             STATUS: OVERALL HEALTH 100% OPERATIONAL | CRIS (CENTRE FOR RAILWAY INFORMATION SYSTEMS) BRIDGE ACTIVE
           </div>
-          <button onClick={() => refetch()} className="btn-ghost" style={{ fontSize: '11px', padding: '4px 10px', fontFamily: 'var(--font-space-mono)', display: 'inline-flex', alignItems: 'center', gap: '5px' }}>
+          <button onClick={() => refetch()} className="btn-ghost" style={{ fontSize: '11px', padding: '4px 10px', fontFamily: 'var(--font-space-mono)', display: 'inline-flex', alignItems: 'center', gap: '5px', flexShrink: 0 }}>
             <RefreshCw size={12} strokeWidth={2.25} /> Refresh Feeds
           </button>
         </div>

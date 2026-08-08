@@ -546,6 +546,26 @@ h4 { font-size: 16px; font-weight: 600; }
   }
 }
 
+/* ---------- System Feeds Modal — responsive two-column body ---------- */
+.system-feeds-body {
+  display: flex;
+  gap: 20px;
+}
+.system-feeds-list {
+  width: 260px;
+  flex-shrink: 0;
+}
+@media (max-width: 640px) {
+  .system-feeds-body {
+    flex-direction: column;
+  }
+  .system-feeds-list {
+    width: 100%;
+    max-height: 200px;
+    overflow-y: auto;
+  }
+}
+
 /* ---------- Mobile Card List (replaces dense tables) ---------- */
 .mobile-card-list {
   display: none;
