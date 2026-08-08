@@ -687,7 +687,16 @@ export default function ControllerDashboard() {
     }
   }, [chatInput, chatLoading, user]);
 
-  const hoveredTrain = selectedTrain ? trains.find(t => t.id === selectedTrain) : null;
+  // Prefer customTrains — a searched train's name/route there comes from the
+  // live RailRadar fetch (fresher, e.g. reflects real IR renumbering like
+  // Yesvantpur → SMVT Bengaluru). The server `trains` list can independently
+  // pick up the same train ID via the silent background registration call,
+  // using the static offline dataset's stale name — falling back to it only
+  // when there's no corrected customTrains entry avoids showing two
+  // contradictory names/routes for the same train in one card.
+  const hoveredTrain = selectedTrain
+    ? customTrains.find(t => t.id === selectedTrain) || trains.find(t => t.id === selectedTrain)
+    : null;
 
   // Detect whether any feed is silently showing sample data instead of a real
   // backend response (fetch failure, timeout, or empty result) — the queries
