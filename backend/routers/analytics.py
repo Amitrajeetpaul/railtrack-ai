@@ -12,7 +12,9 @@ from sqlalchemy import select, func, case, text, Integer
 from database import get_db, engine
 from models import Train, Conflict, Decision, PriorityEnum, TrainStatusEnum, DecisionSourceEnum, User
 from auth_utils import get_current_user
+import logging
 
+logger = logging.getLogger(__name__)
 router = APIRouter()
 
 is_sqlite = (engine.dialect.name == "sqlite")
@@ -25,10 +27,17 @@ def trunc_day(col):
 def parse_date_key(val):
     if val is None:
         return None
-    if isinstance(val, date):
-        return val
+    # datetime.datetime is a SUBCLASS of datetime.date — checking `date`
+    # first caught real datetime values here too and returned them
+    # unstripped (still carrying a time component), so every lookup key
+    # ended up typed `datetime` instead of `date`. Comparing that against
+    # a plain `date` object (`d_obj in lookup`) is never equal in Python,
+    # so the match silently failed for every single day, always — this is
+    # why real matching data could never be found even when it existed.
     if isinstance(val, datetime):
         return val.date()
+    if isinstance(val, date):
+        return val
     try:
         return datetime.strptime(str(val)[:10], "%Y-%m-%d").date()
     except Exception:
@@ -234,6 +243,7 @@ async def get_delay_chart(
                 chart_data.append({"time": day_str, "express": None, "freight": None, "local": None})
         return chart_data
     except Exception:
+        logger.exception("[analytics] delay-chart query failed")
         return [{"time": day, "express": None, "freight": None, "local": None} for day in days]
 
 @router.get("/throughput-chart")
@@ -277,6 +287,7 @@ async def get_throughput_chart(
                 chart_data.append({"time": day_str, "express": None, "freight": None, "local": None})
         return chart_data
     except Exception:
+        logger.exception("[analytics] throughput-chart query failed")
         return [{"time": day, "express": None, "freight": None, "local": None} for day in days]
 
 @router.get("/heatmap")
