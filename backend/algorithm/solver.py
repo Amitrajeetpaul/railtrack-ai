@@ -24,11 +24,21 @@ class PrecedenceOptimizer:
         num_trains = len(self.trains)
 
         for i, t in enumerate(self.trains):
-            # Calculate duration in minutes
+            # Calculate duration in minutes — this models how long a train
+            # occupies the SECTION being scheduled (the contested track/
+            # junction), not its entire end-to-end journey. Using full-journey
+            # distance/speed here previously gave multi-hour "durations" per
+            # train; under the single-track exclusivity constraint below, that
+            # made any batch of more than a handful of trains genuinely
+            # unsatisfiable (no valid sequencing existed within the horizon),
+            # so selecting "All trains" reliably went INFEASIBLE. Capping to a
+            # section-transit-time range keeps relative speed differences
+            # (faster trains still clear proportionally sooner) while modeling
+            # the actual scheduling unit correctly.
             speed = float(t.get('speed', 60.0))
             if speed <= 0: speed = 60.0
             duration = int(float(t.get('distance', 100)) / speed * 60)
-            duration = max(5, duration)
+            duration = max(5, min(duration, 60))
             durations.append(duration)
             
             # Start and End times

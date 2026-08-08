@@ -148,11 +148,16 @@ async def run_simulation(
 
             first_dep = sorted_schedules[0].departure_time
             if first_dep:
-                now_dt = datetime.now(first_dep.tzinfo)
-                # Solver works in minutes throughout (durations, headway, horizon) —
-                # this must be minutes too, not raw seconds, or every downstream
-                # timing comparison is off by a factor of 60.
-                scheduled_arrival = int((first_dep - now_dt).total_seconds() / 60)
+                # Minutes-since-midnight of the train's real scheduled
+                # departure — NOT "minutes from right now until departure".
+                # The latter depends on the current wall-clock time: a train
+                # whose fixed daily departure has already passed today vs one
+                # that hasn't yet can differ by up to ~24h purely based on
+                # when the request happens to be made, which made the exact
+                # same scenario flip between OPTIMAL and INFEASIBLE depending
+                # on the time of day it was run. Time-of-day is stable and
+                # still grounded in each train's real schedule data.
+                scheduled_arrival = first_dep.hour * 60 + first_dep.minute
             else:
                 scheduled_arrival = 0
         else:
