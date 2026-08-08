@@ -58,9 +58,12 @@ class SimActionResult(BaseModel):
 class SimulationResponse(BaseModel):
     status: str
     baseline_delay: int
-    optimized_delay: int
-    delay_delta: int
-    throughput_change: float
+    # None when the solver couldn't find any valid schedule (e.g. INFEASIBLE) —
+    # an empty schedule is a real failure, not "0 delay achieved," so these
+    # must be nullable rather than silently reporting a fake perfect result.
+    optimized_delay: Optional[int] = None
+    delay_delta: Optional[int] = None
+    throughput_change: Optional[float] = None
     conflicts_avoided: int
     actions: List[SimActionResult]
     schedule: Optional[List[dict]] = []  # full schedule for Gantt chart
@@ -217,16 +220,29 @@ async def run_simulation(
         entry["train_number"] = entry["train"]
         entry["train_name"] = meta.get("name", entry["train"])
 
-    # optimized_delay is already in minutes from solver output
-    # baseline_delay is now also in minutes — units match
-    optimized_delay = sum(s.get("delay_minutes", 0) for s in schedule)
-    delay_delta = optimized_delay - baseline_delay
+    solver_status = solver_result.get("status", "COMPLETED")
+    # An INFEASIBLE/UNKNOWN status means the solver found NO valid schedule —
+    # `schedule` is empty in that case. Previously this silently computed
+    # optimized_delay=0 and throughput_change=100% from the empty list,
+    # displaying total solver failure as a perfect result. Only compute real
+    # metrics when the solver actually succeeded.
+    solved = solver_status in ("OPTIMAL", "FEASIBLE")
+
+    if solved:
+        # optimized_delay is already in minutes from solver output
+        # baseline_delay is now also in minutes — units match
+        optimized_delay = sum(s.get("delay_minutes", 0) for s in schedule)
+        delay_delta = optimized_delay - baseline_delay
+
+        baseline_count = len(trains_db)
+        delayed_count = sum(1 for s in schedule if s.get("delay_minutes", 0) > 0)
+        throughput_change = round(((baseline_count - delayed_count) / baseline_count) * 100, 1) if baseline_count > 0 else 0.0
+    else:
+        optimized_delay = None
+        delay_delta = None
+        throughput_change = None
 
     conflicts_avoided = sum(1 for s in schedule if s.get("action") in ["HOLD", "REROUTE"])
-
-    baseline_count = len(trains_db)
-    delayed_count = sum(1 for s in schedule if s.get("delay_minutes", 0) > 0)
-    throughput_change = round(((baseline_count - delayed_count) / baseline_count) * 100, 1) if baseline_count > 0 else 0.0
 
     actions = []
     for sched in schedule:
@@ -244,7 +260,7 @@ async def run_simulation(
         ))
 
     response_data = SimulationResponse(
-        status=solver_result.get("status", "COMPLETED"),
+        status=solver_status,
         baseline_delay=baseline_delay,
         optimized_delay=optimized_delay,
         delay_delta=delay_delta,

@@ -95,11 +95,16 @@ export default function AnalyticsPage() {
   };
 
   // Helper: true when all numeric values in a chart data array for a given key are identical
+  // True when the chart has any missing days (real gaps, shown as null by the
+  // backend) or when every real value is identical — either way there isn't
+  // enough real historical data yet for a meaningful trend line.
   const isChartFlat = (data: any[], keys: string[]): boolean => {
     if (!data || data.length === 0) return false;
-    return keys.every(k => {
-      const vals = data.map(d => Number(d[k] ?? 0));
-      return vals.every(v => v === vals[0]);
+    return keys.some(k => {
+      const vals = data.map(d => d[k]);
+      if (vals.some(v => v === null || v === undefined)) return true;
+      const nums = vals.map(Number);
+      return nums.every(v => v === nums[0]);
     });
   };
 

@@ -41,12 +41,14 @@ class KPIResponse(BaseModel):
     ai_acceptance_rate: float
     throughput_today: int
     override_rate: float
-    sparkline_delay: List[float]
-    sparkline_punctuality: List[float]
-    sparkline_throughput: List[int]
-    sparkline_conflicts: List[int]
-    sparkline_override: List[float]
-    sparkline_ai: List[float]
+    # Optional/nullable: a day with no real recorded data is a genuine gap,
+    # not a fabricated plausible-looking value.
+    sparkline_delay: List[Optional[float]]
+    sparkline_punctuality: List[Optional[float]]
+    sparkline_throughput: List[Optional[int]]
+    sparkline_conflicts: List[Optional[int]]
+    sparkline_override: List[Optional[float]]
+    sparkline_ai: List[Optional[float]]
 
 @router.get("/kpis", response_model=KPIResponse)
 async def get_analytics_kpis(
@@ -112,20 +114,21 @@ async def get_analytics_kpis(
         for i in range(period - 1, -1, -1):
             d = (datetime.utcnow() - timedelta(days=i)).date()
             tr = train_map.get(d)
-            computed_delay.append(round(float(tr.avg_delay or 0.0), 1) if tr else 8.5)
-            computed_thru.append(tr.throughput if tr else 165)
-            punct = round((tr.on_time / tr.throughput * 100), 1) if tr and tr.throughput > 0 else 89.2
-            computed_punct.append(punct)
-            
-            computed_conf.append(conflict_rows.get(d, 2))
-            
+            # None for a day with no real recorded trains — a genuine gap,
+            # not a fabricated plausible-looking value.
+            computed_delay.append(round(float(tr.avg_delay), 1) if tr and tr.avg_delay is not None else None)
+            computed_thru.append(tr.throughput if tr else None)
+            computed_punct.append(round((tr.on_time / tr.throughput * 100), 1) if tr and tr.throughput > 0 else None)
+
+            computed_conf.append(conflict_rows.get(d))
+
             dr = decision_rows.get(d)
             if dr and dr.total > 0:
                 computed_ai.append(round((dr.ai / dr.total * 100), 1))
                 computed_over.append(round((dr.manual / dr.total * 100), 1))
             else:
-                computed_ai.append(94.5)
-                computed_over.append(5.5)
+                computed_ai.append(None)
+                computed_over.append(None)
 
         spark_delay = computed_delay
         spark_punct = computed_punct
@@ -221,15 +224,17 @@ async def get_delay_chart(
                 r = lookup[d_obj]
                 chart_data.append({
                     "time": day_str,
-                    "express": round(float(r.express or 4.2), 1),
-                    "freight": round(float(r.freight or 12.5), 1),
-                    "local": round(float(r.local or 6.1), 1),
+                    "express": round(float(r.express), 1) if r.express is not None else None,
+                    "freight": round(float(r.freight), 1) if r.freight is not None else None,
+                    "local": round(float(r.local), 1) if r.local is not None else None,
                 })
             else:
-                chart_data.append({"time": day_str, "express": 4.2, "freight": 12.5, "local": 6.1})
+                # No real data for this day — a genuine gap, not a plausible-looking
+                # fake number. The frontend renders this as a break in the line.
+                chart_data.append({"time": day_str, "express": None, "freight": None, "local": None})
         return chart_data
     except Exception:
-        return [{"time": day, "express": 4.2 + idx * 0.3, "freight": 12.5 - idx * 0.4, "local": 6.1 - idx * 0.2} for idx, day in enumerate(days)]
+        return [{"time": day, "express": None, "freight": None, "local": None} for day in days]
 
 @router.get("/throughput-chart")
 async def get_throughput_chart(
@@ -258,19 +263,21 @@ async def get_throughput_chart(
         for i in range(period - 1, -1, -1):
             d_obj = (datetime.utcnow() - timedelta(days=i)).date()
             day_str = d_obj.strftime("%a")
-            if d_obj in lookup:
+            if d_obj in lookup and (lookup[d_obj].express or lookup[d_obj].freight or lookup[d_obj].local):
                 r = lookup[d_obj]
                 chart_data.append({
                     "time": day_str,
-                    "express": r.express or 62,
-                    "freight": r.freight or 48,
-                    "local": r.local or 55,
+                    "express": r.express,
+                    "freight": r.freight,
+                    "local": r.local,
                 })
             else:
-                chart_data.append({"time": day_str, "express": 62, "freight": 48, "local": 55})
+                # No trains recorded for this day — a genuine gap, not a
+                # fabricated plausible-looking number.
+                chart_data.append({"time": day_str, "express": None, "freight": None, "local": None})
         return chart_data
     except Exception:
-        return [{"time": day, "express": 60 + idx * 2, "freight": 45 + idx * 3, "local": 50 + idx} for idx, day in enumerate(days)]
+        return [{"time": day, "express": None, "freight": None, "local": None} for day in days]
 
 @router.get("/heatmap")
 async def get_conflict_heatmap(

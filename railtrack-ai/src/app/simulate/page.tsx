@@ -392,7 +392,24 @@ export default function SimulatePage() {
             </div>
           )}
 
-          {simState === 'RESULTS' && (
+          {simState === 'RESULTS' && simResults?.status && !['OPTIMAL', 'FEASIBLE'].includes(simResults.status) && (
+            <div className="animate-slide-in" style={{
+              padding: '20px', background: '#FFEBEE', border: '1px solid #FFCDD2',
+              borderRadius: '8px', display: 'flex', flexDirection: 'column', gap: '8px',
+            }}>
+              <div style={{ fontFamily: 'var(--font-space-mono)', fontSize: '13px', fontWeight: 700, color: 'var(--accent-danger)' }}>
+                ⚠ No Feasible Schedule Found ({simResults.status})
+              </div>
+              <div style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>
+                The solver could not find any valid schedule that satisfies every safety constraint
+                (headway gap, platform capacity) for this train set under these parameters. This is not
+                a system error — it means the scenario is genuinely over-constrained. Try increasing
+                platform count, reducing the number of target trains, or loosening the headway gap.
+              </div>
+            </div>
+          )}
+
+          {simState === 'RESULTS' && simResults?.status && ['OPTIMAL', 'FEASIBLE'].includes(simResults.status) && (
             <div className="animate-slide-in" style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
               {/* Apply Strategy Banner */}
               <div style={{
