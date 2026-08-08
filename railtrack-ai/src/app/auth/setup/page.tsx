@@ -42,7 +42,7 @@ function SetupForm() {
   };
 
   return (
-    <div style={{ background: '#13161e', border: '1px solid #1e2330', borderRadius: '12px', padding: '32px', width: '100%', maxWidth: '448px', position: 'relative' }}>
+    <div style={{ background: '#13161e', border: '1px solid #1e2330', borderRadius: 'var(--radius-sm)', padding: '32px', width: '100%', maxWidth: '448px', position: 'relative' }}>
       
       <h1 style={{ color: '#e8eaf0', fontSize: '24px', fontFamily: 'var(--font-space-mono)', fontWeight: 'bold', textAlign: 'center', margin: '0 0 8px 0', letterSpacing: '-0.02em' }}>
         Complete Your Setup
@@ -58,7 +58,7 @@ function SetupForm() {
             type="email" 
             value={email} 
             disabled
-            style={{ width: '100%', background: '#0d0f14', border: '1px solid #1e2330', borderRadius: '8px', padding: '10px 16px', color: '#6b7280', fontFamily: 'var(--font-jetbrains)', outline: 'none', cursor: 'not-allowed', boxSizing: 'border-box' }}
+            style={{ width: '100%', background: '#0d0f14', border: '1px solid #1e2330', borderRadius: 'var(--radius-xs)', padding: '10px 16px', color: '#6b7280', fontFamily: 'var(--font-jetbrains)', outline: 'none', cursor: 'not-allowed', boxSizing: 'border-box' }}
           />
         </div>
         
@@ -69,7 +69,7 @@ function SetupForm() {
             placeholder="Your name"
             value={formData.name} 
             onChange={e => setFormData({...formData, name: e.target.value})}
-            style={{ width: '100%', background: '#0d0f14', border: '1px solid #1e2330', borderRadius: '8px', padding: '10px 16px', color: '#e8eaf0', fontFamily: 'var(--font-jetbrains)', outline: 'none', boxSizing: 'border-box' }}
+            style={{ width: '100%', background: '#0d0f14', border: '1px solid #1e2330', borderRadius: 'var(--radius-xs)', padding: '10px 16px', color: '#e8eaf0', fontFamily: 'var(--font-jetbrains)', outline: 'none', boxSizing: 'border-box' }}
           />
         </div>
 
@@ -81,7 +81,7 @@ function SetupForm() {
             placeholder="••••••••"
             value={formData.password} 
             onChange={e => setFormData({...formData, password: e.target.value})}
-            style={{ width: '100%', background: '#0d0f14', border: '1px solid #1e2330', borderRadius: '8px', padding: '10px 16px', color: '#e8eaf0', fontFamily: 'var(--font-jetbrains)', outline: 'none', boxSizing: 'border-box' }}
+            style={{ width: '100%', background: '#0d0f14', border: '1px solid #1e2330', borderRadius: 'var(--radius-xs)', padding: '10px 16px', color: '#e8eaf0', fontFamily: 'var(--font-jetbrains)', outline: 'none', boxSizing: 'border-box' }}
           />
         </div>
 
@@ -93,12 +93,12 @@ function SetupForm() {
             placeholder="••••••••"
             value={formData.confirm} 
             onChange={e => setFormData({...formData, confirm: e.target.value})}
-            style={{ width: '100%', background: '#0d0f14', border: '1px solid #1e2330', borderRadius: '8px', padding: '10px 16px', color: '#e8eaf0', fontFamily: 'var(--font-jetbrains)', outline: 'none', boxSizing: 'border-box' }}
+            style={{ width: '100%', background: '#0d0f14', border: '1px solid #1e2330', borderRadius: 'var(--radius-xs)', padding: '10px 16px', color: '#e8eaf0', fontFamily: 'var(--font-jetbrains)', outline: 'none', boxSizing: 'border-box' }}
           />
         </div>
 
         {error && (
-          <div style={{ background: 'rgba(239, 68, 68, 0.1)', border: '1px solid rgba(239, 68, 68, 0.2)', borderRadius: '6px', padding: '12px', marginTop: '4px' }}>
+          <div style={{ background: 'rgba(239, 68, 68, 0.1)', border: '1px solid rgba(239, 68, 68, 0.2)', borderRadius: 'var(--radius-xs)', padding: '12px', marginTop: '4px' }}>
             <p style={{ color: '#f87171', fontSize: '14px', fontFamily: 'var(--font-jetbrains)', textAlign: 'center', margin: 0 }}>{error}</p>
           </div>
         )}
@@ -106,7 +106,7 @@ function SetupForm() {
         <button 
           type="submit" 
           disabled={loading || !email}
-          style={{ width: '100%', background: '#00e5ff', color: '#0d0f14', fontWeight: 'bold', borderRadius: '8px', padding: '14px', border: 'none', cursor: (loading || !email) ? 'not-allowed' : 'pointer', opacity: (loading || !email) ? 0.5 : 1, transition: 'background 0.2s', fontFamily: 'var(--font-space-mono)', marginTop: '8px', boxSizing: 'border-box' }}
+          style={{ width: '100%', background: '#00e5ff', color: '#0d0f14', fontWeight: 'bold', borderRadius: 'var(--radius-xs)', padding: '14px', border: 'none', cursor: (loading || !email) ? 'not-allowed' : 'pointer', opacity: (loading || !email) ? 0.5 : 1, transition: 'background 0.2s', fontFamily: 'var(--font-space-mono)', marginTop: '8px', boxSizing: 'border-box' }}
         >
           {loading ? 'Setting up...' : 'Activate Account'}
         </button>

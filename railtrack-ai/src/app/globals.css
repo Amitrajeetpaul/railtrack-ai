@@ -16,7 +16,16 @@
 
   --text-primary: #22223B;     /* Deep Charcoal Navy */
   --text-secondary: #6B6B80;   /* Muted Gray */
-  --text-muted: #94A3B8;       /* Subtle Gray */
+  /* Was #94A3B8 (2.56:1 on white) — fails WCAG AA (needs 4.5:1) despite
+     being used as real text in 60+ places (timestamps, labels, axis
+     ticks). Darkened to the same hue family at a passing contrast. */
+  --text-muted: #5B6478;
+  /* Text-safe darker amber — WCAG AA requires 4.5:1 for text, but the
+     base --accent-warn (#F2A65A) is only ~2:1 on white and is also used
+     for non-text fills (signal lamps, badge dots) where it should stay
+     bright. Use this variant specifically where --accent-warn is the
+     TEXT color, not the fill/background. */
+  --accent-warn-text: #9C5A0A;
   --grid-line: #EBF0F5;
 
   --shadow-sm: 0 1px 3px rgba(34, 34, 59, 0.05);
@@ -29,6 +38,17 @@
   --font-body: 'Inter', system-ui, sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
   --font-space-mono: 'Space Mono', monospace;
+
+  /* Radius scale — 8/12/16/20/24/28-32px. Everything in the app should map
+     onto one of these instead of arbitrary one-off values (previously 2px,
+     4px, 6px, 10px, 11px were all scattered in alongside the "real" scale). */
+  --radius-xs: 8px;
+  --radius-sm: 12px;
+  --radius-md: 16px;
+  --radius-lg: 20px;
+  --radius-xl: 24px;
+  --radius-2xl: 28px;
+  --radius-pill: 999px;
 }
 
 /* Force light theme values even if data-theme or dark mode class is toggled */
@@ -87,14 +107,14 @@ h4 { font-size: 16px; font-weight: 600; }
 /* ---------- Custom Scrollbars ---------- */
 ::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: var(--bg-base); }
-::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 3px; }
+::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: var(--radius-xs); }
 ::-webkit-scrollbar-thumb:hover { background: #94A3B8; }
 
 /* ---------- Card & Panel System ---------- */
 .panel, .card-elevated {
   background: var(--bg-surface);
   border: 1px solid var(--bg-border);
-  border-radius: 12px;
+  border-radius: var(--radius-sm);
   box-shadow: var(--shadow-card);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
@@ -159,7 +179,7 @@ h4 { font-size: 16px; font-weight: 600; }
   color: #FFFFFF;
   font-family: var(--font-headline);
   font-weight: 600;
-  border-radius: 8px;
+  border-radius: var(--radius-xs);
   padding: 10px 18px;
   border: none;
   cursor: pointer;
@@ -189,7 +209,7 @@ h4 { font-size: 16px; font-weight: 600; }
   color: #FFFFFF;
   font-family: var(--font-headline);
   font-weight: 600;
-  border-radius: 8px;
+  border-radius: var(--radius-xs);
   padding: 10px 18px;
   border: none;
   cursor: pointer;
@@ -212,7 +232,7 @@ h4 { font-size: 16px; font-weight: 600; }
   border: 1px solid var(--bg-border);
   font-family: var(--font-headline);
   font-weight: 500;
-  border-radius: 8px;
+  border-radius: var(--radius-xs);
   padding: 10px 18px;
   cursor: pointer;
   font-size: 14px;
@@ -232,7 +252,7 @@ h4 { font-size: 16px; font-weight: 600; }
   height: 38px;
   background: #FFFFFF;
   border: 1px solid var(--bg-border);
-  border-radius: 8px;
+  border-radius: var(--radius-xs);
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -252,7 +272,7 @@ h4 { font-size: 16px; font-weight: 600; }
   color: var(--accent-danger);
   border: 1px solid #FFCDD2;
   padding: 3px 10px;
-  border-radius: 6px;
+  border-radius: var(--radius-xs);
   font-size: 12px;
   font-weight: 600;
   display: inline-flex;
@@ -265,7 +285,7 @@ h4 { font-size: 16px; font-weight: 600; }
   color: #B78103;
   border: 1px solid #FFE082;
   padding: 3px 10px;
-  border-radius: 6px;
+  border-radius: var(--radius-xs);
   font-size: 12px;
   font-weight: 600;
   display: inline-flex;
@@ -278,7 +298,7 @@ h4 { font-size: 16px; font-weight: 600; }
   color: var(--accent-safe);
   border: 1px solid #C8E6C9;
   padding: 3px 10px;
-  border-radius: 6px;
+  border-radius: var(--radius-xs);
   font-size: 12px;
   font-weight: 600;
   display: inline-flex;
@@ -291,7 +311,7 @@ h4 { font-size: 16px; font-weight: 600; }
   color: var(--accent-primary);
   border: 1px solid #C5DCF2;
   padding: 3px 10px;
-  border-radius: 6px;
+  border-radius: var(--radius-xs);
   font-size: 12px;
   font-weight: 600;
   display: inline-flex;
@@ -304,7 +324,7 @@ h4 { font-size: 16px; font-weight: 600; }
   background: #FFFFFF;
   border: 1.5px solid var(--bg-border);
   color: var(--text-primary);
-  border-radius: 8px;
+  border-radius: var(--radius-xs);
   padding: 10px 14px;
   font-size: 14px;
   outline: none;
@@ -418,6 +438,109 @@ h4 { font-size: 16px; font-weight: 600; }
 .table-scroll-wrap {
   width: 100%;
   overflow-x: auto;
+}
+
+/* ---------- Mobile Bottom Tab Bar (nav) ---------- */
+.mobile-tab-bar {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .app-header-row .desktop-nav-links {
+    /* Inline `style={{ display: 'flex' }}` on these <nav> elements always
+       wins over a plain class rule — !important is required to actually
+       hide them on mobile in favor of the bottom tab bar. */
+    display: none !important;
+  }
+  .mobile-tab-bar {
+    display: flex;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 58px;
+    background: var(--bg-surface);
+    border-top: 1px solid var(--bg-border);
+    box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.04);
+    z-index: 60;
+    padding-bottom: env(safe-area-inset-bottom, 0);
+  }
+  .mobile-tab-bar a {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    font-size: 10px;
+    font-family: var(--font-headline);
+    font-weight: 600;
+    text-decoration: none;
+    color: var(--text-secondary);
+    min-height: 44px;
+  }
+  .mobile-tab-bar a.mobile-tab-active {
+    color: var(--accent-primary);
+  }
+  .mobile-tab-bar a .mobile-tab-icon {
+    font-size: 18px;
+    line-height: 1;
+  }
+  .has-mobile-tab-bar {
+    padding-bottom: 58px;
+  }
+}
+
+/* ---------- Mobile Bottom Action Bar (critical actions) ---------- */
+.mobile-action-bar {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .mobile-action-bar {
+    display: flex;
+    position: fixed;
+    bottom: 58px;
+    left: 0;
+    right: 0;
+    gap: 8px;
+    padding: 10px 12px;
+    background: var(--bg-surface);
+    border-top: 1px solid var(--bg-border);
+    z-index: 55;
+  }
+  .mobile-action-bar button {
+    flex: 1;
+    min-height: 44px;
+    font-size: 12px;
+  }
+  .has-mobile-action-bar {
+    padding-bottom: 76px;
+  }
+}
+
+/* ---------- Mobile Card List (replaces dense tables) ---------- */
+.mobile-card-list {
+  display: none;
+}
+.desktop-table-view {
+  display: block;
+}
+@media (max-width: 640px) {
+  .mobile-card-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .desktop-table-view {
+    display: none;
+  }
+  .mobile-card {
+    background: var(--bg-surface);
+    border: 1px solid var(--bg-border);
+    border-radius: var(--radius-sm);
+    padding: 14px;
+  }
 }
 
 /* ---------- Demo Banner ---------- */

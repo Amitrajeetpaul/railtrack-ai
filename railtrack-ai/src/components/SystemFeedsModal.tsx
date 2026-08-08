@@ -56,7 +56,7 @@ export default function SystemFeedsModal({ isOpen, onClose }: { isOpen: boolean;
     }}>
       <div style={{
         width: '100%', maxWidth: '840px', background: 'var(--bg-surface)',
-        border: '1px solid var(--bg-border)', borderRadius: '12px', overflow: 'hidden',
+        border: '1px solid var(--bg-border)', borderRadius: 'var(--radius-sm)', overflow: 'hidden',
         boxShadow: '0 20px 50px rgba(0,0,0,0.6)', display: 'flex', flexDirection: 'column'
       }}>
         {/* Header */}
@@ -97,7 +97,7 @@ export default function SystemFeedsModal({ isOpen, onClose }: { isOpen: boolean;
                   key={sys.system_code}
                   onClick={() => setSelectedSystem(sys.system_code)}
                   style={{
-                    padding: '12px', borderRadius: '8px', border: '1px solid',
+                    padding: '12px', borderRadius: 'var(--radius-xs)', border: '1px solid',
                     borderColor: selectedSystem === sys.system_code ? 'var(--accent-primary)' : 'var(--bg-border)',
                     background: selectedSystem === sys.system_code ? 'rgba(0,212,255,0.08)' : 'var(--bg-base)',
                     textAlign: 'left', cursor: 'pointer', transition: 'all 0.15s ease'
@@ -107,7 +107,7 @@ export default function SystemFeedsModal({ isOpen, onClose }: { isOpen: boolean;
                       {sys.system_code}
                     </span>
                     <span style={{
-                      fontSize: '10px', padding: '2px 6px', borderRadius: '4px',
+                      fontSize: '10px', padding: '2px 6px', borderRadius: 'var(--radius-xs)',
                       background: 'rgba(0,230,118,0.15)', color: '#00E676', fontFamily: 'var(--font-space-mono)'
                     }}>
                       ● {sys.status}
@@ -126,7 +126,7 @@ export default function SystemFeedsModal({ isOpen, onClose }: { isOpen: boolean;
           </div>
 
           {/* Right: Payload Inspector */}
-          <div style={{ flex: 1, background: 'var(--bg-base)', border: '1px solid var(--bg-border)', borderRadius: '8px', padding: '16px', display: 'flex', flexDirection: 'column' }}>
+          <div style={{ flex: 1, background: 'var(--bg-base)', border: '1px solid var(--bg-border)', borderRadius: 'var(--radius-xs)', padding: '16px', display: 'flex', flexDirection: 'column' }}>
             {currentSys ? (
               <>
                 <div style={{ borderBottom: '1px solid var(--bg-border)', paddingBottom: '12px', marginBottom: '12px' }}>
@@ -142,7 +142,7 @@ export default function SystemFeedsModal({ isOpen, onClose }: { isOpen: boolean;
                   LIVE TELEMETRY PACKET PAYLOAD:
                 </div>
                 <pre style={{
-                  flex: 1, background: '#0A0C10', border: '1px solid var(--bg-border)', borderRadius: '6px',
+                  flex: 1, background: '#0A0C10', border: '1px solid var(--bg-border)', borderRadius: 'var(--radius-xs)',
                   padding: '12px', overflowX: 'auto', fontFamily: 'var(--font-space-mono)', fontSize: '11px',
                   color: '#00E676', lineHeight: 1.5
                 }}>

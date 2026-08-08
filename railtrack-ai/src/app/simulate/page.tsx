@@ -205,7 +205,7 @@ export default function SimulatePage() {
   }
 
   return (
-    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', background: 'var(--bg-base)' }}>
+    <div className="has-mobile-tab-bar" style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', background: 'var(--bg-base)' }}>
       {/* Top Nav */}
       <header className="app-header-row" style={{ height: '56px', background: '#FFFFFF', borderBottom: '1.5px solid var(--bg-border)', display: 'flex', alignItems: 'center', padding: '0 20px', gap: '20px', flexShrink: 0, boxShadow: '0 2px 8px rgba(0,0,0,0.03)' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
@@ -215,7 +215,7 @@ export default function SimulatePage() {
           </div>
         </div>
         <div style={{ width: '1px', height: '24px', background: 'var(--bg-border)' }} />
-        <nav style={{ display: 'flex', gap: '6px', flex: 1 }}>
+        <nav className="desktop-nav-links" style={{ display: 'flex', gap: '6px', flex: 1 }}>
           {[
             { label: 'Dashboard', href: '/dashboard/controller' },
             { label: 'Simulate', href: '/simulate', active: true },
@@ -223,7 +223,7 @@ export default function SimulatePage() {
             { label: 'Admin', href: '/admin' },
           ].map(item => (
             <Link key={item.href} href={item.href} style={{
-              padding: '7px 14px', borderRadius: '8px', fontSize: '13px', textDecoration: 'none',
+              padding: '7px 14px', borderRadius: 'var(--radius-xs)', fontSize: '13px', textDecoration: 'none',
               background: item.active ? '#EBF3FA' : 'transparent',
               color: item.active ? 'var(--accent-primary)' : 'var(--text-secondary)',
               fontFamily: 'var(--font-headline)', fontWeight: item.active ? 700 : 500, transition: 'all 0.15s ease',
@@ -238,7 +238,7 @@ export default function SimulatePage() {
           onClick={() => setIsSystemsModalOpen(true)}
           className="badge-safe"
           style={{
-            padding: '8px 14px', borderRadius: '8px', cursor: 'pointer', fontFamily: 'var(--font-headline)', fontSize: '12px'
+            padding: '8px 14px', borderRadius: 'var(--radius-xs)', cursor: 'pointer', fontFamily: 'var(--font-headline)', fontSize: '12px'
           }}>
           <span>📡</span> Railway Systems Feeds (COA/FOIS)
         </button>
@@ -378,14 +378,14 @@ export default function SimulatePage() {
           </div>
 
           {simState === 'IDLE' && (
-            <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px dashed var(--bg-border)', borderRadius: '8px', color: 'var(--text-muted)' }}>
+            <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px dashed var(--bg-border)', borderRadius: 'var(--radius-xs)', color: 'var(--text-muted)' }}>
               Configure scenario parameters on the left and run simulation to see what-if outcomes.
             </div>
           )}
 
           {simState === 'RUNNING' && (
             <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '16px' }}>
-              <div className="skeleton" style={{ width: '100%', maxWidth: '800px', height: '240px', borderRadius: '8px' }} />
+              <div className="skeleton" style={{ width: '100%', maxWidth: '800px', height: '240px', borderRadius: 'var(--radius-xs)' }} />
               <div style={{ fontFamily: 'var(--font-space-mono)', fontSize: '12px', color: 'var(--accent-primary)', animation: 'pulse-live 1s infinite' }}>
                 Evaluating combinatorial precedence constraints...
               </div>
@@ -395,7 +395,7 @@ export default function SimulatePage() {
           {simState === 'RESULTS' && simResults?.status && !['OPTIMAL', 'FEASIBLE'].includes(simResults.status) && (
             <div className="animate-slide-in" style={{
               padding: '20px', background: '#FFEBEE', border: '1px solid #FFCDD2',
-              borderRadius: '8px', display: 'flex', flexDirection: 'column', gap: '8px',
+              borderRadius: 'var(--radius-xs)', display: 'flex', flexDirection: 'column', gap: '8px',
             }}>
               <div style={{ fontFamily: 'var(--font-space-mono)', fontSize: '13px', fontWeight: 700, color: 'var(--accent-danger)' }}>
                 ⚠ No Feasible Schedule Found ({simResults.status})
@@ -414,7 +414,7 @@ export default function SimulatePage() {
               {/* Apply Strategy Banner */}
               <div style={{
                 padding: '16px 20px', background: 'rgba(0, 212, 255, 0.08)',
-                border: '1px solid rgba(0, 212, 255, 0.3)', borderRadius: '8px',
+                border: '1px solid rgba(0, 212, 255, 0.3)', borderRadius: 'var(--radius-xs)',
                 display: 'flex', justifyContent: 'space-between', alignItems: 'center'
               }}>
                 <div>
@@ -537,13 +537,13 @@ export default function SimulatePage() {
                   <span className="panel-header">Time-Space Gantt Projection</span>
                   <div style={{ display: 'flex', gap: '16px', fontSize: '10px', fontFamily: 'var(--font-space-mono)' }}>
                     <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
-                      <div style={{ width: '8px', height: '8px', borderRadius: '2px', background: '#00E676' }} /> PROCEED
+                      <div style={{ width: '8px', height: '8px', borderRadius: 'var(--radius-xs)', background: '#00E676' }} /> PROCEED
                     </div>
                     <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
-                      <div style={{ width: '8px', height: '8px', borderRadius: '2px', background: '#FFD600' }} /> HOLD
+                      <div style={{ width: '8px', height: '8px', borderRadius: 'var(--radius-xs)', background: '#FFD600' }} /> HOLD
                     </div>
                     <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
-                      <div style={{ width: '8px', height: '8px', borderRadius: '2px', background: '#FF5252' }} /> REROUTE
+                      <div style={{ width: '8px', height: '8px', borderRadius: 'var(--radius-xs)', background: '#FF5252' }} /> REROUTE
                     </div>
                   </div>
                 </div>
@@ -655,6 +655,14 @@ export default function SimulatePage() {
         </main>
       </div>
       <SystemFeedsModal isOpen={isSystemsModalOpen} onClose={() => setIsSystemsModalOpen(false)} />
+
+      <nav className="mobile-tab-bar">
+        <Link href="/dashboard/controller"><span className="mobile-tab-icon">🎛️</span>Dashboard</Link>
+        <Link href="/simulate" className="mobile-tab-active"><span className="mobile-tab-icon">▶</span>Simulate</Link>
+        <Link href="/analytics"><span className="mobile-tab-icon">📊</span>Analytics</Link>
+        <Link href="/admin"><span className="mobile-tab-icon">⚙️</span>Admin</Link>
+      </nav>
+
       <style>{`
         @keyframes spin { to { transform: rotate(360deg); } }
       `}</style>

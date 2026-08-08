@@ -124,7 +124,7 @@ export default function LandingPage() {
         {/* Hero Content */}
         <div style={{ position: 'relative', zIndex: 1, textAlign: 'center', padding: '0 24px', maxWidth: '900px' }}
           className={visible ? 'animate-slide-in' : ''}>
-          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', background: 'rgba(0,212,255,0.08)', border: '1px solid rgba(0,212,255,0.2)', borderRadius: '999px', padding: '4px 16px', marginBottom: '24px' }}>
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', background: 'rgba(0,212,255,0.08)', border: '1px solid rgba(0,212,255,0.2)', borderRadius: 'var(--radius-pill)', padding: '4px 16px', marginBottom: '24px' }}>
             <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: 'var(--accent-primary)', display: 'inline-block' }} className="animate-pulse-live" />
             <span style={{ fontFamily: 'var(--font-space-mono)', fontSize: '11px', color: 'var(--accent-primary)', letterSpacing: '0.1em' }}>
               LIVE DEMO • ENTERPRISE TRAFFIC SYSTEM
@@ -218,7 +218,7 @@ export default function LandingPage() {
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '16px' }}>
             {ARCH_NODES.map((node, i) => (
-              <div key={i} style={{ background: 'var(--bg-elevated)', border: `1px solid ${node.color}30`, borderRadius: '8px', padding: '20px', textAlign: 'center' }}>
+              <div key={i} style={{ background: 'var(--bg-elevated)', border: `1px solid ${node.color}30`, borderRadius: 'var(--radius-xs)', padding: '20px', textAlign: 'center' }}>
                 <div style={{ width: '12px', height: '12px', borderRadius: '50%', background: node.color, margin: '0 auto 12px' }} />
                 <div style={{ fontFamily: 'var(--font-space-mono)', fontSize: '11px', color: 'var(--text-secondary)', letterSpacing: '0.05em' }}>
                   {node.label}
@@ -240,7 +240,7 @@ export default function LandingPage() {
         </div>
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px', justifyContent: 'center' }}>
           {TECH_STACK.map((tech, i) => (
-            <span key={i} style={{ background: 'var(--bg-elevated)', border: '1px solid var(--bg-border)', borderRadius: '6px', padding: '8px 16px', fontFamily: 'var(--font-space-mono)', fontSize: '12px', color: 'var(--text-secondary)' }}>
+            <span key={i} style={{ background: 'var(--bg-elevated)', border: '1px solid var(--bg-border)', borderRadius: 'var(--radius-xs)', padding: '8px 16px', fontFamily: 'var(--font-space-mono)', fontSize: '12px', color: 'var(--text-secondary)' }}>
               {tech}
             </span>
           ))}
@@ -254,7 +254,7 @@ export default function LandingPage() {
         </div>
         <div style={{ display: 'flex', gap: '24px' }}>
           <a href="https://github.com/Amitrajeetpaul/railtrack-ai" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--text-secondary)', textDecoration: 'none', fontSize: '13px', fontFamily: 'var(--font-space-mono)' }}>GitHub</a>
-          <span style={{ background: 'rgba(0,212,255,0.1)', border: '1px solid rgba(0,212,255,0.2)', borderRadius: '4px', padding: '2px 10px', fontSize: '11px', fontFamily: 'var(--font-space-mono)', color: 'var(--accent-primary)' }}>
+          <span style={{ background: 'rgba(0,212,255,0.1)', border: '1px solid rgba(0,212,255,0.2)', borderRadius: 'var(--radius-xs)', padding: '2px 10px', fontSize: '11px', fontFamily: 'var(--font-space-mono)', color: 'var(--accent-primary)' }}>
             ENTERPRISE PLATFORM
           </span>
         </div>

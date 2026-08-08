@@ -25,7 +25,7 @@ export default function AIRecommendation({ visible, conflict, onDismiss, onAccep
       background: '#FFFFFF',
       border: '1.5px solid var(--bg-border)',
       borderLeft: '4px solid var(--accent-primary)',
-      borderRadius: '12px',
+      borderRadius: 'var(--radius-sm)',
       display: 'flex',
       flexDirection: 'column',
       zIndex: 10,
@@ -83,7 +83,7 @@ export default function AIRecommendation({ visible, conflict, onDismiss, onAccep
           <button
             onClick={() => setShowXai(!showXai)}
             style={{
-              width: '100%', padding: '10px 14px', borderRadius: '8px',
+              width: '100%', padding: '10px 14px', borderRadius: 'var(--radius-xs)',
               border: '1px solid #C5DCF2', background: showXai ? '#EBF3FA' : '#F8FAFC',
               color: 'var(--accent-primary)', fontFamily: 'var(--font-headline)', fontSize: '12px', fontWeight: 600,
               display: 'flex', alignItems: 'center', justifyContent: 'space-between', cursor: 'pointer'
@@ -95,7 +95,7 @@ export default function AIRecommendation({ visible, conflict, onDismiss, onAccep
           {showXai && (
             <div style={{
               marginTop: '10px', padding: '14px', background: 'var(--bg-base)',
-              border: '1px solid var(--bg-border)', borderRadius: '8px', fontSize: '12px',
+              border: '1px solid var(--bg-border)', borderRadius: 'var(--radius-xs)', fontSize: '12px',
               color: 'var(--text-primary)', lineHeight: 1.6
             }}>
               <div style={{ fontFamily: 'var(--font-headline)', fontWeight: 700, color: 'var(--accent-primary)', marginBottom: '6px' }}>
@@ -116,13 +116,13 @@ export default function AIRecommendation({ visible, conflict, onDismiss, onAccep
             <span style={{ fontFamily: 'var(--font-headline)', fontSize: '11px', fontWeight: 700, color: 'var(--text-secondary)', letterSpacing: '0.06em' }} title="Reflects priority-rule strength for this scenario, not a live-computed model confidence score.">PRIORITY SCORE</span>
             <span style={{ fontFamily: 'var(--font-mono)', fontSize: '14px', color: 'var(--accent-primary)', fontWeight: 700 }}>{conflict.confidence}%</span>
           </div>
-          <div style={{ height: '8px', background: 'var(--bg-border)', borderRadius: '4px', overflow: 'hidden' }}>
-            <div style={{ height: '100%', width: `${conflict.confidence}%`, background: 'var(--accent-primary)', borderRadius: '4px', transition: 'width 0.5s ease' }} />
+          <div style={{ height: '8px', background: 'var(--bg-border)', borderRadius: 'var(--radius-xs)', overflow: 'hidden' }}>
+            <div style={{ height: '100%', width: `${conflict.confidence}%`, background: 'var(--accent-primary)', borderRadius: 'var(--radius-xs)', transition: 'width 0.5s ease' }} />
           </div>
         </div>
 
         {/* Time saving */}
-        <div style={{ background: '#E8F5E9', border: '1px solid #C8E6C9', borderRadius: '10px', padding: '14px', marginBottom: '18px' }}>
+        <div style={{ background: '#E8F5E9', border: '1px solid #C8E6C9', borderRadius: 'var(--radius-sm)', padding: '14px', marginBottom: '18px' }}>
           <div style={{ fontFamily: 'var(--font-headline)', fontSize: '11px', fontWeight: 700, color: 'var(--accent-safe)', letterSpacing: '0.06em', marginBottom: '4px' }}>ESTIMATED TIME SAVED</div>
           <div style={{ fontFamily: 'var(--font-mono)', fontSize: '26px', fontWeight: 700, color: 'var(--accent-safe)' }}>
             +{conflict.timeSaving} min
@@ -132,10 +132,10 @@ export default function AIRecommendation({ visible, conflict, onDismiss, onAccep
 
       {/* Actions */}
       <div style={{ padding: '16px 20px', borderTop: '1px solid var(--bg-border)', display: 'flex', gap: '10px', background: '#FFFFFF' }}>
-        <button className="btn-primary" style={{ flex: 1, justifyContent: 'center', fontSize: '13.5px', padding: '11px', background: 'var(--accent-safe)', borderRadius: '8px' }} onClick={() => onAccept?.(conflict)}>
+        <button className="btn-primary" style={{ flex: 1, justifyContent: 'center', fontSize: '13.5px', padding: '11px', background: 'var(--accent-safe)', borderRadius: 'var(--radius-xs)' }} onClick={() => onAccept?.(conflict)}>
           ✓ Accept Recommendation
         </button>
-        <button className="btn-ghost" style={{ flex: 1, justifyContent: 'center', fontSize: '13.5px', padding: '11px', borderRadius: '8px' }} onClick={() => onOverride?.(conflict)}>
+        <button className="btn-ghost" style={{ flex: 1, justifyContent: 'center', fontSize: '13.5px', padding: '11px', borderRadius: 'var(--radius-xs)' }} onClick={() => onOverride?.(conflict)}>
           Override
         </button>
       </div>

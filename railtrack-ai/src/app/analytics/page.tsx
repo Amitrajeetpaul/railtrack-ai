@@ -254,7 +254,7 @@ export default function AnalyticsPage() {
   }
 
   return (
-    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', background: 'var(--bg-base)' }}>
+    <div className="has-mobile-tab-bar" style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', background: 'var(--bg-base)' }}>
       {/* Top Nav */}
       {/* Top Nav */}
       <header className="app-header-row" style={{ height: '56px', background: '#FFFFFF', borderBottom: '1.5px solid var(--bg-border)', display: 'flex', alignItems: 'center', padding: '0 20px', gap: '20px', flexShrink: 0, boxShadow: '0 2px 8px rgba(0,0,0,0.03)' }}>
@@ -265,7 +265,7 @@ export default function AnalyticsPage() {
           </div>
         </div>
         <div style={{ width: '1px', height: '24px', background: 'var(--bg-border)' }} />
-        <nav style={{ display: 'flex', gap: '6px' }}>
+        <nav className="desktop-nav-links" style={{ display: 'flex', gap: '6px' }}>
           {[
             { label: 'Dashboard', href: '/dashboard/controller' },
             { label: 'Simulate', href: '/simulate' },
@@ -273,7 +273,7 @@ export default function AnalyticsPage() {
             { label: 'Admin', href: '/admin' },
           ].map(item => (
             <Link key={item.href} href={item.href} style={{
-              padding: '7px 14px', borderRadius: '8px', fontSize: '13px', textDecoration: 'none',
+              padding: '7px 14px', borderRadius: 'var(--radius-xs)', fontSize: '13px', textDecoration: 'none',
               background: item.active ? '#EBF3FA' : 'transparent',
               color: item.active ? 'var(--accent-primary)' : 'var(--text-secondary)',
               fontFamily: 'var(--font-headline)', fontWeight: item.active ? 700 : 500,
@@ -327,8 +327,8 @@ export default function AnalyticsPage() {
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px' }}>
               {[...Array(6)].map((_, i) => (
                 <div key={i} className="panel" style={{ padding: '24px', minHeight: '100px' }}>
-                  <div style={{ background: 'var(--bg-elevated)', borderRadius: '6px', height: '12px', width: '60%', marginBottom: '16px', animation: 'pulse-live 1.4s ease-in-out infinite' }} />
-                  <div style={{ background: 'var(--bg-elevated)', borderRadius: '6px', height: '32px', width: '40%', animation: 'pulse-live 1.4s ease-in-out infinite' }} />
+                  <div style={{ background: 'var(--bg-elevated)', borderRadius: 'var(--radius-xs)', height: '12px', width: '60%', marginBottom: '16px', animation: 'pulse-live 1.4s ease-in-out infinite' }} />
+                  <div style={{ background: 'var(--bg-elevated)', borderRadius: 'var(--radius-xs)', height: '32px', width: '40%', animation: 'pulse-live 1.4s ease-in-out infinite' }} />
                 </div>
               ))}
             </div>
@@ -504,12 +504,12 @@ export default function AnalyticsPage() {
                     <div key={d} style={{ display: 'grid', gridTemplateColumns: 'repeat(24, 1fr)', gap: '4px' }}>
                       {heatmapLoading ? (
                         Array.from({ length: 24 }).map((_, i) => (
-                           <div key={i} style={{ background: 'var(--bg-elevated)', borderRadius: '2px' }} />
+                           <div key={i} style={{ background: 'var(--bg-elevated)', borderRadius: 'var(--radius-xs)' }} />
                         ))
                       ) : heatmapData.filter(h => h.day === d).map((h, i) => (
                         <div key={i} title={`${h.day} ${h.hour}:00 - ${h.value} conflicts`} style={{
                           background: `rgba(239, 68, 68, ${Math.min(h.value / 4, 1)})`,
-                          borderRadius: '2px',
+                          borderRadius: 'var(--radius-xs)',
                           border: `1px solid rgba(239, 68, 68, ${Math.min(h.value / 2, 1)})`,
                           minWidth: '0',
                         }} />
@@ -561,6 +561,13 @@ export default function AnalyticsPage() {
 
         </div>
       </main>
+
+      <nav className="mobile-tab-bar">
+        <Link href="/dashboard/controller"><span className="mobile-tab-icon">🎛️</span>Dashboard</Link>
+        <Link href="/simulate"><span className="mobile-tab-icon">▶</span>Simulate</Link>
+        <Link href="/analytics" className="mobile-tab-active"><span className="mobile-tab-icon">📊</span>Analytics</Link>
+        <Link href="/admin"><span className="mobile-tab-icon">⚙️</span>Admin</Link>
+      </nav>
     </div>
   );
 }

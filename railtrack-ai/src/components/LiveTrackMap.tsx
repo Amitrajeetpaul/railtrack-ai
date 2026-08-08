@@ -140,7 +140,7 @@ export default function LiveTrackMap({ conflictSegment, onTrainClick, liveTrainD
   }
 
   return (
-    <div className="card-elevated" style={{ borderRadius: '12px', background: '#FFFFFF', overflow: 'hidden', position: 'relative' }}>
+    <div className="card-elevated" style={{ borderRadius: 'var(--radius-sm)', background: '#FFFFFF', overflow: 'hidden', position: 'relative' }}>
       {/* Grid overlay */}
       <svg width="100%" height="100%" style={{ position: 'absolute', inset: 0, opacity: 0.4 }} preserveAspectRatio="none">
         <defs>
@@ -287,7 +287,7 @@ export default function LiveTrackMap({ conflictSegment, onTrainClick, liveTrainD
       <div style={{ padding: '12px 20px', borderTop: '1px solid var(--bg-border)', display: 'flex', gap: '24px', flexWrap: 'wrap', background: '#FFFFFF', position: 'relative', zIndex: 1 }}>
         {Object.entries(PRIORITY_COLORS).map(([k, v]) => (
           <div key={k} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <div style={{ width: '16px', height: '8px', borderRadius: '3px', background: v }} />
+            <div style={{ width: '16px', height: '8px', borderRadius: 'var(--radius-xs)', background: v }} />
             <span style={{ fontFamily: 'var(--font-headline)', fontSize: '11px', fontWeight: 600, color: 'var(--text-secondary)' }}>{k}</span>
           </div>
         ))}

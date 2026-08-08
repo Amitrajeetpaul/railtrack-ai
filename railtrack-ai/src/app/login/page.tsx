@@ -135,7 +135,7 @@ export default function LoginPage() {
         </div>
 
         {/* Login Card */}
-        <div className="card-elevated" style={{ padding: '36px', borderRadius: '16px' }}>
+        <div className="card-elevated" style={{ padding: '36px', borderRadius: 'var(--radius-md)' }}>
           {/* Role selector */}
           <div style={{ marginBottom: '28px' }}>
             <div className="panel-header" style={{ marginBottom: '12px' }}>Select Controller Role</div>
@@ -147,7 +147,7 @@ export default function LoginPage() {
                   style={{
                     background: selectedRole === role.key ? '#EBF3FA' : '#FFFFFF',
                     border: `1.5px solid ${selectedRole === role.key ? 'var(--accent-primary)' : 'var(--bg-border)'}`,
-                    borderRadius: '10px',
+                    borderRadius: 'var(--radius-sm)',
                     padding: '12px 14px',
                     cursor: 'pointer',
                     textAlign: 'left',
@@ -200,12 +200,12 @@ export default function LoginPage() {
 
             {/* Error message */}
             {error && (
-              <div className="badge-conflict" style={{ width: '100%', marginBottom: '16px', padding: '10px 14px', borderRadius: '8px', fontSize: '13px' }}>
+              <div className="badge-conflict" style={{ width: '100%', marginBottom: '16px', padding: '10px 14px', borderRadius: 'var(--radius-xs)', fontSize: '13px' }}>
                 ⚠ {error}
               </div>
             )}
 
-            <button type="submit" className="btn-primary" style={{ width: '100%', justifyContent: 'center', fontSize: '15px', padding: '12px', borderRadius: '10px' }} disabled={isLoading}>
+            <button type="submit" className="btn-primary" style={{ width: '100%', justifyContent: 'center', fontSize: '15px', padding: '12px', borderRadius: 'var(--radius-sm)' }} disabled={isLoading}>
               {isLoading ? (
                 <>
                   <span style={{ display: 'inline-block', width: '14px', height: '14px', border: '2px solid #FFFFFF', borderTopColor: 'transparent', borderRadius: '50%', animation: 'spin 0.6s linear infinite' }} />
@@ -233,7 +233,7 @@ export default function LoginPage() {
               justifyContent: 'center',
               fontSize: '14px',
               padding: '11px',
-              borderRadius: '10px',
+              borderRadius: 'var(--radius-sm)',
               gap: '10px',
               opacity: googleLoading ? 0.7 : 1,
             }}
@@ -253,13 +253,13 @@ export default function LoginPage() {
 
           {/* Google auth error */}
           {googleError && (
-            <div className="badge-conflict" style={{ width: '100%', marginTop: '12px', padding: '10px 14px', borderRadius: '8px', fontSize: '12px' }}>
+            <div className="badge-conflict" style={{ width: '100%', marginTop: '12px', padding: '10px 14px', borderRadius: 'var(--radius-xs)', fontSize: '12px' }}>
               ⚠ {googleError}
             </div>
           )}
 
           {/* Demo hint */}
-          <div style={{ marginTop: '20px', padding: '14px', background: '#FFF8E1', border: '1px solid #FFE082', borderRadius: '10px' }}>
+          <div style={{ marginTop: '20px', padding: '14px', background: '#FFF8E1', border: '1px solid #FFE082', borderRadius: 'var(--radius-sm)' }}>
             <div style={{ fontFamily: 'var(--font-headline)', fontSize: '11px', fontWeight: 700, color: '#B78103', letterSpacing: '0.05em', marginBottom: '4px' }}>
               DEMO ACCESS CREDENTIALS
             </div>

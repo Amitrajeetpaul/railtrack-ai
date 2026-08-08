@@ -712,7 +712,7 @@ export default function ControllerDashboard() {
   ].filter(Boolean) as string[];
 
   return (
-    <div style={{ height: '100vh', display: 'flex', flexDirection: 'column', overflow: 'hidden', background: 'var(--bg-base)' }}>
+    <div className="has-mobile-tab-bar has-mobile-action-bar" style={{ height: '100vh', display: 'flex', flexDirection: 'column', overflow: 'hidden', background: 'var(--bg-base)' }}>
       {/* Demo Banner */}
       {user?.isDemo && (
         <div className="demo-banner">
@@ -737,7 +737,7 @@ export default function ControllerDashboard() {
           </div>
         </div>
         <div style={{ width: '1px', height: '24px', background: 'var(--bg-border)' }} />
-        <nav style={{ display: 'flex', gap: '6px' }}>
+        <nav className="desktop-nav-links" style={{ display: 'flex', gap: '6px' }}>
           {[
             { label: 'Dashboard', href: '/dashboard/controller', active: true },
             { label: 'Simulate', href: '/simulate' },
@@ -745,7 +745,7 @@ export default function ControllerDashboard() {
             { label: 'Admin', href: '/admin' },
           ].map(item => (
             <Link key={item.href} href={item.href} style={{
-              padding: '7px 14px', borderRadius: '8px', fontSize: '13px', textDecoration: 'none',
+              padding: '7px 14px', borderRadius: 'var(--radius-xs)', fontSize: '13px', textDecoration: 'none',
               background: item.active ? '#EBF3FA' : 'transparent',
               color: item.active ? 'var(--accent-primary)' : 'var(--text-secondary)',
               fontFamily: 'var(--font-headline)',
@@ -768,13 +768,13 @@ export default function ControllerDashboard() {
           <button
             onClick={logout}
             className="btn-ghost"
-            style={{ padding: '6px 14px', fontSize: '12.5px', fontFamily: 'var(--font-headline)', borderRadius: '8px' }}>
+            style={{ padding: '6px 14px', fontSize: '12.5px', fontFamily: 'var(--font-headline)', borderRadius: 'var(--radius-xs)' }}>
             Sign Out
           </button>
           <button
             onClick={() => setSidebarOpen(o => !o)}
             className="btn-ghost"
-            style={{ padding: '6px 10px', fontSize: '14px', marginRight: '4px', borderRadius: '8px' }}
+            style={{ padding: '6px 10px', fontSize: '14px', marginRight: '4px', borderRadius: 'var(--radius-xs)' }}
             title={sidebarOpen ? 'Hide sidebar' : 'Show sidebar'}
             aria-label={sidebarOpen ? 'Hide sidebar' : 'Show sidebar'}
           >
@@ -929,7 +929,7 @@ export default function ControllerDashboard() {
                           ? (liveTrainData[train.id].message || 'Live tracking service unavailable')
                           : undefined}
                       style={{
-                        fontSize: '9px', padding: '2px 6px', borderRadius: '4px',
+                        fontSize: '9px', padding: '2px 6px', borderRadius: 'var(--radius-xs)',
                         background: liveTrainData[train.id]?.isLive
                           ? 'rgba(34, 197, 94, 0.15)'
                           : (liveTrainData[train.id]?.status === 'not_running' || liveTrainData[train.id]?.status === 'unavailable')
@@ -1029,7 +1029,7 @@ export default function ControllerDashboard() {
             </div>
             <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: '12px' }}>
               {/* Demo Scenario Presets Dropdown / Buttons */}
-              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', background: 'rgba(0, 212, 255, 0.08)', padding: '4px 8px', borderRadius: '6px', border: '1px solid rgba(0, 212, 255, 0.2)' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', background: 'rgba(0, 212, 255, 0.08)', padding: '4px 8px', borderRadius: 'var(--radius-xs)', border: '1px solid rgba(0, 212, 255, 0.2)' }}>
                 <span style={{ fontSize: '11px', fontFamily: 'var(--font-space-mono)', color: 'var(--accent-primary)', fontWeight: 700 }}>
                   ⚡ DEMO PRESETS:
                 </span>
@@ -1037,21 +1037,21 @@ export default function ControllerDashboard() {
                   onClick={() => triggerDemoScenario('overtake')}
                   title="Test Overtake: Express vs Freight at ST-3"
                   className="btn-ghost"
-                  style={{ fontSize: '10px', padding: '3px 8px', borderRadius: '4px', background: 'var(--bg-elevated)', color: 'var(--text-primary)', border: '1px solid var(--bg-border)' }}>
+                  style={{ fontSize: '10px', padding: '3px 8px', borderRadius: 'var(--radius-xs)', background: 'var(--bg-elevated)', color: 'var(--text-primary)', border: '1px solid var(--bg-border)' }}>
                   1. Overtake
                 </button>
                 <button
                   onClick={() => triggerDemoScenario('headon')}
                   title="Test Crossing: Head-on single track SEG-04"
                   className="btn-ghost"
-                  style={{ fontSize: '10px', padding: '3px 8px', borderRadius: '4px', background: 'var(--bg-elevated)', color: 'var(--accent-danger)', border: '1px solid var(--bg-border)' }}>
+                  style={{ fontSize: '10px', padding: '3px 8px', borderRadius: 'var(--radius-xs)', background: 'var(--bg-elevated)', color: 'var(--accent-danger)', border: '1px solid var(--bg-border)' }}>
                   2. Head-on
                 </button>
                 <button
                   onClick={() => triggerDemoScenario('bottleneck')}
                   title="Test Bottleneck: Multi-train platform conflict at ST-5"
                   className="btn-ghost"
-                  style={{ fontSize: '10px', padding: '3px 8px', borderRadius: '4px', background: 'var(--bg-elevated)', color: 'var(--accent-warn)', border: '1px solid var(--bg-border)' }}>
+                  style={{ fontSize: '10px', padding: '3px 8px', borderRadius: 'var(--radius-xs)', background: 'var(--bg-elevated)', color: 'var(--accent-warn-text)', border: '1px solid var(--bg-border)' }}>
                   3. Bottleneck
                 </button>
               </div>
@@ -1068,7 +1068,7 @@ export default function ControllerDashboard() {
                 <button
                   onClick={() => setAiAssist(a => !a)}
                   style={{
-                    width: '40px', height: '22px', borderRadius: '11px',
+                    width: '40px', height: '22px', borderRadius: 'var(--radius-sm)',
                     background: aiAssist ? 'var(--accent-primary)' : 'var(--bg-border)',
                     border: 'none', cursor: 'pointer', position: 'relative', transition: 'background 0.2s ease',
                   }}>
@@ -1142,7 +1142,7 @@ export default function ControllerDashboard() {
                         {(liveTrainData[hoveredTrain.id].delay ?? 0) === 0 ? 'On Time' : `+${liveTrainData[hoveredTrain.id].delay} min`}
                       </div>
                     ) : (
-                      <div style={{ fontFamily: 'var(--font-jetbrains)', fontSize: '14px', color: 'var(--accent-warn)' }}>
+                      <div style={{ fontFamily: 'var(--font-jetbrains)', fontSize: '14px', color: 'var(--accent-warn-text)' }}>
                         +{hoveredTrain.delay} min
                       </div>
                     )}
@@ -1201,12 +1201,12 @@ export default function ControllerDashboard() {
               <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
                 <button
                   onClick={() => triggerDemoScenario('overtake')}
-                  style={{ fontSize: '10px', padding: '4px 8px', background: 'rgba(0, 212, 255, 0.15)', color: 'var(--accent-primary)', border: '1px solid var(--accent-primary)', borderRadius: '4px', cursor: 'pointer', fontFamily: 'var(--font-space-mono)', fontWeight: 700 }}>
+                  style={{ fontSize: '10px', padding: '4px 8px', background: 'rgba(0, 212, 255, 0.15)', color: 'var(--accent-primary)', border: '1px solid var(--accent-primary)', borderRadius: 'var(--radius-xs)', cursor: 'pointer', fontFamily: 'var(--font-space-mono)', fontWeight: 700 }}>
                   + Overtake Conflict
                 </button>
                 <button
                   onClick={() => triggerDemoScenario('headon')}
-                  style={{ fontSize: '10px', padding: '4px 8px', background: 'rgba(239, 68, 68, 0.15)', color: 'var(--accent-danger)', border: '1px solid var(--accent-danger)', borderRadius: '4px', cursor: 'pointer', fontFamily: 'var(--font-space-mono)', fontWeight: 700 }}>
+                  style={{ fontSize: '10px', padding: '4px 8px', background: 'rgba(239, 68, 68, 0.15)', color: 'var(--accent-danger)', border: '1px solid var(--accent-danger)', borderRadius: 'var(--radius-xs)', cursor: 'pointer', fontFamily: 'var(--font-space-mono)', fontWeight: 700 }}>
                   + Head-on Conflict
                 </button>
               </div>
@@ -1225,7 +1225,7 @@ export default function ControllerDashboard() {
                     <span className={`badge-${c.severity === 'HIGH' ? 'conflict' : 'warn'}`} style={{ fontSize: '9px' }}>{c.severity}</span>
                   </div>
                   <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>{c.location}</div>
-                  <div style={{ fontFamily: 'var(--font-jetbrains)', fontSize: '11px', color: 'var(--accent-warn)', marginTop: '2px' }}>
+                  <div style={{ fontFamily: 'var(--font-jetbrains)', fontSize: '11px', color: 'var(--accent-warn-text)', marginTop: '2px' }}>
                     T-{Math.floor(c.timeToConflict / 60)}:{String(c.timeToConflict % 60).padStart(2, '0')}
                   </div>
                 </div>
@@ -1294,7 +1294,7 @@ export default function ControllerDashboard() {
               {chatHistory.map((msg, i) => (
                 <div key={i} style={{
                   padding: '8px 12px',
-                  borderRadius: '6px',
+                  borderRadius: 'var(--radius-xs)',
                   fontSize: '12px',
                   lineHeight: 1.5,
                   background: msg.role === 'ai' ? '#EBF3FA' : 'var(--bg-elevated)',
@@ -1313,7 +1313,7 @@ export default function ControllerDashboard() {
               {/* Typing indicator while waiting for a reply */}
               {chatLoading && (
                 <div style={{
-                  padding: '8px 12px', borderRadius: '6px', fontSize: '12px',
+                  padding: '8px 12px', borderRadius: 'var(--radius-xs)', fontSize: '12px',
                   background: '#EBF3FA', border: '1px solid #C5DCF2',
                   alignSelf: 'flex-start', display: 'flex', alignItems: 'center', gap: '6px',
                 }}>
@@ -1343,6 +1343,28 @@ export default function ControllerDashboard() {
           </div>
         </aside>
       </div>
+
+      {/* Mobile bottom action bar — critical actions, always reachable with one thumb */}
+      <div className="mobile-action-bar">
+        <button className="btn-danger" aria-label="Halt selected train">🛑 Halt</button>
+        <button className="btn-danger" style={{ background: '#7f1d1d', color: '#fca5a5' }} aria-label="Emergency stop">⚠ Emergency Stop</button>
+      </div>
+
+      {/* Mobile bottom tab bar navigation */}
+      <nav className="mobile-tab-bar">
+        <Link href="/dashboard/controller" className="mobile-tab-active">
+          <span className="mobile-tab-icon">🎛️</span>Dashboard
+        </Link>
+        <Link href="/simulate">
+          <span className="mobile-tab-icon">▶</span>Simulate
+        </Link>
+        <Link href="/analytics">
+          <span className="mobile-tab-icon">📊</span>Analytics
+        </Link>
+        <Link href="/admin">
+          <span className="mobile-tab-icon">⚙️</span>Admin
+        </Link>
+      </nav>
     </div>
   );
 }

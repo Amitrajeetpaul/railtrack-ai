@@ -259,7 +259,7 @@ export default function AdminPage() {
   }
 
   return (
-    <div style={{ height: '100vh', display: 'flex', flexDirection: 'column', background: 'var(--bg-base)' }}>
+    <div className="has-mobile-tab-bar" style={{ height: '100vh', display: 'flex', flexDirection: 'column', background: 'var(--bg-base)' }}>
       {/* Top Nav */}
       <header className="app-header-row" style={{ height: '56px', background: '#FFFFFF', borderBottom: '1.5px solid var(--bg-border)', display: 'flex', alignItems: 'center', padding: '0 20px', gap: '20px', flexShrink: 0, boxShadow: '0 2px 8px rgba(0,0,0,0.03)' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
@@ -269,7 +269,7 @@ export default function AdminPage() {
           </div>
         </div>
         <div style={{ width: '1px', height: '24px', background: 'var(--bg-border)' }} />
-        <nav style={{ display: 'flex', gap: '6px' }}>
+        <nav className="desktop-nav-links" style={{ display: 'flex', gap: '6px' }}>
           {[
             { label: 'Dashboard', href: '/dashboard/controller' },
             { label: 'Simulate', href: '/simulate' },
@@ -277,7 +277,7 @@ export default function AdminPage() {
             { label: 'Admin', href: '/admin', active: true },
           ].map(item => (
             <Link key={item.href} href={item.href} style={{
-              padding: '7px 14px', borderRadius: '8px', fontSize: '13px', textDecoration: 'none',
+              padding: '7px 14px', borderRadius: 'var(--radius-xs)', fontSize: '13px', textDecoration: 'none',
               background: item.active ? '#EBF3FA' : 'transparent',
               color: item.active ? 'var(--accent-primary)' : 'var(--text-secondary)',
               fontFamily: 'var(--font-headline)', fontWeight: item.active ? 700 : 500,
@@ -289,9 +289,9 @@ export default function AdminPage() {
         </nav>
       </header>
 
-      <div style={{ flex: 1, display: 'flex', overflow: 'hidden' }}>
+      <div className="main-3col-row" style={{ flex: 1 }}>
         {/* Sidebar */}
-        <aside style={{ width: '240px', background: 'var(--bg-surface)', borderRight: '1px solid var(--bg-border)', display: 'flex', flexDirection: 'column' }}>
+        <aside className="sidebar-left" style={{ background: 'var(--bg-surface)', borderRight: '1px solid var(--bg-border)', display: 'flex', flexDirection: 'column' }}>
           <div style={{ padding: '24px 16px', flex: 1 }}>
             <div style={{ fontFamily: 'var(--font-space-mono)', fontSize: '11px', color: 'var(--text-muted)', letterSpacing: '0.1em', marginBottom: '16px', marginLeft: '12px' }}>ADMINISTRATION</div>
             <nav style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
@@ -300,7 +300,7 @@ export default function AdminPage() {
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
                   style={{
-                    display: 'flex', alignItems: 'center', gap: '12px', padding: '10px 12px', borderRadius: '6px', border: 'none', width: '100%', textAlign: 'left', cursor: 'pointer', fontSize: '13px',
+                    display: 'flex', alignItems: 'center', gap: '12px', padding: '10px 12px', borderRadius: 'var(--radius-xs)', border: 'none', width: '100%', textAlign: 'left', cursor: 'pointer', fontSize: '13px',
                     background: activeTab === tab.id ? 'var(--bg-elevated)' : 'transparent',
                     color: activeTab === tab.id ? 'var(--text-primary)' : 'var(--text-secondary)',
                     transition: 'all 0.15s ease'
@@ -328,7 +328,7 @@ export default function AdminPage() {
                   <button className="btn-primary" style={{ padding: '8px 16px', fontSize: '13px' }} onClick={() => setShowInviteModal(true)}>+ Invite User</button>
                 </div>
 
-                <div className="panel table-scroll-wrap">
+                <div className="panel table-scroll-wrap desktop-table-view">
                   <table className="data-table" style={{ minWidth: '640px' }}>
                     <thead>
                       <tr>
@@ -382,6 +382,39 @@ export default function AdminPage() {
                       ))}
                     </tbody>
                   </table>
+                </div>
+
+                {/* Mobile card-based list — replaces the dense table below 640px */}
+                <div className="mobile-card-list">
+                  {isLoading ? (
+                    <div style={{ textAlign: 'center', padding: '32px', color: 'var(--text-muted)' }}>Loading users...</div>
+                  ) : usersData.map((u: any) => (
+                    <div key={u.id} className="mobile-card">
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '10px' }}>
+                        <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: 'var(--bg-elevated)', border: '1px solid var(--bg-border)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '13px', fontFamily: 'var(--font-space-mono)', color: 'var(--text-muted)', flexShrink: 0 }}>
+                          {u.name ? u.name.split(' ').map((n: string) => n[0]).join('').substring(0, 2).toUpperCase() : 'U'}
+                        </div>
+                        <div style={{ minWidth: 0, flex: 1 }}>
+                          <div style={{ fontWeight: 600, color: 'var(--text-primary)', fontSize: '14px' }}>{u.name}</div>
+                          <div style={{ fontSize: '11px', color: 'var(--text-muted)', fontFamily: 'var(--font-jetbrains)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{u.email}</div>
+                        </div>
+                        <span className={u.role === 'ADMIN' ? 'badge-conflict' : u.role === 'CONTROLLER' ? 'badge-safe' : 'badge-rail'}>
+                          {u.role}
+                        </span>
+                      </div>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '10px' }}>
+                        <span style={{ fontFamily: 'var(--font-jetbrains)' }}>{u.section}</span>
+                        <div
+                          onClick={() => handleStatusToggle(u)}
+                          style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '11px', fontFamily: 'var(--font-space-mono)', color: u.is_active ? 'var(--accent-safe)' : 'var(--text-muted)', cursor: 'pointer', minHeight: '44px', minWidth: '44px', justifyContent: 'flex-end' }}
+                        >
+                          <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: u.is_active ? 'var(--accent-safe)' : 'var(--text-muted)' }} />
+                          {u.is_active ? 'ACTIVE' : 'INACTIVE'}
+                        </div>
+                      </div>
+                      <button className="btn-ghost" style={{ width: '100%', fontSize: '12px', padding: '10px', minHeight: '44px' }} onClick={() => setEditUser(u)}>Edit</button>
+                    </div>
+                  ))}
                 </div>
               </div>
             )}
@@ -455,7 +488,7 @@ export default function AdminPage() {
             )}
 
             {(activeTab === 'keys' || activeTab === 'config') && (
-              <div className="animate-slide-in" style={{ padding: '48px', textAlign: 'center', border: '1px dashed var(--bg-border)', borderRadius: '8px' }}>
+              <div className="animate-slide-in" style={{ padding: '48px', textAlign: 'center', border: '1px dashed var(--bg-border)', borderRadius: 'var(--radius-xs)' }}>
                 <Shield size={48} color="var(--text-muted)" style={{ margin: '0 auto 16px' }} />
                 <h3 style={{ fontFamily: 'var(--font-space-mono)', color: 'var(--text-primary)', marginBottom: '8px' }}>{TABS.find(t => t.id === activeTab)?.label} Locked</h3>
                 <p style={{ color: 'var(--text-muted)' }}>This section is locked in the demo environment.</p>
@@ -468,7 +501,7 @@ export default function AdminPage() {
       {/* Invite Modal */}
       {showInviteModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70" style={{ position: 'fixed', inset: 0, zIndex: 50, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(0,0,0,0.7)' }}>
-          <div className="bg-[#13161e] border border-[#1e2330] rounded-lg p-8 w-full max-w-md relative" style={{ background: '#13161e', border: '1px solid #1e2330', borderRadius: '8px', padding: '32px', width: '100%', maxWidth: '448px', position: 'relative' }}>
+          <div className="bg-[#13161e] border border-[#1e2330] rounded-lg p-8 w-full max-w-md relative" style={{ background: '#13161e', border: '1px solid #1e2330', borderRadius: 'var(--radius-xs)', padding: '32px', width: '100%', maxWidth: '448px', position: 'relative' }}>
             <button onClick={() => setShowInviteModal(false)} aria-label="Close invite dialog" className="absolute top-4 right-4 text-gray-400 hover:text-white" style={{ position: 'absolute', top: '16px', right: '16px', color: '#6b7280', background: 'none', border: 'none', cursor: 'pointer', fontSize: '16px' }}>✕</button>
             <h2 className="text-white font-mono text-xl mb-1" style={{ color: '#e8eaf0', fontFamily: 'var(--font-space-mono)', fontSize: '20px', margin: '0 0 4px 0' }}>Invite User</h2>
             <p className="text-gray-400 text-sm mb-6" style={{ color: '#6b7280', fontSize: '14px', margin: '0 0 24px 0' }}>Send an invite link to grant system access.</p>
@@ -476,14 +509,14 @@ export default function AdminPage() {
             <form onSubmit={handleInviteSubmit} className="space-y-4" style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
               <input required aria-label="Full Name" placeholder="Full Name" value={inviteForm.name}
                 onChange={e => setInviteForm({...inviteForm, name: e.target.value})}
-                style={{ width: '100%', background: '#0d0f14', border: '1px solid #1e2330', borderRadius: '6px', padding: '8px 16px', color: '#e8eaf0', outline: 'none', boxSizing: 'border-box' }} />
+                style={{ width: '100%', background: '#0d0f14', border: '1px solid #1e2330', borderRadius: 'var(--radius-xs)', padding: '8px 16px', color: '#e8eaf0', outline: 'none', boxSizing: 'border-box' }} />
 
               <input required type="email" aria-label="Email Address" placeholder="Email Address" value={inviteForm.email}
                 onChange={e => setInviteForm({...inviteForm, email: e.target.value})}
-                style={{ width: '100%', background: '#0d0f14', border: '1px solid #1e2330', borderRadius: '6px', padding: '8px 16px', color: '#e8eaf0', outline: 'none', boxSizing: 'border-box' }} />
+                style={{ width: '100%', background: '#0d0f14', border: '1px solid #1e2330', borderRadius: 'var(--radius-xs)', padding: '8px 16px', color: '#e8eaf0', outline: 'none', boxSizing: 'border-box' }} />
 
               <select aria-label="Role" value={inviteForm.role} onChange={e => setInviteForm({...inviteForm, role: e.target.value})}
-                style={{ width: '100%', background: '#0d0f14', border: '1px solid #1e2330', borderRadius: '6px', padding: '8px 16px', color: '#e8eaf0', outline: 'none', boxSizing: 'border-box' }}>
+                style={{ width: '100%', background: '#0d0f14', border: '1px solid #1e2330', borderRadius: 'var(--radius-xs)', padding: '8px 16px', color: '#e8eaf0', outline: 'none', boxSizing: 'border-box' }}>
                 <option value="CONTROLLER">CONTROLLER</option>
                 <option value="ADMIN">ADMIN</option>
                 <option value="SUPERVISOR">SUPERVISOR</option>
@@ -492,12 +525,12 @@ export default function AdminPage() {
 
               <input required aria-label="Section" placeholder="Section (e.g. NR-42)" value={inviteForm.section}
                 onChange={e => setInviteForm({...inviteForm, section: e.target.value})}
-                style={{ width: '100%', background: '#0d0f14', border: '1px solid #1e2330', borderRadius: '6px', padding: '8px 16px', color: '#e8eaf0', outline: 'none', boxSizing: 'border-box' }} />
+                style={{ width: '100%', background: '#0d0f14', border: '1px solid #1e2330', borderRadius: 'var(--radius-xs)', padding: '8px 16px', color: '#e8eaf0', outline: 'none', boxSizing: 'border-box' }} />
               
               {inviteError && <p style={{ color: '#ef4444', fontSize: '14px', margin: 0 }}>{inviteError}</p>}
               
               <button type="submit" disabled={inviteLoading}
-                style={{ width: '100%', background: '#00e5ff', color: '#0d0f14', fontWeight: 600, borderRadius: '6px', padding: '10px', border: 'none', cursor: inviteLoading ? 'not-allowed' : 'pointer', opacity: inviteLoading ? 0.5 : 1, transition: 'background 0.2s', marginTop: '8px', boxSizing: 'border-box' }}>
+                style={{ width: '100%', background: '#00e5ff', color: '#0d0f14', fontWeight: 600, borderRadius: 'var(--radius-xs)', padding: '10px', border: 'none', cursor: inviteLoading ? 'not-allowed' : 'pointer', opacity: inviteLoading ? 0.5 : 1, transition: 'background 0.2s', marginTop: '8px', boxSizing: 'border-box' }}>
                 {inviteLoading ? 'Sending...' : 'Send Invite'}
               </button>
             </form>
@@ -508,7 +541,7 @@ export default function AdminPage() {
       {/* Edit Modal */}
       {editUser && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70" style={{ position: 'fixed', inset: 0, zIndex: 50, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(0,0,0,0.7)' }}>
-          <div className="bg-[#13161e] border border-[#1e2330] rounded-lg p-8 w-full max-w-md relative" style={{ background: '#13161e', border: '1px solid #1e2330', borderRadius: '8px', padding: '32px', width: '100%', maxWidth: '448px', position: 'relative' }}>
+          <div className="bg-[#13161e] border border-[#1e2330] rounded-lg p-8 w-full max-w-md relative" style={{ background: '#13161e', border: '1px solid #1e2330', borderRadius: 'var(--radius-xs)', padding: '32px', width: '100%', maxWidth: '448px', position: 'relative' }}>
             <button onClick={() => setEditUser(null)} aria-label="Close edit dialog" className="absolute top-4 right-4 text-gray-400 hover:text-white" style={{ position: 'absolute', top: '16px', right: '16px', color: '#6b7280', background: 'none', border: 'none', cursor: 'pointer', fontSize: '16px' }}>✕</button>
             <h2 className="text-white font-mono text-xl mb-1" style={{ color: '#e8eaf0', fontFamily: 'var(--font-space-mono)', fontSize: '20px', margin: '0 0 4px 0' }}>Edit User</h2>
             <p className="text-gray-400 text-sm mb-6" style={{ color: '#6b7280', fontSize: '14px', margin: '0 0 24px 0' }}>{editUser.name} ({editUser.email})</p>
@@ -517,7 +550,7 @@ export default function AdminPage() {
               <div>
                 <label style={{ display: 'block', fontSize: '12px', color: '#9ca3af', marginBottom: '6px' }}>Role</label>
                 <select value={editUser.role} onChange={e => setEditUser({...editUser, role: e.target.value})}
-                  style={{ width: '100%', background: '#0d0f14', border: '1px solid #1e2330', borderRadius: '6px', padding: '8px 16px', color: '#e8eaf0', outline: 'none', boxSizing: 'border-box' }}>
+                  style={{ width: '100%', background: '#0d0f14', border: '1px solid #1e2330', borderRadius: 'var(--radius-xs)', padding: '8px 16px', color: '#e8eaf0', outline: 'none', boxSizing: 'border-box' }}>
                   <option value="CONTROLLER">CONTROLLER</option>
                   <option value="ADMIN">ADMIN</option>
                   <option value="SUPERVISOR">SUPERVISOR</option>
@@ -529,13 +562,13 @@ export default function AdminPage() {
                 <label style={{ display: 'block', fontSize: '12px', color: '#9ca3af', marginBottom: '6px' }}>Section</label>
                 <input required value={editUser.section}
                   onChange={e => setEditUser({...editUser, section: e.target.value})}
-                  style={{ width: '100%', background: '#0d0f14', border: '1px solid #1e2330', borderRadius: '6px', padding: '8px 16px', color: '#e8eaf0', outline: 'none', boxSizing: 'border-box' }} />
+                  style={{ width: '100%', background: '#0d0f14', border: '1px solid #1e2330', borderRadius: 'var(--radius-xs)', padding: '8px 16px', color: '#e8eaf0', outline: 'none', boxSizing: 'border-box' }} />
               </div>
 
               <div>
                 <label style={{ display: 'block', fontSize: '12px', color: '#9ca3af', marginBottom: '6px' }}>Account Status</label>
                 <select value={editUser.is_active ? 'ACTIVE' : 'INACTIVE'} onChange={e => setEditUser({...editUser, is_active: e.target.value === 'ACTIVE'})}
-                  style={{ width: '100%', background: '#0d0f14', border: '1px solid #1e2330', borderRadius: '6px', padding: '8px 16px', color: '#e8eaf0', outline: 'none', boxSizing: 'border-box' }}>
+                  style={{ width: '100%', background: '#0d0f14', border: '1px solid #1e2330', borderRadius: 'var(--radius-xs)', padding: '8px 16px', color: '#e8eaf0', outline: 'none', boxSizing: 'border-box' }}>
                   <option value="ACTIVE">Active</option>
                   <option value="INACTIVE">Inactive / Suspended</option>
                 </select>
@@ -545,11 +578,11 @@ export default function AdminPage() {
               
               <div style={{ display: 'flex', gap: '12px', marginTop: '8px' }}>
                 <button type="button" onClick={handleDeleteSubmit} disabled={editLoading}
-                  style={{ flex: 1, background: 'transparent', color: '#ef4444', fontWeight: 600, borderRadius: '6px', padding: '10px', border: '1px solid rgba(239, 68, 68, 0.5)', cursor: editLoading ? 'not-allowed' : 'pointer', opacity: editLoading ? 0.5 : 1, transition: 'background 0.2s', boxSizing: 'border-box' }}>
+                  style={{ flex: 1, background: 'transparent', color: '#ef4444', fontWeight: 600, borderRadius: 'var(--radius-xs)', padding: '10px', border: '1px solid rgba(239, 68, 68, 0.5)', cursor: editLoading ? 'not-allowed' : 'pointer', opacity: editLoading ? 0.5 : 1, transition: 'background 0.2s', boxSizing: 'border-box' }}>
                   Delete
                 </button>
                 <button type="submit" disabled={editLoading}
-                  style={{ flex: 2, background: '#00e5ff', color: '#0d0f14', fontWeight: 600, borderRadius: '6px', padding: '10px', border: 'none', cursor: editLoading ? 'not-allowed' : 'pointer', opacity: editLoading ? 0.5 : 1, transition: 'background 0.2s', boxSizing: 'border-box' }}>
+                  style={{ flex: 2, background: '#00e5ff', color: '#0d0f14', fontWeight: 600, borderRadius: 'var(--radius-xs)', padding: '10px', border: 'none', cursor: editLoading ? 'not-allowed' : 'pointer', opacity: editLoading ? 0.5 : 1, transition: 'background 0.2s', boxSizing: 'border-box' }}>
                   {editLoading ? 'Saving...' : 'Save Changes'}
                 </button>
               </div>
@@ -560,10 +593,17 @@ export default function AdminPage() {
       
       {/* Toast UI */}
       {toast && (
-        <div className="fixed bottom-6 right-6 bg-[#13161e] border border-cyan-400/30 text-cyan-400 px-5 py-3 rounded-lg font-mono text-sm shadow-lg z-50 animate-fade-in" style={{ position: 'fixed', bottom: '24px', right: '24px', background: '#13161e', border: '1px solid rgba(0, 229, 255, 0.3)', color: '#00e5ff', padding: '12px 20px', borderRadius: '8px', fontFamily: 'var(--font-space-mono)', fontSize: '14px', boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.5)', zIndex: 50 }}>
+        <div className="fixed bottom-6 right-6 bg-[#13161e] border border-cyan-400/30 text-cyan-400 px-5 py-3 rounded-lg font-mono text-sm shadow-lg z-50 animate-fade-in" style={{ position: 'fixed', bottom: '24px', right: '24px', background: '#13161e', border: '1px solid rgba(0, 229, 255, 0.3)', color: '#00e5ff', padding: '12px 20px', borderRadius: 'var(--radius-xs)', fontFamily: 'var(--font-space-mono)', fontSize: '14px', boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.5)', zIndex: 50 }}>
           {toast}
         </div>
       )}
+
+      <nav className="mobile-tab-bar">
+        <Link href="/dashboard/controller"><span className="mobile-tab-icon">🎛️</span>Dashboard</Link>
+        <Link href="/simulate"><span className="mobile-tab-icon">▶</span>Simulate</Link>
+        <Link href="/analytics"><span className="mobile-tab-icon">📊</span>Analytics</Link>
+        <Link href="/admin" className="mobile-tab-active"><span className="mobile-tab-icon">⚙️</span>Admin</Link>
+      </nav>
     </div>
   );
 }
