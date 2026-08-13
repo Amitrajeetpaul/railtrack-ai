@@ -83,6 +83,10 @@ class LiveTrainResponse(BaseModel):
     train_name: Optional[str] = None
     origin_name: Optional[str] = None
     destination_name: Optional[str] = None
+    # Real geographic coordinates of the train's current station — from a
+    # static lookup of real station locations, not invented/interpolated.
+    current_lat: Optional[float] = None
+    current_lng: Optional[float] = None
 
 
 # ─── Endpoints ────────────────────────────────────────────────────────────────
@@ -187,6 +191,7 @@ async def get_live_train_status(
     never fabricates position/delay data.
     """
     from utils.railradar import fetch_live_train
+    from utils.station_coords import get_station_coords
 
     data = await fetch_live_train(train_number)
 
@@ -205,6 +210,19 @@ async def get_live_train_status(
     route_by_seq = {r.get("sequence"): r for r in data.get("route", [])}
     current_name = route_by_seq.get(current.get("sequence"), {}).get("stationName") or current.get("stationCode", "")
 
+    # Real coordinates for the current station. RailRadar's own live response
+    # already includes real lat/lng for the train's source/destination in
+    # this same call — check those first (zero extra cost) before falling
+    # back to the static ~950-station table for intermediate stops.
+    current_code = current.get("stationCode", "")
+    src, dst = train_meta.get("source") or {}, train_meta.get("destination") or {}
+    if src.get("code") == current_code and src.get("lat") is not None:
+        coords = {"lat": src["lat"], "lng": src["lng"]}
+    elif dst.get("code") == current_code and dst.get("lat") is not None:
+        coords = {"lat": dst["lat"], "lng": dst["lng"]}
+    else:
+        coords = get_station_coords(current_code)
+
     return LiveTrainResponse(
         train_number=train_number,
         status="ok",
@@ -218,6 +236,8 @@ async def get_live_train_status(
         train_name=data.get("trainName"),
         origin_name=(train_meta.get("source") or {}).get("name"),
         destination_name=(train_meta.get("destination") or {}).get("name"),
+        current_lat=coords["lat"] if coords else None,
+        current_lng=coords["lng"] if coords else None,
     )
 
 

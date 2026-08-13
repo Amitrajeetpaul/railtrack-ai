@@ -4,11 +4,12 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import LiveTrackMap from '@/components/LiveTrackMap';
 import SystemFeedsModal from '@/components/SystemFeedsModal';
+import RealPositionsMap, { RealTrainPosition } from '@/components/RealPositionsMap';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Train } from '@/lib/mockData';
 import { API_BASE, trainsQueryFor } from '@/lib/api';
 import { useAuth } from '@/lib/auth';
-import { Radio, TriangleAlert, Zap, Rocket, Lightbulb, SlidersHorizontal, Play, BarChart3, Settings } from 'lucide-react';
+import { Radio, TriangleAlert, Zap, Rocket, Lightbulb, SlidersHorizontal, Play, BarChart3, Settings, Satellite } from 'lucide-react';
 import OfficialUtilityBar from '@/components/OfficialUtilityBar';
 import Breadcrumb from '@/components/Breadcrumb';
 
@@ -38,6 +39,11 @@ export default function SimulatePage() {
   const [applyMessage, setApplyMessage] = useState<string | null>(null);
   const [theme, setTheme] = useState<'dark' | 'light'>('dark');
 
+  const REAL_POSITIONS_CAP = 10;
+  const [realPositions, setRealPositions] = useState<RealTrainPosition[] | null>(null);
+  const [isFetchingRealPositions, setIsFetchingRealPositions] = useState(false);
+  const [realPositionsNote, setRealPositionsNote] = useState<string | null>(null);
+
   const toggleTheme = () => {
     const nextTheme = theme === 'dark' ? 'light' : 'dark';
     setTheme(nextTheme);
@@ -57,6 +63,31 @@ export default function SimulatePage() {
     },
     enabled: isAuthReady,
   });
+
+  // Real active conflicts (train_a_id/train_b_id from the app's own
+  // conflict-detection logic) — reused here to highlight, on the real
+  // position map, which of the currently-plotted trains are actually
+  // flagged as conflicting, rather than inventing a separate signal.
+  const { data: activeConflicts = [] } = useQuery({
+    queryKey: ['conflicts'],
+    queryFn: async () => {
+      const token = getClientToken();
+      if (!token) return [];
+      const res = await fetch(`${API_BASE}/api/conflicts/`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (!res.ok) return [];
+      return res.json();
+    },
+    enabled: isAuthReady,
+  });
+
+  const conflictPairs: [string, string][] = realPositions
+    ? (activeConflicts as any[])
+        .filter(c => !c.resolved)
+        .map(c => [c.train_a_id, c.train_b_id] as [string, string])
+        .filter(([a, b]) => realPositions.some(p => p.trainNumber === a) && realPositions.some(p => p.trainNumber === b))
+    : [];
 
   useEffect(() => {
     if (trains.length > 0 && selectedTrains.length === 0 && simState === 'IDLE') {
@@ -149,6 +180,56 @@ export default function SimulatePage() {
       setApplyMessage(`Error: ${err.message}`);
     } finally {
       setIsApplying(false);
+    }
+  };
+
+  const handleShowRealPositions = async () => {
+    if (selectedTrains.length === 0) return;
+    const targets = selectedTrains.slice(0, REAL_POSITIONS_CAP);
+    setRealPositionsNote(
+      selectedTrains.length > REAL_POSITIONS_CAP
+        ? `Showing real positions for the first ${REAL_POSITIONS_CAP} of ${selectedTrains.length} selected trains (capped to limit live API calls).`
+        : null
+    );
+    setIsFetchingRealPositions(true);
+    setRealPositions(null);
+    try {
+      const token = getClientToken();
+      const results = await Promise.all(
+        targets.map(async (trainId): Promise<RealTrainPosition> => {
+          const trainMeta = trains.find(t => t.id === trainId);
+          try {
+            const res = await fetch(`${API_BASE}/api/trains/live/${trainId}`, {
+              headers: token ? { Authorization: `Bearer ${token}` } : {},
+            });
+            if (!res.ok) throw new Error('unavailable');
+            const data = await res.json();
+            return {
+              trainNumber: trainId,
+              trainName: data.train_name || trainMeta?.name || `Train ${trainId}`,
+              lat: data.current_lat ?? null,
+              lng: data.current_lng ?? null,
+              delayMinutes: data.status === 'ok' ? (data.delay_minutes ?? 0) : null,
+              currentStationName: data.current_station_name,
+              nextStation: data.next_station,
+              status: data.status === 'ok' ? 'ok' : (data.status || 'unavailable'),
+              terminated: data.terminated ?? false,
+            };
+          } catch {
+            return {
+              trainNumber: trainId,
+              trainName: trainMeta?.name || `Train ${trainId}`,
+              lat: null,
+              lng: null,
+              delayMinutes: null,
+              status: 'unavailable',
+            };
+          }
+        })
+      );
+      setRealPositions(results);
+    } finally {
+      setIsFetchingRealPositions(false);
     }
   };
 
@@ -285,6 +366,14 @@ export default function SimulatePage() {
                   ))}
                 </select>
               )}
+              <button
+                className="btn-ghost"
+                onClick={handleShowRealPositions}
+                disabled={selectedTrains.length === 0 || isFetchingRealPositions}
+                style={{ width: '100%', justifyContent: 'center', padding: '8px', fontSize: '12px', marginTop: '8px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <Satellite size={13} strokeWidth={2.25} />
+                {isFetchingRealPositions ? 'Fetching real positions...' : `Show Real Live Positions${selectedTrains.length > 0 ? ` (${Math.min(selectedTrains.length, REAL_POSITIONS_CAP)})` : ''}`}
+              </button>
             </div>
 
             {/* Event Type */}
@@ -378,6 +467,20 @@ export default function SimulatePage() {
           <div style={{ marginBottom: '16px' }}>
             <Breadcrumb items={[{ label: 'Simulate' }]} />
           </div>
+          {(realPositions || isFetchingRealPositions) && (
+            <div style={{ marginBottom: '24px' }}>
+              <h3 style={{ fontFamily: 'var(--font-space-mono)', fontSize: '16px', marginBottom: '16px' }}>Real Live Positions</h3>
+              {realPositionsNote && (
+                <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginBottom: '10px' }}>{realPositionsNote}</div>
+              )}
+              {isFetchingRealPositions ? (
+                <div className="skeleton" style={{ width: '100%', height: '300px', borderRadius: 'var(--radius-sm)' }} />
+              ) : (
+                <RealPositionsMap positions={realPositions!} conflictPairs={conflictPairs} />
+              )}
+            </div>
+          )}
+
           <div style={{ marginBottom: '24px' }}>
             <h3 style={{ fontFamily: 'var(--font-space-mono)', fontSize: '16px', marginBottom: '16px' }}>Scenario Context: T-0</h3>
             <LiveTrackMap />

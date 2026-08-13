@@ -1,0 +1,4752 @@
+{
+ "AAK": {
+  "name": "ANKAIKILA",
+  "lat": 20.18297,
+  "lng": 74.437823
+ },
+ "AB": {
+  "name": "AMBUR",
+  "lat": 12.784066,
+  "lng": 78.721785
+ },
+ "ABO": {
+  "name": "ASTHAL BOHAR",
+  "lat": 28.858154,
+  "lng": 76.629053
+ },
+ "ABY": {
+  "name": "AMBIVLI",
+  "lat": 19.268291,
+  "lng": 73.172246
+ },
+ "AD": {
+  "name": "ADONI",
+  "lat": 15.617614,
+  "lng": 77.274694
+ },
+ "AEH": {
+  "name": "ANANT PAITH",
+  "lat": 25.95535,
+  "lng": 78.276429
+ },
+ "AFK": {
+  "name": "ANGAMALI",
+  "lat": 10.183779,
+  "lng": 76.378077
+ },
+ "AGC": {
+  "name": "AGRA CANTT JN",
+  "lat": 27.158953,
+  "lng": 77.990048
+ },
+ "AGD": {
+  "name": "AGASOD",
+  "lat": 24.233963,
+  "lng": 78.21762
+ },
+ "AGQ": {
+  "name": "ASIRGARH ROAD",
+  "lat": 21.378068,
+  "lng": 76.267481
+ },
+ "AIP": {
+  "name": "ATTIPPATTU",
+  "lat": 13.260841,
+  "lng": 80.289648
+ },
+ "AIPP": {
+  "name": "ATTIPATTU PUDU NAGAR.H",
+  "lat": 13.24951,
+  "lng": 80.29953
+ },
+ "AJH": {
+  "name": "AJHAI",
+  "lat": 27.636249,
+  "lng": 77.558095
+ },
+ "AJNI": {
+  "name": "AJNI",
+  "lat": 21.126923,
+  "lng": 79.082575
+ },
+ "AJTM": {
+  "name": "AJITGILL MATTA",
+  "lat": 30.482873,
+  "lng": 74.864104
+ },
+ "AKAT": {
+  "name": "AKKAMPET",
+  "lat": 13.648763,
+  "lng": 80.018502
+ },
+ "AKM": {
+  "name": "ARAMBAKKAM",
+  "lat": 13.53307,
+  "lng": 80.074675
+ },
+ "AKR": {
+  "name": "AKOLNER",
+  "lat": 18.983933,
+  "lng": 74.668318
+ },
+ "AKY": {
+  "name": "AKKURTI",
+  "lat": 13.783337,
+  "lng": 79.669141
+ },
+ "ALER": {
+  "name": "ALER",
+  "lat": 17.645626,
+  "lng": 79.048895
+ },
+ "AMIN": {
+  "name": "AMIN",
+  "lat": 29.904621,
+  "lng": 76.899603
+ },
+ "AMLA": {
+  "name": "AMLA JN",
+  "lat": 21.91951,
+  "lng": 78.122756
+ },
+ "AMLX": {
+  "name": "AMLA JUNCTION YARD",
+  "lat": 21.91814,
+  "lng": 78.11678
+ },
+ "AMY": {
+  "name": "AKATHUMURI",
+  "lat": 8.700679,
+  "lng": 76.758552
+ },
+ "ANB": {
+  "name": "AMMANABROLU",
+  "lat": 15.596591,
+  "lng": 80.148985
+ },
+ "ANDI": {
+  "name": "ADARSH NAGAR DELHI",
+  "lat": 28.714401,
+  "lng": 77.167288
+ },
+ "ANG": {
+  "name": "AHILYANAGAR",
+  "lat": 19.074352,
+  "lng": 74.721998
+ },
+ "ANK": {
+  "name": "ANKAI",
+  "lat": 20.15087,
+  "lng": 74.46986
+ },
+ "ANU": {
+  "name": "ANANGUR",
+  "lat": 11.398425,
+  "lng": 77.820989
+ },
+ "APB": {
+  "name": "ANUPPAMBATTU",
+  "lat": 13.30419,
+  "lng": 80.230943
+ },
+ "APL": {
+  "name": "APPIKATLA",
+  "lat": 15.970606,
+  "lng": 80.514293
+ },
+ "AQ": {
+  "name": "AJNI ELECTRIC LOCO SHED",
+  "lat": 21.117333,
+  "lng": 79.078894
+ },
+ "ARI": {
+  "name": "ANTRI",
+  "lat": 26.035644,
+  "lng": 78.226953
+ },
+ "ASAF": {
+  "name": "ASIFABAD ROAD",
+  "lat": 19.257162,
+  "lng": 79.416689
+ },
+ "ASE": {
+  "name": "ASAUDAH",
+  "lat": 28.736759,
+  "lng": 76.859708
+ },
+ "ASO": {
+  "name": "ASANGAON",
+  "lat": 19.439747,
+  "lng": 73.308012
+ },
+ "ASP": {
+  "name": "ASPARI",
+  "lat": 15.455801,
+  "lng": 77.356166
+ },
+ "AST": {
+  "name": "ASAOTI",
+  "lat": 28.253176,
+  "lng": 77.323616
+ },
+ "ATG": {
+  "name": "ATGAON",
+  "lat": 19.503542,
+  "lng": 73.328257
+ },
+ "ATP": {
+  "name": "ANANTAPUR",
+  "lat": 14.686288,
+  "lng": 77.595246
+ },
+ "AV": {
+  "name": "ASVALI",
+  "lat": 19.82045,
+  "lng": 73.717591
+ },
+ "AWL": {
+  "name": "ALAWALPUR",
+  "lat": 31.42553,
+  "lng": 75.642859
+ },
+ "AWY": {
+  "name": "ALUVA",
+  "lat": 10.108253,
+  "lng": 76.356699
+ },
+ "AXR": {
+  "name": "ALLURU ROAD",
+  "lat": 14.710492,
+  "lng": 79.988793
+ },
+ "BAB": {
+  "name": "BABINA",
+  "lat": 25.239269,
+  "lng": 78.453636
+ },
+ "BAD": {
+  "name": "BAD",
+  "lat": 27.397091,
+  "lng": 77.688213
+ },
+ "BAO": {
+  "name": "BANMOR",
+  "lat": 26.355471,
+  "lng": 78.098603
+ },
+ "BAP": {
+  "name": "BELAPUR",
+  "lat": 19.619764,
+  "lng": 74.659901
+ },
+ "BAQ": {
+  "name": "GANJ BASODA",
+  "lat": 23.845913,
+  "lng": 77.94462
+ },
+ "BAU": {
+  "name": "BURHANPUR",
+  "lat": 21.334818,
+  "lng": 76.199833
+ },
+ "BBDE": {
+  "name": "BABARPUR",
+  "lat": 29.449984,
+  "lng": 76.966619
+ },
+ "BBMN": {
+  "name": "BARI BRAHMAN",
+  "lat": 32.638584,
+  "lng": 74.9164
+ },
+ "BBQ": {
+  "name": "BASIN BRIDGE JN",
+  "lat": 13.10239,
+  "lng": 80.27133
+ },
+ "BBTR": {
+  "name": "BARBATPUR",
+  "lat": 22.196907,
+  "lng": 77.919728
+ },
+ "BDHY": {
+  "name": "BUDHI",
+  "lat": 32.440625,
+  "lng": 75.43543
+ },
+ "BDI": {
+  "name": "BHADLI",
+  "lat": 21.023186,
+  "lng": 75.675173
+ },
+ "BDMJ": {
+  "name": "BHODWAL MAJRI",
+  "lat": 29.185226,
+  "lng": 77.008419
+ },
+ "BDY": {
+  "name": "BUDDIREDDIPPATI",
+  "lat": 12.046308,
+  "lng": 78.313751
+ },
+ "BET": {
+  "name": "BARETH",
+  "lat": 23.914445,
+  "lng": 77.999846
+ },
+ "BFP": {
+  "name": "BILOCHPURA",
+  "lat": 27.2019,
+  "lng": 77.986789
+ },
+ "BG": {
+  "name": "BHONGIR",
+  "lat": 17.523976,
+  "lng": 78.898362
+ },
+ "BGSF": {
+  "name": "BISUGIRSHARIF",
+  "lat": 18.347362,
+  "lng": 79.483275
+ },
+ "BGZ": {
+  "name": "BAHADURGARH",
+  "lat": 28.701224,
+  "lng": 76.930357
+ },
+ "BHA": {
+  "name": "BHANDAI JUNCTION",
+  "lat": 27.06868,
+  "lng": 77.966583
+ },
+ "BHBT": {
+  "name": "BASANTAR BLOCK HUT",
+  "lat": 32.558235,
+  "lng": 75.068332
+ },
+ "BHCH": {
+  "name": "BLOCK CABIN CHAKKI BANK",
+  "lat": 32.24038,
+  "lng": 75.65264
+ },
+ "BHD": {
+  "name": "BADLI",
+  "lat": 28.74654,
+  "lng": 77.137462
+ },
+ "BHOI": {
+  "name": "DHANDARIKALAN BLOCK HUT (BHOI)",
+  "lat": 30.894669,
+  "lng": 75.871065
+ },
+ "BHRL": {
+  "name": "BHAROLI JN.",
+  "lat": 32.271538,
+  "lng": 75.616385
+ },
+ "BHS": {
+  "name": "VIDISHA",
+  "lat": 23.522579,
+  "lng": 77.8148
+ },
+ "BIF": {
+  "name": "BHAIRONPUR",
+  "lat": 22.440474,
+  "lng": 77.41898
+ },
+ "BINA": {
+  "name": "BINA JN",
+  "lat": 24.171233,
+  "lng": 78.185181
+ },
+ "BJA": {
+  "name": "BIJROTHA",
+  "lat": 24.946612,
+  "lng": 78.421158
+ },
+ "BJI": {
+  "name": "BIJAULI",
+  "lat": 25.37624,
+  "lng": 78.517492
+ },
+ "BKA": {
+  "name": "BARKHERA",
+  "lat": 22.916846,
+  "lng": 77.650036
+ },
+ "BKL": {
+  "name": "BONA KALU",
+  "lat": 17.02936,
+  "lng": 80.263411
+ },
+ "BLCA": {
+  "name": "BEAS BLOCK CABIN",
+  "lat": 32.087945,
+  "lng": 75.621119
+ },
+ "BLNR": {
+  "name": "BIRLANAGAR",
+  "lat": 26.238073,
+  "lng": 78.195412
+ },
+ "BLZ": {
+  "name": "BUDHLADA",
+  "lat": 29.921854,
+  "lng": 75.549861
+ },
+ "BMA": {
+  "name": "BAGMAR",
+  "lat": 21.725153,
+  "lng": 76.363252
+ },
+ "BMT": {
+  "name": "BEGAMPET",
+  "lat": 17.438695,
+  "lng": 78.458097
+ },
+ "BN": {
+  "name": "BIBINAGAR",
+  "lat": 17.470742,
+  "lng": 78.794704
+ },
+ "BNCR": {
+  "name": "BANCHARI",
+  "lat": 27.945678,
+  "lng": 77.363215
+ },
+ "BND": {
+  "name": "BHANDUP",
+  "lat": 19.142757,
+  "lng": 72.937654
+ },
+ "BNGL": {
+  "name": "BHANGALA",
+  "lat": 32.025059,
+  "lng": 75.612219
+ },
+ "BNI": {
+  "name": "BUDNI",
+  "lat": 22.786886,
+  "lng": 77.681475
+ },
+ "BOK": {
+  "name": "BORKHEDI",
+  "lat": 20.860473,
+  "lng": 78.974484
+ },
+ "BPA": {
+  "name": "BELAMPALLI",
+  "lat": 19.052348,
+  "lng": 79.485937
+ },
+ "BPF": {
+  "name": "BANAPURA",
+  "lat": 22.470483,
+  "lng": 77.481689
+ },
+ "BPK": {
+  "name": "BHUGAON",
+  "lat": 20.673577,
+  "lng": 78.669787
+ },
+ "BPL": {
+  "name": "BHOPAL JN.",
+  "lat": 23.266485,
+  "lng": 77.413084
+ },
+ "BPP": {
+  "name": "BAPATLA",
+  "lat": 15.908348,
+  "lng": 80.468724
+ },
+ "BPQ": {
+  "name": "BALHARSHAH",
+  "lat": 19.849914,
+  "lng": 79.34781
+ },
+ "BPQX": {
+  "name": "BALHARSHAH YARD",
+  "lat": 19.84515,
+  "lng": 79.35171
+ },
+ "BPRS": {
+  "name": "BHOGPUR SIRWAL",
+  "lat": 31.555021,
+  "lng": 75.64487
+ },
+ "BPW": {
+  "name": "BURHPURA",
+  "lat": 25.199492,
+  "lng": 78.423386
+ },
+ "BQI": {
+  "name": "BOMMIDI",
+  "lat": 11.984149,
+  "lng": 78.245963
+ },
+ "BRBD": {
+  "name": "BORABANDA",
+  "lat": 17.459069,
+  "lng": 78.407866
+ },
+ "BRGJ": {
+  "name": "BARGAON GUJAR",
+  "lat": 21.777155,
+  "lng": 76.355431
+ },
+ "BRI": {
+  "name": "BHIRINGI",
+  "lat": 22.238751,
+  "lng": 76.957027
+ },
+ "BRUD": {
+  "name": "BARUD",
+  "lat": 22.028226,
+  "lng": 76.763749
+ },
+ "BRZ": {
+  "name": "BARETA",
+  "lat": 29.859704,
+  "lng": 75.69244
+ },
+ "BSBN": {
+  "name": "BHUSAVAL B CABIN",
+  "lat": 21.05441,
+  "lng": 75.82839
+ },
+ "BSGS": {
+  "name": "BHUSAVAL GOODS YARD",
+  "lat": 21.04837,
+  "lng": 75.81473
+ },
+ "BSL": {
+  "name": "BHUSAVAL JN",
+  "lat": 21.047255,
+  "lng": 75.788059
+ },
+ "BSLX": {
+  "name": "BHUSAVAL JN YARD",
+  "lat": 21.047847,
+  "lng": 75.799846
+ },
+ "BSPD": {
+  "name": "BIASPIND",
+  "lat": 31.45253,
+  "lng": 75.635937
+ },
+ "BSPH": {
+  "name": "BISHANPUR HRYNA",
+  "lat": 29.27394,
+  "lng": 76.323724
+ },
+ "BSPL": {
+  "name": "BASAMPALLE",
+  "lat": 14.311241,
+  "lng": 77.745521
+ },
+ "BTBR": {
+  "name": "BUTI BORI",
+  "lat": 20.918487,
+  "lng": 79.013281
+ },
+ "BTCC": {
+  "name": "BATHINDA C CABIN",
+  "lat": 30.184531,
+  "lng": 74.94284
+ },
+ "BTI": {
+  "name": "BATHINDA",
+  "lat": 30.212757,
+  "lng": 74.933084
+ },
+ "BTNR": {
+  "name": "BHARATNAGAR",
+  "lat": 17.462603,
+  "lng": 78.430156
+ },
+ "BTSR": {
+  "name": "BHUTESHWAR",
+  "lat": 27.501721,
+  "lng": 77.667588
+ },
+ "BTTN": {
+  "name": "BHATIAN",
+  "lat": 31.0784,
+  "lng": 75.779218
+ },
+ "BTTR": {
+  "name": "BITRAGUNTA",
+  "lat": 14.766979,
+  "lng": 79.98383
+ },
+ "BTWN": {
+  "name": "BETWA CABIN",
+  "lat": 23.51058,
+  "lng": 77.78328
+ },
+ "BUM": {
+  "name": "BOMMASAMUDRAM",
+  "lat": 13.04498,
+  "lng": 79.176685
+ },
+ "BUPH": {
+  "name": "BABUPETH",
+  "lat": 19.920822,
+  "lng": 79.313054
+ },
+ "BUX": {
+  "name": "BHANDAK",
+  "lat": 20.084731,
+  "lng": 79.113319
+ },
+ "BVB": {
+  "name": "BHADBHADAGHAT",
+  "lat": 23.374841,
+  "lng": 77.535468
+ },
+ "BVH": {
+  "name": "BALLABGARH",
+  "lat": 28.340262,
+  "lng": 77.3122
+ },
+ "BWD": {
+  "name": "BELVANDI",
+  "lat": 18.710759,
+  "lng": 74.622582
+ },
+ "BWRA": {
+  "name": "BHARATWADA",
+  "lat": 21.231421,
+  "lng": 79.016713
+ },
+ "BY": {
+  "name": "BYCULLA",
+  "lat": 18.976622,
+  "lng": 72.832794
+ },
+ "BYS": {
+  "name": "BARSALI",
+  "lat": 21.910178,
+  "lng": 78.031395
+ },
+ "BZA": {
+  "name": "VIJAYAWADA JN",
+  "lat": 16.517968,
+  "lng": 80.619572
+ },
+ "BZAY": {
+  "name": "VIJAYAWADA YARD",
+  "lat": 16.52683,
+  "lng": 80.62201
+ },
+ "BZJT": {
+  "name": "BAZIDA JATAN",
+  "lat": 29.613412,
+  "lng": 76.965496
+ },
+ "BZK": {
+  "name": "BHAINI KHURD",
+  "lat": 29.751995,
+  "lng": 76.955529
+ },
+ "BZO": {
+  "name": "BARSOLA",
+  "lat": 29.386385,
+  "lng": 76.238225
+ },
+ "BZU": {
+  "name": "BETUL",
+  "lat": 21.89717,
+  "lng": 77.90617
+ },
+ "BZY": {
+  "name": "BASAI",
+  "lat": 25.142712,
+  "lng": 78.394284
+ },
+ "CAER": {
+  "name": "CHHANERA",
+  "lat": 21.963641,
+  "lng": 76.707278
+ },
+ "CBE": {
+  "name": "COIMBATORE JN",
+  "lat": 10.9962,
+  "lng": 76.9666
+ },
+ "CBF": {
+  "name": "COIMBATORE NORTH JN.",
+  "lat": 11.018336,
+  "lng": 76.955721
+ },
+ "CBX": {
+  "name": "CHAND BHAN",
+  "lat": 30.384214,
+  "lng": 74.893896
+ },
+ "CCA": {
+  "name": "CHIGICHERLA",
+  "lat": 14.516567,
+  "lng": 77.684094
+ },
+ "CCD": {
+  "name": "CHICHONDA",
+  "lat": 21.709287,
+  "lng": 78.352547
+ },
+ "CD": {
+  "name": "CHANDRAPUR",
+  "lat": 19.960328,
+  "lng": 79.300134
+ },
+ "CDI": {
+  "name": "CHANDNI",
+  "lat": 21.426025,
+  "lng": 76.348661
+ },
+ "CDNR": {
+  "name": "CHANDANAGAR",
+  "lat": 17.487298,
+  "lng": 78.332214
+ },
+ "CEU": {
+  "name": "CHIHERU",
+  "lat": 31.262649,
+  "lng": 75.706872
+ },
+ "CGH": {
+  "name": "CHOLANG",
+  "lat": 31.617024,
+  "lng": 75.640569
+ },
+ "CGI": {
+  "name": "CHANDRAGIRI",
+  "lat": 13.611712,
+  "lng": 79.312278
+ },
+ "CGO": {
+  "name": "CHHIDGAON",
+  "lat": 22.406975,
+  "lng": 77.31389
+ },
+ "CGTA": {
+  "name": "CHEGUNTA",
+  "lat": 16.485737,
+  "lng": 77.301563
+ },
+ "CGV": {
+  "name": "CHINGAVANAM",
+  "lat": 9.529231,
+  "lng": 76.525379
+ },
+ "CGY": {
+  "name": "CHANGANASSERI",
+  "lat": 9.448874,
+  "lng": 76.548669
+ },
+ "CHA": {
+  "name": "CHAWAPALL",
+  "lat": 30.759639,
+  "lng": 76.127419
+ },
+ "CHG": {
+  "name": "BBY CHINCHPKILI",
+  "lat": 18.987198,
+  "lng": 72.832672
+ },
+ "CHJ": {
+  "name": "CHATA",
+  "lat": 27.712416,
+  "lng": 77.502653
+ },
+ "CHJC": {
+  "name": "CHITODA",
+  "lat": 20.714051,
+  "lng": 78.625566
+ },
+ "CHNR": {
+  "name": "CHHAN ARORIAN",
+  "lat": 32.461472,
+  "lng": 75.358719
+ },
+ "CHQ": {
+  "name": "CHOKA",
+  "lat": 22.863923,
+  "lng": 77.638019
+ },
+ "CHZ": {
+  "name": "CHARLAPALLI",
+  "lat": 17.458597,
+  "lng": 78.606606
+ },
+ "CIAT": {
+  "name": "COCHIN AIRPORT",
+  "lat": 10.16022,
+  "lng": 76.38035
+ },
+ "CIRL": {
+  "name": "CHIRULA",
+  "lat": 25.583861,
+  "lng": 78.483925
+ },
+ "CIT": {
+  "name": "CHITALI",
+  "lat": 19.691104,
+  "lng": 74.623651
+ },
+ "CJM": {
+  "name": "CHINNA GANJAM",
+  "lat": 15.689378,
+  "lng": 80.236717
+ },
+ "CK": {
+  "name": "CHIKSUGAR",
+  "lat": 16.335928,
+  "lng": 77.344844
+ },
+ "CKDL": {
+  "name": "CHAKDAYALA",
+  "lat": 32.479676,
+  "lng": 75.304142
+ },
+ "CKI": {
+  "name": "CHALAKUDI",
+  "lat": 10.302385,
+  "lng": 76.321561
+ },
+ "CKKD": {
+  "name": "CHARKHERA KHURD",
+  "lat": 21.938669,
+  "lng": 76.641459
+ },
+ "CKKN": {
+  "name": "CHAK KALAN",
+  "lat": 32.065335,
+  "lng": 75.619863
+ },
+ "CKN": {
+  "name": "CHINTA KANI",
+  "lat": 17.123911,
+  "lng": 80.203115
+ },
+ "CKNI": {
+  "name": "CHIKNI ROAD",
+  "lat": 20.325097,
+  "lng": 78.960277
+ },
+ "CLA": {
+  "name": "KURLA LOCAL",
+  "lat": 19.06528,
+  "lng": 72.87938
+ },
+ "CLAS": {
+  "name": "KURLA EMU CARSHED",
+  "lat": 19.07464,
+  "lng": 72.89122
+ },
+ "CLE": {
+  "name": "CHINTALPALLI",
+  "lat": 17.914395,
+  "lng": 79.702165
+ },
+ "CLHT": {
+  "name": "CHULHETA",
+  "lat": 23.949809,
+  "lng": 78.020825
+ },
+ "CLVR": {
+  "name": "CHILUVUR",
+  "lat": 16.380282,
+  "lng": 80.617224
+ },
+ "CLX": {
+  "name": "CHIRALA",
+  "lat": 15.830914,
+  "lng": 80.354362
+ },
+ "CNGR": {
+  "name": "CHENGANNUR",
+  "lat": 9.318281,
+  "lng": 76.608532
+ },
+ "CPL": {
+  "name": "CHAKARLAPALLI",
+  "lat": 13.99759,
+  "lng": 77.582855
+ },
+ "CPW": {
+  "name": "CHOTIPADOLI",
+  "lat": 20.001774,
+  "lng": 79.249816
+ },
+ "CRD": {
+  "name": "BMBY CURREY RD",
+  "lat": 18.993749,
+  "lng": 72.832856
+ },
+ "CRK": {
+  "name": "CHARKHERA",
+  "lat": 22.366257,
+  "lng": 77.160078
+ },
+ "CRNM": {
+  "name": "MULUND DEPOT",
+  "lat": 19.16379,
+  "lng": 72.95099
+ },
+ "CRY": {
+  "name": "CHIRAYINKEEZH",
+  "lat": 8.659556,
+  "lng": 76.785555
+ },
+ "CSB": {
+  "name": "SHIVAJI BRIDGE",
+  "lat": 28.633452,
+  "lng": 77.226668
+ },
+ "CSMT": {
+  "name": "CHHATRAPATI SHIVAJI MAHARAJ TERMINUS",
+  "lat": 18.940493,
+  "lng": 72.835786
+ },
+ "CSN": {
+  "name": "CHALISGAON JN",
+  "lat": 20.46402,
+  "lng": 74.999071
+ },
+ "CSTN": {
+  "name": "SANATNAGAR CONCOR SIDING",
+  "lat": 17.46074,
+  "lng": 78.42266
+ },
+ "CT": {
+  "name": "CHITTAPUR",
+  "lat": 17.119842,
+  "lng": 77.090534
+ },
+ "CTF": {
+  "name": "CHITGIDDA",
+  "lat": 17.394179,
+  "lng": 77.973697
+ },
+ "CTO": {
+  "name": "CHITTOOR",
+  "lat": 13.219366,
+  "lng": 79.103313
+ },
+ "CV": {
+  "name": "CAUVERY",
+  "lat": 11.351082,
+  "lng": 77.760971
+ },
+ "CVV": {
+  "name": "CHERUVU MADHWRM",
+  "lat": 16.688481,
+  "lng": 80.542161
+ },
+ "CWR": {
+  "name": "CHOVVARA",
+  "lat": 10.132978,
+  "lng": 76.372272
+ },
+ "CYN": {
+  "name": "CHERIYANAD",
+  "lat": 9.273294,
+  "lng": 76.5849
+ },
+ "DAA": {
+  "name": "DATIA",
+  "lat": 25.64066,
+  "lng": 78.455983
+ },
+ "DAH": {
+  "name": "DEHARE CABIN",
+  "lat": 19.2436,
+  "lng": 74.674826
+ },
+ "DAZ": {
+  "name": "DELHI AZADPUR",
+  "lat": 28.703504,
+  "lng": 77.177063
+ },
+ "DBA": {
+  "name": "DABRA",
+  "lat": 25.881888,
+  "lng": 78.330508
+ },
+ "DBSC": {
+  "name": "DAYABASTI BYPASS A CABIN",
+  "lat": 28.67348,
+  "lng": 77.15613
+ },
+ "DBSI": {
+  "name": "DAYABASTI",
+  "lat": 28.667122,
+  "lng": 77.17119
+ },
+ "DBU": {
+  "name": "DODBALLAPUR",
+  "lat": 13.279688,
+  "lng": 77.550505
+ },
+ "DC": {
+  "name": "MAGUDANCHAVADI",
+  "lat": 11.551401,
+  "lng": 77.987712
+ },
+ "DDAP": {
+  "name": "DAUND A CABIN (PUNE)",
+  "lat": 18.46662,
+  "lng": 74.54779
+ },
+ "DDCC": {
+  "name": "DAUND CHORD LINE",
+  "lat": 18.4667083,
+  "lng": 74.5526912
+ },
+ "DDCL": {
+  "name": "DOMVIVALI CONTROL CABIN",
+  "lat": 19.21243,
+  "lng": 73.079353
+ },
+ "DDDM": {
+  "name": "DEEN DAYAL DHAM",
+  "lat": 27.31857,
+  "lng": 77.758303
+ },
+ "DDL": {
+  "name": "DHANDARI KALAN",
+  "lat": 30.874368,
+  "lng": 75.90946
+ },
+ "DDMT": {
+  "name": "DARIMETA",
+  "lat": 21.536797,
+  "lng": 78.540495
+ },
+ "DGN": {
+  "name": "DONGARGAON",
+  "lat": 21.620065,
+  "lng": 76.370773
+ },
+ "DHKR": {
+  "name": "DHODA KHEDI",
+  "lat": 30.01856,
+  "lng": 76.842411
+ },
+ "DHMZ": {
+  "name": "DHOLA MAZRA",
+  "lat": 30.115398,
+  "lng": 76.853834
+ },
+ "DHO": {
+  "name": "DHAULPUR",
+  "lat": 26.696354,
+  "lng": 77.905952
+ },
+ "DHQ": {
+  "name": "DHARAKHOH",
+  "lat": 22.00984,
+  "lng": 77.95012
+ },
+ "DHY": {
+  "name": "DHARODI",
+  "lat": 29.639659,
+  "lng": 76.05592
+ },
+ "DI": {
+  "name": "DOMBIVLI",
+  "lat": 19.218049,
+  "lng": 73.086135
+ },
+ "DIG": {
+  "name": "DUGGIRALA",
+  "lat": 16.328919,
+  "lng": 80.62385
+ },
+ "DINR": {
+  "name": "DIVINE NAGAR HALT (F",
+  "lat": 10.285799,
+  "lng": 76.336828
+ },
+ "DIVA": {
+  "name": "DIVA",
+  "lat": 19.188756,
+  "lng": 73.041417
+ },
+ "DKI": {
+  "name": "DHARMKUNDI",
+  "lat": 22.510309,
+  "lng": 77.548736
+ },
+ "DKJ": {
+  "name": "DORNAKAL JN",
+  "lat": 17.445355,
+  "lng": 80.1529
+ },
+ "DKZ": {
+  "name": "DELHI KISHANGNJ",
+  "lat": 28.662744,
+  "lng": 77.197908
+ },
+ "DLA": {
+  "name": "DOULTA",
+  "lat": 24.994894,
+  "lng": 78.42887
+ },
+ "DMM": {
+  "name": "DHARMAVARAM JN",
+  "lat": 14.426063,
+  "lng": 77.715228
+ },
+ "DOA": {
+  "name": "DORAHA",
+  "lat": 30.803852,
+  "lng": 76.043676
+ },
+ "DOH": {
+  "name": "DHODRA MOHAR",
+  "lat": 22.281247,
+  "lng": 77.874804
+ },
+ "DPE": {
+  "name": "DEVARAPALLE",
+  "lat": 13.723234,
+  "lng": 77.511948
+ },
+ "DPI": {
+  "name": "DODDAMPATTI",
+  "lat": 12.181299,
+  "lng": 78.422334
+ },
+ "DPP": {
+  "name": "DHIRPUR",
+  "lat": 30.066416,
+  "lng": 76.844439
+ },
+ "DR": {
+  "name": "DADAR",
+  "lat": 19.017376,
+  "lng": 72.843026
+ },
+ "DRA": {
+  "name": "DULARIA",
+  "lat": 22.575757,
+  "lng": 77.654527
+ },
+ "DRE": {
+  "name": "DHOGRI",
+  "lat": 31.3939,
+  "lng": 75.633138
+ },
+ "DRHI": {
+  "name": "DAGAR KHEDI",
+  "lat": 22.08156,
+  "lng": 76.826944
+ },
+ "DRR": {
+  "name": "DHARUR",
+  "lat": 17.289124,
+  "lng": 77.758232
+ },
+ "DSB": {
+  "name": "SADAR BAZAR",
+  "lat": 28.658087,
+  "lng": 77.217009
+ },
+ "DSK": {
+  "name": "DUSKHEDA",
+  "lat": 21.073598,
+  "lng": 75.839235
+ },
+ "DSPT": {
+  "name": "DANISHPET",
+  "lat": 11.858515,
+  "lng": 78.138037
+ },
+ "DST": {
+  "name": "DASAMPATTI",
+  "lat": 12.251998,
+  "lng": 78.439648
+ },
+ "DTN": {
+  "name": "DHAMTAN SAHIB",
+  "lat": 29.687392,
+  "lng": 76.006291
+ },
+ "DTW": {
+  "name": "DATEWAS",
+  "lat": 29.890987,
+  "lng": 75.620531
+ },
+ "DUA": {
+  "name": "DHAURA",
+  "lat": 24.450481,
+  "lng": 78.321921
+ },
+ "DVBH": {
+  "name": "MAKUDAN VIRAPANDI BLOCK HUT",
+  "lat": 11.580377,
+  "lng": 78.037667
+ },
+ "DVL": {
+  "name": "DEVLALI",
+  "lat": 19.896549,
+  "lng": 73.83674
+ },
+ "DVR": {
+  "name": "DORAVARICHATTRAM",
+  "lat": 13.817815,
+  "lng": 79.948455
+ },
+ "DWA": {
+  "name": "DAILWARA",
+  "lat": 24.780536,
+  "lng": 78.393334
+ },
+ "DWG": {
+  "name": "DEWANGANJ",
+  "lat": 23.428692,
+  "lng": 77.592407
+ },
+ "DWJN": {
+  "name": "DIVA JUNCTION CABIN",
+  "lat": 19.19585,
+  "lng": 73.05737
+ },
+ "DWNA": {
+  "name": "DIWANA",
+  "lat": 29.318071,
+  "lng": 76.980157
+ },
+ "DZA": {
+  "name": "DASUYA",
+  "lat": 31.808457,
+  "lng": 75.658007
+ },
+ "ED": {
+  "name": "ERODE JN",
+  "lat": 11.328626,
+  "lng": 77.72579
+ },
+ "ED-DLS": {
+  "name": "ERODE DIESEL LOCO SHED",
+  "lat": 11.3239,
+  "lng": 77.71841
+ },
+ "EGU": {
+  "name": "IRANAGALLU",
+  "lat": 15.892604,
+  "lng": 77.263743
+ },
+ "ELR": {
+  "name": "ELAVUR",
+  "lat": 13.458964,
+  "lng": 80.115892
+ },
+ "ENR": {
+  "name": "ENNORE",
+  "lat": 13.217468,
+  "lng": 80.321601
+ },
+ "ERN": {
+  "name": "ERNAKULAM TOWN",
+  "lat": 9.991656,
+  "lng": 76.286356
+ },
+ "ERSC": {
+  "name": "ERNAKULAM C CABIN",
+  "lat": 9.98281,
+  "lng": 76.288452
+ },
+ "ESV": {
+  "name": "ISIVI",
+  "lat": 15.657554,
+  "lng": 77.229794
+ },
+ "ET": {
+  "name": "ITARSI JN",
+  "lat": 22.608563,
+  "lng": 77.76707
+ },
+ "ETB": {
+  "name": "ITARSI B CABIN",
+  "lat": 22.591923,
+  "lng": 77.710106
+ },
+ "ETBC": {
+  "name": "ITARSI B CABIN",
+  "lat": 22.602994,
+  "lng": 77.749342
+ },
+ "ETF": {
+  "name": "ITARSI F CABIN",
+  "lat": 22.61562,
+  "lng": 77.77484
+ },
+ "ETM": {
+  "name": "ETTUMANUR",
+  "lat": 9.675149,
+  "lng": 76.546011
+ },
+ "ETMD": {
+  "name": "ETTIMADAI",
+  "lat": 10.898476,
+  "lng": 76.895974
+ },
+ "EVA": {
+  "name": "EDAVAI",
+  "lat": 8.763333,
+  "lng": 76.697494
+ },
+ "FAR": {
+  "name": "FARAH",
+  "lat": 27.3346,
+  "lng": 77.744213
+ },
+ "FDB": {
+  "name": "FARIDABAD",
+  "lat": 28.410762,
+  "lng": 77.307077
+ },
+ "FDK": {
+  "name": "FARIDKOT",
+  "lat": 30.682651,
+  "lng": 74.762086
+ },
+ "FDN": {
+  "name": "FARIDABAD NW TN",
+  "lat": 28.377372,
+  "lng": 77.309472
+ },
+ "FNB": {
+  "name": "FATEHNAGAR BRIDGE",
+  "lat": 17.456201,
+  "lng": 78.449924
+ },
+ "FZR": {
+  "name": "FIROZPUR CANT",
+  "lat": 30.941881,
+  "lng": 74.617982
+ },
+ "GAA": {
+  "name": "GALAN",
+  "lat": 20.609212,
+  "lng": 75.276893
+ },
+ "GBD": {
+  "name": "GAURIBIDANUR",
+  "lat": 13.613449,
+  "lng": 77.513135
+ },
+ "GC": {
+  "name": "GHATKOPAR",
+  "lat": 19.085693,
+  "lng": 72.908367
+ },
+ "GDE": {
+  "name": "GARLADINNE",
+  "lat": 14.827341,
+  "lng": 77.592786
+ },
+ "GDKP": {
+  "name": "GHUNDANKHAPA",
+  "lat": 21.656362,
+  "lng": 78.398486
+ },
+ "GDQ": {
+  "name": "GODAMGURA",
+  "lat": 17.290053,
+  "lng": 77.866747
+ },
+ "GDR": {
+  "name": "GUDUR JN",
+  "lat": 14.148475,
+  "lng": 79.845394
+ },
+ "GDYA": {
+  "name": "GHORADONGRI",
+  "lat": 22.125642,
+  "lng": 78.0022
+ },
+ "GGD": {
+  "name": "GULLAGUDA",
+  "lat": 17.417046,
+  "lng": 78.032996
+ },
+ "GHA": {
+  "name": "GOLEHWALA",
+  "lat": 30.789742,
+  "lng": 74.704598
+ },
+ "GHE": {
+  "name": "GHEVRA",
+  "lat": 28.691343,
+  "lng": 76.997771
+ },
+ "GHER": {
+  "name": "GHER",
+  "lat": 26.671865,
+  "lng": 77.948098
+ },
+ "GHGL": {
+  "name": "GHAGWAL",
+  "lat": 32.50517,
+  "lng": 75.213419
+ },
+ "GILA": {
+  "name": "GHIALA",
+  "lat": 32.153103,
+  "lng": 75.647535
+ },
+ "GIT": {
+  "name": "GHORPURI TRANSH YARD",
+  "lat": 18.53159,
+  "lng": 73.88866
+ },
+ "GJUT": {
+  "name": "GANGSAR JAITU",
+  "lat": 30.445772,
+  "lng": 74.878945
+ },
+ "GLA": {
+  "name": "GARLA",
+  "lat": 17.486212,
+  "lng": 80.139564
+ },
+ "GLG": {
+  "name": "GULABHGANJ",
+  "lat": 23.683778,
+  "lng": 77.911902
+ },
+ "GMG": {
+  "name": "GUMGAON",
+  "lat": 20.993925,
+  "lng": 79.030126
+ },
+ "GNA": {
+  "name": "GONEANA",
+  "lat": 30.318782,
+  "lng": 74.909709
+ },
+ "GNBA": {
+  "name": "GAON BARODA",
+  "lat": 29.430761,
+  "lng": 76.205591
+ },
+ "GNN": {
+  "name": "GANGINENI",
+  "lat": 16.744965,
+  "lng": 80.519639
+ },
+ "GNP": {
+  "name": "GHANPUR",
+  "lat": 17.849779,
+  "lng": 79.376345
+ },
+ "GNQ": {
+  "name": "GODHANI",
+  "lat": 21.21158,
+  "lng": 79.068635
+ },
+ "GNU": {
+  "name": "GANAUR",
+  "lat": 29.131526,
+  "lng": 77.011089
+ },
+ "GNVR": {
+  "name": "GONDWANAVISAPUR",
+  "lat": 19.88247,
+  "lng": 79.328369
+ },
+ "GO": {
+  "name": "GHOTI",
+  "lat": 19.723749,
+  "lng": 73.636307
+ },
+ "GPD": {
+  "name": "GUMMIDIPUNDI",
+  "lat": 13.409824,
+  "lng": 80.12369
+ },
+ "GPU": {
+  "name": "GULAPALYAMU",
+  "lat": 15.086938,
+  "lng": 77.399739
+ },
+ "GPW": {
+  "name": "GHAUNSPUR",
+  "lat": 31.888621,
+  "lng": 75.631652
+ },
+ "GRA": {
+  "name": "GHARAUNDA",
+  "lat": 29.540877,
+  "lng": 76.965377
+ },
+ "GRY": {
+  "name": "GORAYA",
+  "lat": 31.12989,
+  "lng": 75.774172
+ },
+ "GSB": {
+  "name": "GARNA SAHIB",
+  "lat": 31.779957,
+  "lng": 75.653457
+ },
+ "GSO": {
+  "name": "GHASO",
+  "lat": 29.531096,
+  "lng": 76.14327
+ },
+ "GT": {
+  "name": "GHATKESAR",
+  "lat": 17.452856,
+  "lng": 78.678298
+ },
+ "GTL": {
+  "name": "GUNTAKAL JN",
+  "lat": 15.173713,
+  "lng": 77.369864
+ },
+ "GTLB": {
+  "name": "GUNTAKAL BYE PASS CABIN",
+  "lat": 15.256033,
+  "lng": 77.368813
+ },
+ "GUU": {
+  "name": "GUNDRATIMADUGU",
+  "lat": 17.532081,
+  "lng": 80.079997
+ },
+ "GVG": {
+  "name": "GOVINDGARH",
+  "lat": 30.669338,
+  "lng": 76.297468
+ },
+ "GWL": {
+  "name": "GWALIOR JN.",
+  "lat": 26.2162438,
+  "lng": 78.1826037
+ },
+ "GYM": {
+  "name": "GUDIYATTAM",
+  "lat": 12.937296,
+  "lng": 78.914347
+ },
+ "GZS": {
+  "name": "GZ SANDHWAN",
+  "lat": 30.613562,
+  "lng": 74.801553
+ },
+ "HBD": {
+  "name": "HOSHANGABAD",
+  "lat": 22.75291,
+  "lng": 77.7168
+ },
+ "HD": {
+  "name": "HARDA",
+  "lat": 22.33904,
+  "lng": 77.10155
+ },
+ "HDL": {
+  "name": "HODAL",
+  "lat": 27.886502,
+  "lng": 77.388131
+ },
+ "HDP": {
+  "name": "HADAPSAR",
+  "lat": 18.526967,
+  "lng": 73.927825
+ },
+ "HET": {
+  "name": "HETAMPUR",
+  "lat": 26.610962,
+  "lng": 77.943806
+ },
+ "HFZ": {
+  "name": "HAFIZPET",
+  "lat": 17.4823997,
+  "lng": 78.3630141
+ },
+ "HGT": {
+  "name": "HINGANGHAT",
+  "lat": 20.542611,
+  "lng": 78.833164
+ },
+ "HLKT": {
+  "name": "HALAKATTA",
+  "lat": 17.042732,
+  "lng": 76.991817
+ },
+ "HMQ": {
+  "name": "HIMMATPURA",
+  "lat": 29.74792,
+  "lng": 75.864548
+ },
+ "HNMN": {
+  "name": "HANUMAN STATION",
+  "lat": 15.149128,
+  "lng": 77.376811
+ },
+ "HNN": {
+  "name": "HARANA KALAN",
+  "lat": 28.945033,
+  "lng": 77.038939
+ },
+ "HPH": {
+  "name": "HANUMAPURA",
+  "lat": 15.972643,
+  "lng": 77.306724
+ },
+ "HPLX": {
+  "name": "LONI YARD",
+  "lat": 18.4933,
+  "lng": 74.01546
+ },
+ "HPR": {
+  "name": "HIRAPUR",
+  "lat": 20.424519,
+  "lng": 74.936618
+ },
+ "HRNR": {
+  "name": "HIRA NAGAR",
+  "lat": 32.487069,
+  "lng": 75.268159
+ },
+ "HSJ": {
+  "name": "HUSSAIN SAGAR JUNCTION",
+  "lat": 17.4257,
+  "lng": 78.46221
+ },
+ "HSL": {
+  "name": "HISVAHAL",
+  "lat": 20.281178,
+  "lng": 74.560309
+ },
+ "HSP": {
+  "name": "HASANPARTI ROAD",
+  "lat": 18.077948,
+  "lng": 79.502276
+ },
+ "HTCY": {
+  "name": "HIGH TECH CITY",
+  "lat": 17.469814,
+  "lng": 78.385378
+ },
+ "HTN": {
+  "name": "HATNA PUR",
+  "lat": 21.756464,
+  "lng": 78.348076
+ },
+ "HUK": {
+  "name": "HOLAMBI KALAN",
+  "lat": 28.801579,
+  "lng": 77.102483
+ },
+ "HUP": {
+  "name": "HINDUPUR",
+  "lat": 13.818776,
+  "lng": 77.499936
+ },
+ "HYB": {
+  "name": "HYDERABAD",
+  "lat": 17.392422,
+  "lng": 78.467596
+ },
+ "IGP": {
+  "name": "IGATPURI",
+  "lat": 19.694439,
+  "lng": 73.563888
+ },
+ "IGPX": {
+  "name": "IGATPURI YARD",
+  "lat": 19.6924,
+  "lng": 73.5779
+ },
+ "IGR": {
+  "name": "INGUR",
+  "lat": 11.225595,
+  "lng": 77.58736
+ },
+ "IGU": {
+  "name": "IRUGUR",
+  "lat": 11.015944,
+  "lng": 77.067821
+ },
+ "IJK": {
+  "name": "IRINJALAKUDA",
+  "lat": 10.340647,
+  "lng": 76.280786
+ },
+ "IMAM": {
+  "name": "IMAMPURAM",
+  "lat": 15.012893,
+  "lng": 77.517034
+ },
+ "INK": {
+  "name": "INTAKANNE",
+  "lat": 17.728548,
+  "lng": 79.861218
+ },
+ "IPG": {
+  "name": "IPPUGUDA",
+  "lat": 17.801764,
+  "lng": 79.327164
+ },
+ "IPL": {
+  "name": "IDAPALLI",
+  "lat": 10.034533,
+  "lng": 76.298762
+ },
+ "IPPM": {
+  "name": "IPURUPALEM",
+  "lat": 15.851928,
+  "lng": 80.385263
+ },
+ "IRP": {
+  "name": "IRAVIPURAM",
+  "lat": 8.866794,
+  "lng": 76.624735
+ },
+ "ISM": {
+  "name": "ISMAILA HARYANA",
+  "lat": 28.79975,
+  "lng": 76.73995
+ },
+ "ITKL": {
+  "name": "ITAYA KALAN",
+  "lat": 23.055352,
+  "lng": 77.540992
+ },
+ "JAQ": {
+  "name": "JANDRAPETA",
+  "lat": 15.809717,
+  "lng": 80.334322
+ },
+ "JAT": {
+  "name": "JAMMUTAVI",
+  "lat": 32.70604,
+  "lng": 74.879993
+ },
+ "JET": {
+  "name": "SECBAD JAMES ST",
+  "lat": 17.432952,
+  "lng": 78.487322
+ },
+ "JHA": {
+  "name": "JAKHAURA",
+  "lat": 24.870765,
+  "lng": 78.400481
+ },
+ "JHL": {
+  "name": "JAKHAL JN",
+  "lat": 29.803082,
+  "lng": 75.820793
+ },
+ "JHP": {
+  "name": "JUJHARPUR CABIN",
+  "lat": 22.589386,
+  "lng": 77.758093
+ },
+ "JHSA": {
+  "name": "JHANSI A CABIN",
+  "lat": 25.42028,
+  "lng": 78.54663
+ },
+ "JIND": {
+  "name": "JIND JN",
+  "lat": 29.32961,
+  "lng": 76.289501
+ },
+ "JJ": {
+  "name": "JAJAU",
+  "lat": 26.934084,
+  "lng": 77.936239
+ },
+ "JJT": {
+  "name": "JAI JAI WANTI",
+  "lat": 29.168336,
+  "lng": 76.368512
+ },
+ "JKR": {
+  "name": "JAULKHERA",
+  "lat": 21.860354,
+  "lng": 78.199776
+ },
+ "JL": {
+  "name": "JALGAON JN",
+  "lat": 21.01798,
+  "lng": 75.563254
+ },
+ "JLN": {
+  "name": "JAKHALAUN",
+  "lat": 24.547243,
+  "lng": 78.341969
+ },
+ "JMKT": {
+  "name": "JAMIKUNTA",
+  "lat": 18.29003,
+  "lng": 79.476688
+ },
+ "JNA": {
+  "name": "JULANA",
+  "lat": 29.121169,
+  "lng": 76.395507
+ },
+ "JRC": {
+  "name": "JALANDHAR CANT",
+  "lat": 31.307331,
+  "lng": 75.631199
+ },
+ "JRO": {
+  "name": "JIRON",
+  "lat": 24.607958,
+  "lng": 78.361294
+ },
+ "JSPN": {
+  "name": "JASPALON",
+  "lat": 30.784767,
+  "lng": 76.080569
+ },
+ "JTJ": {
+  "name": "JOLARPETTAI JN.",
+  "lat": 12.56399,
+  "lng": 78.57839
+ },
+ "JUH": {
+  "name": "JUJHARPUR CABIN",
+  "lat": 22.6052,
+  "lng": 77.75727
+ },
+ "KAGR": {
+  "name": "KAGANGARH",
+  "lat": 29.83592,
+  "lng": 75.745686
+ },
+ "KAH": {
+  "name": "KALHAR",
+  "lat": 23.976976,
+  "lng": 78.05752
+ },
+ "KAQ": {
+  "name": "KOLANUKONDA",
+  "lat": 16.448422,
+  "lng": 80.604512
+ },
+ "KATL": {
+  "name": "KATOL",
+  "lat": 21.263417,
+  "lng": 78.590479
+ },
+ "KAVM": {
+  "name": "KATHIVAKKAM",
+  "lat": 13.204038,
+  "lng": 80.316547
+ },
+ "KBSN": {
+  "name": "KASBE SUKENE",
+  "lat": 20.074345,
+  "lng": 74.031311
+ },
+ "KBU": {
+  "name": "KASU BEGU",
+  "lat": 30.869519,
+  "lng": 74.665651
+ },
+ "KCC": {
+  "name": "KRISHNA CANAL",
+  "lat": 16.477258,
+  "lng": 80.606004
+ },
+ "KCVL": {
+  "name": "THIRUVANANTHAPURAM NORTH",
+  "lat": 8.509554,
+  "lng": 76.8964
+ },
+ "KDG": {
+  "name": "KEDGAON",
+  "lat": 18.482087,
+  "lng": 74.376715
+ },
+ "KDGH": {
+  "name": "KODIGEHALLI",
+  "lat": 13.063064,
+  "lng": 77.575836
+ },
+ "KDK": {
+  "name": "KOHDAD",
+  "lat": 21.68471,
+  "lng": 76.364518
+ },
+ "KDM": {
+  "name": "KESAMUDRAM",
+  "lat": 17.686246,
+  "lng": 79.896983
+ },
+ "KDT": {
+  "name": "KHADARPETT",
+  "lat": 14.982781,
+  "lng": 77.54255
+ },
+ "KDTN": {
+  "name": "KADETHAN",
+  "lat": 18.477935,
+  "lng": 74.422422
+ },
+ "KDTY": {
+  "name": "KADUTURUTTI HALT",
+  "lat": 9.755693,
+  "lng": 76.492411
+ },
+ "KDV": {
+  "name": "KHADAVLI",
+  "lat": 19.356724,
+  "lng": 73.219037
+ },
+ "KDY": {
+  "name": "KETTANDAPATTI",
+  "lat": 12.625281,
+  "lng": 78.570896
+ },
+ "KE": {
+  "name": "KHARDI",
+  "lat": 19.580216,
+  "lng": 73.393825
+ },
+ "KEN": {
+  "name": "KOTALA",
+  "lat": 13.604781,
+  "lng": 79.285956
+ },
+ "KEY": {
+  "name": "KAGANKARAI",
+  "lat": 12.410174,
+  "lng": 78.508518
+ },
+ "KFE": {
+  "name": "CHOTTANIKKARA ROAD",
+  "lat": 9.924474,
+  "lng": 76.375978
+ },
+ "KFI": {
+  "name": "KAPPIL",
+  "lat": 8.779556,
+  "lng": 76.679288
+ },
+ "KFQ": {
+  "name": "KUMARANALLUR",
+  "lat": 9.61702,
+  "lng": 76.532164
+ },
+ "KFU": {
+  "name": "KOHAND",
+  "lat": 29.495658,
+  "lng": 76.968594
+ },
+ "KGL": {
+  "name": "KUPGAL",
+  "lat": 15.726864,
+  "lng": 77.219766
+ },
+ "KHJ": {
+  "name": "KHAJRAHA",
+  "lat": 25.303991,
+  "lng": 78.478375
+ },
+ "KHKN": {
+  "name": "KHERA KALAN",
+  "lat": 28.76969,
+  "lng": 77.115861
+ },
+ "KHT": {
+  "name": "SRI KALAHASTI",
+  "lat": 13.745832,
+  "lng": 79.683259
+ },
+ "KHV": {
+  "name": "KARAINTHI",
+  "lat": 29.014175,
+  "lng": 76.482545
+ },
+ "KI": {
+  "name": "KONDAPALLI",
+  "lat": 16.623708,
+  "lng": 80.54688
+ },
+ "KIKA": {
+  "name": "KURWAI KETHORA",
+  "lat": 24.118309,
+  "lng": 78.115678
+ },
+ "KIU": {
+  "name": "KINANA",
+  "lat": 29.227898,
+  "lng": 76.335507
+ },
+ "KJ": {
+  "name": "KAJGAON",
+  "lat": 20.573625,
+  "lng": 75.140686
+ },
+ "KJJ": {
+  "name": "KODAVALURU",
+  "lat": 14.564467,
+  "lng": 79.994628
+ },
+ "KJKD": {
+  "name": "KANJIKODE",
+  "lat": 10.800281,
+  "lng": 76.754774
+ },
+ "KJRD": {
+  "name": "KANJUR MARG",
+  "lat": 19.128653,
+  "lng": 72.928039
+ },
+ "KKDE": {
+  "name": "KURUKSHETRA JN",
+  "lat": 29.969859,
+  "lng": 76.851711
+ },
+ "KKL": {
+  "name": "KALA BAKRA",
+  "lat": 31.476008,
+  "lng": 75.63038
+ },
+ "KKN": {
+  "name": "KHIRKIYA",
+  "lat": 22.165909,
+  "lng": 76.859044
+ },
+ "KKP": {
+  "name": "KOT KAPURA",
+  "lat": 30.579851,
+  "lng": 74.817402
+ },
+ "KLBA": {
+  "name": "KALAMBHA",
+  "lat": 21.344379,
+  "lng": 78.5588
+ },
+ "KLMR": {
+  "name": "KALAMASSERI",
+  "lat": 10.062362,
+  "lng": 76.32721
+ },
+ "KLU": {
+  "name": "KALLURU",
+  "lat": 14.925015,
+  "lng": 77.581539
+ },
+ "KLWN": {
+  "name": "KALWAN",
+  "lat": 29.699603,
+  "lng": 75.965699
+ },
+ "KLX": {
+  "name": "KOLAKALUR",
+  "lat": 16.295352,
+  "lng": 80.627663
+ },
+ "KMLP": {
+  "name": "KOMMARAPUDI",
+  "lat": 14.276923,
+  "lng": 79.901934
+ },
+ "KMPT": {
+  "name": "KOMATI PALLI",
+  "lat": 18.023444,
+  "lng": 79.516146
+ },
+ "KMT": {
+  "name": "KHAMMAM",
+  "lat": 17.249035,
+  "lng": 80.139167
+ },
+ "KNDI": {
+  "name": "KANDRORI",
+  "lat": 32.184633,
+  "lng": 75.669442
+ },
+ "KNGN": {
+  "name": "KANHEGAON",
+  "lat": 19.816812,
+  "lng": 74.571537
+ },
+ "KNN": {
+  "name": "KHANNA",
+  "lat": 30.708775,
+  "lng": 76.223487
+ },
+ "KNNT": {
+  "name": "KUNNATHUR",
+  "lat": 12.361852,
+  "lng": 78.497819
+ },
+ "KNW": {
+  "name": "KHANDWA JUNCTION",
+  "lat": 21.823838,
+  "lng": 76.353016
+ },
+ "KNWX": {
+  "name": "KHANDWA JUNCTION YARD",
+  "lat": 21.81706,
+  "lng": 76.35442
+ },
+ "KO": {
+  "name": "KOSGI",
+  "lat": 15.847702,
+  "lng": 77.236377
+ },
+ "KOA": {
+  "name": "KARONDA",
+  "lat": 24.330217,
+  "lng": 78.265119
+ },
+ "KOHL": {
+  "name": "KOHLI",
+  "lat": 21.273548,
+  "lng": 78.807881
+ },
+ "KOK": {
+  "name": "KORUKKUPET JN",
+  "lat": 13.119425,
+  "lng": 80.278456
+ },
+ "KOLR": {
+  "name": "KOLNUR",
+  "lat": 18.496553,
+  "lng": 79.419029
+ },
+ "KPD": {
+  "name": "KATPADI JN",
+  "lat": 12.97218,
+  "lng": 79.13814
+ },
+ "KPG": {
+  "name": "KOPARGAON",
+  "lat": 19.90359,
+  "lng": 74.50359
+ },
+ "KPLL": {
+  "name": "KOTTA PNDLPALLI",
+  "lat": 15.761077,
+  "lng": 80.281532
+ },
+ "KPPR": {
+  "name": "KARUPPUR",
+  "lat": 11.724174,
+  "lng": 78.089885
+ },
+ "KPTM": {
+  "name": "KANJIRAMITTAM",
+  "lat": 9.861939,
+  "lng": 76.412304
+ },
+ "KPY": {
+  "name": "KARUNAGAPPALLI",
+  "lat": 9.065225,
+  "lng": 76.544645
+ },
+ "KQA": {
+  "name": "KONDAGUNTA",
+  "lat": 14.080356,
+  "lng": 79.794553
+ },
+ "KQD": {
+  "name": "KHAIRATABAD DCN",
+  "lat": 17.412974,
+  "lng": 78.461058
+ },
+ "KQE": {
+  "name": "KALA AKHAR",
+  "lat": 22.39508,
+  "lng": 77.818307
+ },
+ "KQT": {
+  "name": "KURGUNTA",
+  "lat": 17.191979,
+  "lng": 77.360341
+ },
+ "KRAN": {
+  "name": "KORATTI ANGADI",
+  "lat": 10.260532,
+  "lng": 76.35665
+ },
+ "KRO": {
+  "name": "KURAWAN",
+  "lat": 22.205336,
+  "lng": 76.904619
+ },
+ "KRPP": {
+  "name": "KURUPPANTARA",
+  "lat": 9.735076,
+  "lng": 76.510491
+ },
+ "KRQ": {
+  "name": "KARARI",
+  "lat": 25.530774,
+  "lng": 78.508887
+ },
+ "KRTH": {
+  "name": "KIRATGARH",
+  "lat": 22.538132,
+  "lng": 77.772975
+ },
+ "KRV": {
+  "name": "KARAVADI",
+  "lat": 15.552646,
+  "lng": 80.113532
+ },
+ "KRZ": {
+  "name": "KHARAWAR",
+  "lat": 28.831343,
+  "lng": 76.681063
+ },
+ "KSLA": {
+  "name": "KESLA",
+  "lat": 22.536385,
+  "lng": 77.823854
+ },
+ "KSN": {
+  "name": "KRISHNA",
+  "lat": 16.4105669,
+  "lng": 77.32885
+ },
+ "KSRA": {
+  "name": "KASARA",
+  "lat": 19.648232,
+  "lng": 73.473589
+ },
+ "KSTH": {
+  "name": "KASHTI",
+  "lat": 18.524297,
+  "lng": 74.59878
+ },
+ "KSV": {
+  "name": "KOSI KALAN",
+  "lat": 27.78804,
+  "lng": 77.445807
+ },
+ "KSWR": {
+  "name": "KALMESHWAR",
+  "lat": 21.229589,
+  "lng": 78.915203
+ },
+ "KTCR": {
+  "name": "KOTHA CHERUVU",
+  "lat": 14.18667,
+  "lng": 77.76049
+ },
+ "KTF": {
+  "name": "KOT FATTEH",
+  "lat": 30.123176,
+  "lng": 75.08265
+ },
+ "KTKL": {
+  "name": "KOTLI KALAN",
+  "lat": 30.040804,
+  "lng": 75.29746
+ },
+ "KTKU": {
+  "name": "KOTTEKAD",
+  "lat": 10.816174,
+  "lng": 76.693311
+ },
+ "KTRA": {
+  "name": "KOTRA",
+  "lat": 25.811227,
+  "lng": 78.381072
+ },
+ "KTT": {
+  "name": "KHUTBAV",
+  "lat": 18.486004,
+  "lng": 74.315655
+ },
+ "KTYM": {
+  "name": "KOTTAYAM",
+  "lat": 9.594478,
+  "lng": 76.532283
+ },
+ "KTZ": {
+  "name": "KHUTWANSA",
+  "lat": 22.548322,
+  "lng": 77.607797
+ },
+ "KUC": {
+  "name": "KARUKKUTTY",
+  "lat": 10.225705,
+  "lng": 76.373726
+ },
+ "KUN": {
+  "name": "KARNAL",
+  "lat": 29.695115,
+  "lng": 76.969829
+ },
+ "KUY": {
+  "name": "TIRUPPUR KULIPALAYAM",
+  "lat": 11.144176,
+  "lng": 77.390337
+ },
+ "KVDU": {
+  "name": "KADAVAKUDURU",
+  "lat": 15.723033,
+  "lng": 80.257852
+ },
+ "KVN": {
+  "name": "KAVANUR",
+  "lat": 12.949054,
+  "lng": 78.969782
+ },
+ "KVP": {
+  "name": "KAVARAIPPETTAI",
+  "lat": 13.363221,
+  "lng": 80.147628
+ },
+ "KVU": {
+  "name": "KADAKAVUR",
+  "lat": 8.678699,
+  "lng": 76.767643
+ },
+ "KVZ": {
+  "name": "KAVALI",
+  "lat": 14.915534,
+  "lng": 79.988971
+ },
+ "KW": {
+  "name": "KHERVADI",
+  "lat": 20.046855,
+  "lng": 73.973918
+ },
+ "KXM": {
+  "name": "KITHAM",
+  "lat": 27.254392,
+  "lng": 77.81777
+ },
+ "KXP": {
+  "name": "KANIYAPURAM",
+  "lat": 8.587403,
+  "lng": 76.854403
+ },
+ "KYJ": {
+  "name": "KAYANKULAM JN",
+  "lat": 9.181302,
+  "lng": 76.5121
+ },
+ "KYN": {
+  "name": "KALYAN JN",
+  "lat": 19.235822,
+  "lng": 73.13081
+ },
+ "KYNX": {
+  "name": "KALYAN JUNCTION YARD (TXR)",
+  "lat": 19.23293,
+  "lng": 73.12379
+ },
+ "KYOP": {
+  "name": "KOTTAPALLI",
+  "lat": 18.539881,
+  "lng": 79.4036
+ },
+ "KZH": {
+  "name": "KILA ZAFARGARH",
+  "lat": 29.081002,
+  "lng": 76.428547
+ },
+ "KZJ": {
+  "name": "KAZIPET JN",
+  "lat": 17.974827,
+  "lng": 79.511268
+ },
+ "KZJE": {
+  "name": "KAZIPET E CABIN",
+  "lat": 17.98594,
+  "lng": 79.51773
+ },
+ "KZJF": {
+  "name": "KAZIPET F CABIN",
+  "lat": 17.977968,
+  "lng": 79.524484
+ },
+ "KZK": {
+  "name": "KAZHAKUTTAM",
+  "lat": 8.556815,
+  "lng": 76.872753
+ },
+ "KZW": {
+  "name": "KATAR SINGHWALA",
+  "lat": 30.158735,
+  "lng": 74.999864
+ },
+ "KZX": {
+  "name": "KHUDDA KORALA",
+  "lat": 31.743864,
+  "lng": 75.648843
+ },
+ "LAR": {
+  "name": "LALITPUR",
+  "lat": 24.687873,
+  "lng": 78.395726
+ },
+ "LCR": {
+  "name": "LOKUR",
+  "lat": 11.928748,
+  "lng": 78.174684
+ },
+ "LDH": {
+  "name": "LUDHIANA JN",
+  "lat": 30.912252,
+  "lng": 75.849376
+ },
+ "LDW": {
+  "name": "LADHOWAL",
+  "lat": 30.977746,
+  "lng": 75.796624
+ },
+ "LDY": {
+  "name": "LAKKITI",
+  "lat": 10.753268,
+  "lng": 76.434261
+ },
+ "LGD": {
+  "name": "LALLAGUDA",
+  "lat": 17.437059,
+  "lng": 78.529713
+ },
+ "LGRE": {
+  "name": "LINGIRI",
+  "lat": 16.668765,
+  "lng": 77.189729
+ },
+ "LKPL": {
+  "name": "LAKDI KA PUL",
+  "lat": 17.403833,
+  "lng": 78.463502
+ },
+ "LNMA": {
+  "name": "LAKHAN MAJRA HALT",
+  "lat": 29.039077,
+  "lng": 76.46584
+ },
+ "LOGH": {
+  "name": "LOTTEGOLLAHALLI",
+  "lat": 13.04347,
+  "lng": 77.563084
+ },
+ "LONI": {
+  "name": "LONI",
+  "lat": 18.490847,
+  "lng": 74.020808
+ },
+ "LPI": {
+  "name": "LINGAMPALLI",
+  "lat": 17.483123,
+  "lng": 78.317773
+ },
+ "LS": {
+  "name": "LASALGAON",
+  "lat": 20.154605,
+  "lng": 74.225844
+ },
+ "LT": {
+  "name": "LAHAVIT",
+  "lat": 19.8227,
+  "lng": 73.78498
+ },
+ "LTI": {
+  "name": "LATTERI",
+  "lat": 12.967043,
+  "lng": 79.066238
+ },
+ "MABA": {
+  "name": "MANDI BAMORA",
+  "lat": 24.053476,
+  "lng": 78.082325
+ },
+ "MABD": {
+  "name": "MAHBUBABAD",
+  "lat": 17.597554,
+  "lng": 80.000593
+ },
+ "MAGH": {
+  "name": "MANIKGARH",
+  "lat": 19.787695,
+  "lng": 79.3986
+ },
+ "MALK": {
+  "name": "MALKAPUR ROAD",
+  "lat": 21.904713,
+  "lng": 77.96688
+ },
+ "MAP": {
+  "name": "MORAPPUR",
+  "lat": 12.125905,
+  "lng": 78.394782
+ },
+ "MAS": {
+  "name": "PURATCHI THALAIVAR DR. MGR CTL CHENNAI",
+  "lat": 13.082423,
+  "lng": 80.275962
+ },
+ "MASK": {
+  "name": "MAISAR KHANA",
+  "lat": 30.094469,
+  "lng": 75.150457
+ },
+ "MAUL": {
+  "name": "MAULI BLOCK HUT",
+  "lat": 31.167415,
+  "lng": 75.770392
+ },
+ "MAUR": {
+  "name": "MAUR",
+  "lat": 30.06297,
+  "lng": 75.22824
+ },
+ "MBL": {
+  "name": "MANUBOLU",
+  "lat": 14.225784,
+  "lng": 79.877118
+ },
+ "MCI": {
+  "name": "MANCHERAL",
+  "lat": 18.87953,
+  "lng": 79.44942
+ },
+ "MCVM": {
+  "name": "MACHAVARAM",
+  "lat": 16.025831,
+  "lng": 80.541672
+ },
+ "MDDP": {
+  "name": "MANDI DIP",
+  "lat": 23.093838,
+  "lng": 77.51143
+ },
+ "MDKI": {
+  "name": "MADUKARAI",
+  "lat": 10.900659,
+  "lng": 76.942484
+ },
+ "MDKU": {
+  "name": "MODUKURU",
+  "lat": 16.124149,
+  "lng": 80.582792
+ },
+ "MDPB": {
+  "name": "MADHOPUR PUNJAB",
+  "lat": 32.36097,
+  "lng": 75.595746
+ },
+ "MDR": {
+  "name": "MADHIRA",
+  "lat": 16.922272,
+  "lng": 80.365554
+ },
+ "MEH": {
+  "name": "MELALATHUR",
+  "lat": 12.917877,
+  "lng": 78.875262
+ },
+ "MER": {
+  "name": "METPANJRA",
+  "lat": 21.272979,
+  "lng": 78.675562
+ },
+ "MEX": {
+  "name": "MUKERIAN",
+  "lat": 31.94205,
+  "lng": 75.612191
+ },
+ "MGK": {
+  "name": "MULAGUNNATHUKAVU",
+  "lat": 10.595722,
+  "lng": 76.207651
+ },
+ "MGLP": {
+  "name": "MANGOLPURI",
+  "lat": 28.683698,
+  "lng": 77.091483
+ },
+ "MGRD": {
+  "name": "MAGARDOH",
+  "lat": 22.24557,
+  "lng": 77.894203
+ },
+ "MGSJ": {
+  "name": "MAGNESITE JUNCTION",
+  "lat": 11.694788,
+  "lng": 78.097414
+ },
+ "MGV": {
+  "name": "MOLAGAVALLI",
+  "lat": 15.357441,
+  "lng": 77.372394
+ },
+ "MHWL": {
+  "name": "MACHROWAR",
+  "lat": 31.5149,
+  "lng": 75.63613
+ },
+ "MIA": {
+  "name": "MANIA",
+  "lat": 26.805879,
+  "lng": 77.919798
+ },
+ "MIG": {
+  "name": "MIDGHAT",
+  "lat": 22.825095,
+  "lng": 77.650521
+ },
+ "MJBK": {
+  "name": "MANJARI BUDRUK",
+  "lat": 18.512209,
+  "lng": 73.971934
+ },
+ "MJR": {
+  "name": "MINJUR",
+  "lat": 13.28134,
+  "lng": 80.260244
+ },
+ "MJRI": {
+  "name": "MAJRI JN",
+  "lat": 20.139335,
+  "lng": 79.042962
+ },
+ "MJY": {
+  "name": "MARAMJHIRI",
+  "lat": 21.944534,
+  "lng": 77.883416
+ },
+ "MKDI": {
+  "name": "MAKUDI",
+  "lat": 19.537404,
+  "lng": 79.478834
+ },
+ "MKL": {
+  "name": "MAKALIDURGA",
+  "lat": 13.409934,
+  "lng": 77.50982
+ },
+ "MLIH": {
+  "name": "MAULI HALT",
+  "lat": 31.18094,
+  "lng": 75.768901
+ },
+ "MLMG": {
+  "name": "MALLEMADUGU",
+  "lat": 17.3247,
+  "lng": 80.160559
+ },
+ "MLND": {
+  "name": "MULUND",
+  "lat": 19.172137,
+  "lng": 72.956697
+ },
+ "MLU": {
+  "name": "MALUGUR",
+  "lat": 13.891793,
+  "lng": 77.541664
+ },
+ "MLY": {
+  "name": "MAULA ALI",
+  "lat": 17.440739,
+  "lng": 78.55067
+ },
+ "MLYC": {
+  "name": "MOULALI C CABIN",
+  "lat": 17.447649,
+  "lng": 78.574498
+ },
+ "MMR": {
+  "name": "MANMAD JN",
+  "lat": 20.24942,
+  "lng": 74.43742
+ },
+ "MMRB": {
+  "name": "MANMAD B CABIN",
+  "lat": 20.25166,
+  "lng": 74.44422
+ },
+ "MMZ": {
+  "name": "MANDAMARI",
+  "lat": 18.970183,
+  "lng": 79.469817
+ },
+ "MNPT": {
+  "name": "MUNGILIPATTU",
+  "lat": 13.556393,
+  "lng": 79.241245
+ },
+ "MNTT": {
+  "name": "MULANTURUTTI",
+  "lat": 9.897774,
+  "lng": 76.390668
+ },
+ "MNUR": {
+  "name": "MANNANUR",
+  "lat": 10.749273,
+  "lng": 76.324347
+ },
+ "MNY": {
+  "name": "MANKARAI",
+  "lat": 10.772067,
+  "lng": 76.500373
+ },
+ "MOD": {
+  "name": "MORAMPUDI",
+  "lat": 16.356071,
+  "lng": 80.6202
+ },
+ "MOLK": {
+  "name": "MOLAKARAMPATTI",
+  "lat": 12.455749,
+  "lng": 78.535037
+ },
+ "MOY": {
+  "name": "MOHRI",
+  "lat": 30.255527,
+  "lng": 76.850459
+ },
+ "MPI": {
+  "name": "MELPATTI",
+  "lat": 12.858345,
+  "lng": 78.795185
+ },
+ "MQC": {
+  "name": "MUNDKA",
+  "lat": 28.689078,
+  "lng": 77.029116
+ },
+ "MQO": {
+  "name": "MUNROTURUTTU",
+  "lat": 8.994531,
+  "lng": 76.611584
+ },
+ "MQR": {
+  "name": "MALKHAID ROAD",
+  "lat": 17.14741,
+  "lng": 77.174304
+ },
+ "MQU": {
+  "name": "MURUKKAMPUZHA",
+  "lat": 8.613137,
+  "lng": 76.83049
+ },
+ "MRA": {
+  "name": "MORENA",
+  "lat": 26.50132,
+  "lng": 78.002862
+ },
+ "MRC": {
+  "name": "MARICHETHAL",
+  "lat": 16.109887,
+  "lng": 77.309439
+ },
+ "MRTL": {
+  "name": "MIRTHAL",
+  "lat": 32.112547,
+  "lng": 75.60834
+ },
+ "MSBR": {
+  "name": "MUSAHIBPUR",
+  "lat": 31.98467,
+  "lng": 75.610135
+ },
+ "MSD": {
+  "name": "MUMBAI MASJID",
+  "lat": 18.952295,
+  "lng": 72.838177
+ },
+ "MSKT": {
+  "name": "MARTYR CPTN SUNIL KR CHOUDHARY KATHUA",
+  "lat": 32.398115,
+  "lng": 75.550882
+ },
+ "MSO": {
+  "name": "MISROD",
+  "lat": 23.168496,
+  "lng": 77.458623
+ },
+ "MSZ": {
+  "name": "MANSA",
+  "lat": 29.988294,
+  "lng": 75.404112
+ },
+ "MTA": {
+  "name": "MATHELA",
+  "lat": 21.878791,
+  "lng": 76.38911
+ },
+ "MTJ": {
+  "name": "MATHURA JN.",
+  "lat": 27.480113,
+  "lng": 77.67376
+ },
+ "MTMI": {
+  "name": "MOTIMARI",
+  "lat": 16.956019,
+  "lng": 80.320781
+ },
+ "MTN": {
+  "name": "MUMBAI MATUNGA",
+  "lat": 19.027436,
+  "lng": 72.850147
+ },
+ "MTU": {
+  "name": "MATMARI",
+  "lat": 16.046499,
+  "lng": 77.302479
+ },
+ "MTY": {
+  "name": "MULTAI",
+  "lat": 21.782845,
+  "lng": 78.263508
+ },
+ "MUC": {
+  "name": "MULLURCARAI",
+  "lat": 10.706137,
+  "lng": 76.271742
+ },
+ "MUO": {
+  "name": "MASANGAON",
+  "lat": 22.267101,
+  "lng": 76.996849
+ },
+ "MVH": {
+  "name": "MANTATTI",
+  "lat": 17.227497,
+  "lng": 77.509741
+ },
+ "MVLK": {
+  "name": "MAVELIKARA",
+  "lat": 9.239652,
+  "lng": 76.545719
+ },
+ "MVPM": {
+  "name": "MAVELIPALAIYAM",
+  "lat": 11.482736,
+  "lng": 77.899939
+ },
+ "MWA": {
+  "name": "MANDWA",
+  "lat": 21.515839,
+  "lng": 76.391775
+ },
+ "MWD": {
+  "name": "MHASAVAD",
+  "lat": 20.870657,
+  "lng": 75.458683
+ },
+ "MWL": {
+  "name": "MUTHIREVULA HALT",
+  "lat": 13.277005,
+  "lng": 79.118444
+ },
+ "MWM": {
+  "name": "MALLESWARAM",
+  "lat": 13.000631,
+  "lng": 77.563476
+ },
+ "MWY": {
+  "name": "MAILARAM",
+  "lat": 17.280148,
+  "lng": 77.809669
+ },
+ "MXS": {
+  "name": "MOHASA",
+  "lat": 24.375643,
+  "lng": 78.287764
+ },
+ "MYJ": {
+  "name": "MAHEJI",
+  "lat": 20.769136,
+  "lng": 75.424479
+ },
+ "MYY": {
+  "name": "MAYYANAD",
+  "lat": 8.838029,
+  "lng": 76.647681
+ },
+ "MZNC": {
+  "name": "MAZGAON CABIN",
+  "lat": 18.97022,
+  "lng": 72.83343
+ },
+ "MZX": {
+  "name": "MATATILA",
+  "lat": 25.08328,
+  "lng": 78.402949
+ },
+ "NAW": {
+  "name": "NAWANDGI",
+  "lat": 17.216357,
+  "lng": 77.427161
+ },
+ "NB": {
+  "name": "NIMBHORA",
+  "lat": 21.160521,
+  "lng": 75.97467
+ },
+ "NCHS": {
+  "name": "NATURE CURE HOSPITAL",
+  "lat": 17.445657,
+  "lng": 78.452149
+ },
+ "NDLS": {
+  "name": "NEW DELHI",
+  "lat": 28.641926,
+  "lng": 77.22175
+ },
+ "NDO": {
+  "name": "NIDUBROLU",
+  "lat": 16.067979,
+  "lng": 80.557544
+ },
+ "NDPM": {
+  "name": "NARMADAPURAM",
+  "lat": 22.75296,
+  "lng": 77.717326
+ },
+ "NDZ": {
+  "name": "NIDIGALLU",
+  "lat": 13.988617,
+  "lng": 79.661542
+ },
+ "NEA": {
+  "name": "NEYKKARAPATTI",
+  "lat": 11.624375,
+  "lng": 78.103927
+ },
+ "NGD": {
+  "name": "NAGARDEVLA",
+  "lat": 20.603322,
+  "lng": 75.198433
+ },
+ "NGI": {
+  "name": "NAGARI",
+  "lat": 20.406869,
+  "lng": 78.890057
+ },
+ "NGN": {
+  "name": "NANDGAON",
+  "lat": 20.309402,
+  "lng": 74.659762
+ },
+ "NGNX": {
+  "name": "NANDGAON YARD CABIN (TXR)",
+  "lat": 20.314374,
+  "lng": 74.666008
+ },
+ "NGP": {
+  "name": "NAGPUR JN.",
+  "lat": 21.152373,
+  "lng": 79.088236
+ },
+ "NHU": {
+  "name": "NAHUR",
+  "lat": 19.15464,
+  "lng": 72.946652
+ },
+ "NI": {
+  "name": "NAYDONGRI",
+  "lat": 20.349284,
+  "lng": 74.837419
+ },
+ "NK": {
+  "name": "NASIK ROAD",
+  "lat": 19.948058,
+  "lng": 73.842084
+ },
+ "NKD": {
+  "name": "NEKONDA",
+  "lat": 17.794898,
+  "lng": 79.804542
+ },
+ "NLKR": {
+  "name": "NILOKHERI",
+  "lat": 29.831979,
+  "lng": 76.925471
+ },
+ "NLR": {
+  "name": "NELLORE",
+  "lat": 14.461974,
+  "lng": 79.990227
+ },
+ "NLS": {
+  "name": "NELLORE SOUTH",
+  "lat": 14.444347,
+  "lng": 79.983698
+ },
+ "NMLU": {
+  "name": "NEMAKALLU",
+  "lat": 15.29289,
+  "lng": 77.372618
+ },
+ "NNB": {
+  "name": "NIMBLAK",
+  "lat": 19.118905,
+  "lng": 74.689093
+ },
+ "NNO": {
+  "name": "NANGLOI",
+  "lat": 28.686281,
+  "lng": 77.057361
+ },
+ "NPKM": {
+  "name": "NANDIYAMPAKKAM",
+  "lat": 13.268683,
+  "lng": 80.275856
+ },
+ "NPL": {
+  "name": "NAGALAPALLE",
+  "lat": 17.460242,
+  "lng": 78.230083
+ },
+ "NPNR": {
+  "name": "NEPANAGAR",
+  "lat": 21.464107,
+  "lng": 76.396882
+ },
+ "NPW": {
+  "name": "NIPANI VADGAON",
+  "lat": 19.587987,
+  "lng": 74.704533
+ },
+ "NPX": {
+  "name": "NARINDARPURA",
+  "lat": 29.952395,
+  "lng": 75.476761
+ },
+ "NR": {
+  "name": "NIPHAD",
+  "lat": 20.097202,
+  "lng": 74.080014
+ },
+ "NRKR": {
+  "name": "NARKHER",
+  "lat": 21.469677,
+  "lng": 78.525313
+ },
+ "NRR": {
+  "name": "NAGARUR",
+  "lat": 15.542867,
+  "lng": 77.313631
+ },
+ "NRW": {
+  "name": "NARWANA JN",
+  "lat": 29.589052,
+  "lng": 76.109677
+ },
+ "NRYP": {
+  "name": "NARAYANAPURAM",
+  "lat": 14.128847,
+  "lng": 77.696046
+ },
+ "NSKL": {
+  "name": "NASKHAL",
+  "lat": 17.886908,
+  "lng": 79.414439
+ },
+ "NSZ": {
+  "name": "NISHATPURA",
+  "lat": 23.287713,
+  "lng": 77.42534
+ },
+ "NUB": {
+  "name": "NURABAD",
+  "lat": 26.405085,
+  "lng": 78.077635
+ },
+ "NUR": {
+  "name": "NARELA",
+  "lat": 28.846477,
+  "lng": 77.085663
+ },
+ "NVC": {
+  "name": "NAGALWANCHA",
+  "lat": 17.074722,
+  "lng": 80.228478
+ },
+ "NW": {
+  "name": "NALWAR",
+  "lat": 16.936031,
+  "lng": 77.019441
+ },
+ "NWBV": {
+  "name": "VIJAYAWADA NEW WEST CABIN",
+  "lat": 16.55896,
+  "lng": 80.59258
+ },
+ "NWOC": {
+  "name": "AMBALA CANTT NEW WEST OUTER CABIN",
+  "lat": 30.350261,
+  "lng": 76.808811
+ },
+ "NWRN": {
+  "name": "NALWAR NORTH",
+  "lat": 16.979,
+  "lng": 77.00632
+ },
+ "NYI": {
+  "name": "NELLAYI",
+  "lat": 10.392027,
+  "lng": 76.275618
+ },
+ "NYP": {
+  "name": "NAYUDUPETA",
+  "lat": 13.908679,
+  "lng": 79.900829
+ },
+ "NZM": {
+  "name": "HAZRAT NIZAMUDDIN JN",
+  "lat": 28.588965,
+  "lng": 77.25352
+ },
+ "OCR": {
+  "name": "OCHIRA",
+  "lat": 9.131837,
+  "lng": 76.52516
+ },
+ "ODG": {
+  "name": "OBAIDULLA GANJ",
+  "lat": 22.995072,
+  "lng": 77.587465
+ },
+ "ODHA": {
+  "name": "ODHA",
+  "lat": 20.017795,
+  "lng": 73.913237
+ },
+ "ODUR": {
+  "name": "ODUR",
+  "lat": 14.071862,
+  "lng": 79.855862
+ },
+ "OEA": {
+  "name": "ODELA",
+  "lat": 18.456449,
+  "lng": 79.449402
+ },
+ "OGL": {
+  "name": "ONGOLE",
+  "lat": 15.497807,
+  "lng": 80.05712
+ },
+ "OKA": {
+  "name": "OKHLA",
+  "lat": 28.559475,
+  "lng": 77.265623
+ },
+ "OKAC": {
+  "name": "OKHLA BYPASS B CABIN",
+  "lat": 28.57116,
+  "lng": 77.25564
+ },
+ "OLR": {
+  "name": "OLLUR",
+  "lat": 10.473877,
+  "lng": 76.237091
+ },
+ "OMB": {
+  "name": "OOMBERMALI",
+  "lat": 19.628367,
+  "lng": 73.422953
+ },
+ "OPL": {
+  "name": "UPPAL",
+  "lat": 18.182484,
+  "lng": 79.481985
+ },
+ "ORH": {
+  "name": "ODDARAHALLI",
+  "lat": 13.346059,
+  "lng": 77.541119
+ },
+ "OTP": {
+  "name": "OTTAPPALAM",
+  "lat": 10.769875,
+  "lng": 76.377682
+ },
+ "PAA": {
+  "name": "PATAS",
+  "lat": 18.473417,
+  "lng": 74.471013
+ },
+ "PAI": {
+  "name": "PABAI",
+  "lat": 23.767521,
+  "lng": 77.932037
+ },
+ "PAK": {
+  "name": "PAKALA JN",
+  "lat": 13.450904,
+  "lng": 79.114505
+ },
+ "PAL": {
+  "name": "PALASNER",
+  "lat": 22.298601,
+  "lng": 77.0425
+ },
+ "PAM": {
+  "name": "PANAPAKAM",
+  "lat": 13.500002,
+  "lng": 79.204091
+ },
+ "PAR": {
+  "name": "PANDHURNA",
+  "lat": 21.589826,
+  "lng": 78.525806
+ },
+ "PB": {
+  "name": "PUNTAMBA",
+  "lat": 19.761445,
+  "lng": 74.621966
+ },
+ "PBP": {
+  "name": "PEMBARTI",
+  "lat": 17.692958,
+  "lng": 79.117144
+ },
+ "PC": {
+  "name": "PACHORA JN",
+  "lat": 20.669632,
+  "lng": 75.349205
+ },
+ "PCKM": {
+  "name": "PACHCHAKUPPAM",
+  "lat": 12.823475,
+  "lng": 78.758238
+ },
+ "PDGN": {
+  "name": "PADHEGAON",
+  "lat": 19.537303,
+  "lng": 74.692324
+ },
+ "PDPL": {
+  "name": "PEDDAPALLI",
+  "lat": 18.613757,
+  "lng": 79.392325
+ },
+ "PEL": {
+  "name": "POLIREDDIPALEM",
+  "lat": 13.759228,
+  "lng": 79.979832
+ },
+ "PGDP": {
+  "name": "PAGIDIPALLI JUNCTION",
+  "lat": 17.484575,
+  "lng": 78.82059
+ },
+ "PGL": {
+  "name": "PAGDHAL",
+  "lat": 22.420323,
+  "lng": 77.351512
+ },
+ "PGMD": {
+  "name": "PRAGATI MAIDAN",
+  "lat": 28.616039,
+  "lng": 77.247211
+ },
+ "PGT": {
+  "name": "PALAKKAD JN",
+  "lat": 10.799297,
+  "lng": 76.637566
+ },
+ "PGU": {
+  "name": "PADUGUPADU",
+  "lat": 14.498067,
+  "lng": 79.990046
+ },
+ "PGW": {
+  "name": "PHAGWARA JN",
+  "lat": 31.217576,
+  "lng": 75.765438
+ },
+ "PGZ": {
+  "name": "PERUNGUZHI",
+  "lat": 8.631732,
+  "lng": 76.808162
+ },
+ "PHQ": {
+  "name": "PARDHANDE",
+  "lat": 20.729841,
+  "lng": 75.377192
+ },
+ "PHR": {
+  "name": "PHILLAUR JN",
+  "lat": 31.016873,
+  "lng": 75.786102
+ },
+ "PI": {
+  "name": "PADLI",
+  "lat": 19.798199,
+  "lng": 73.672129
+ },
+ "PJN": {
+  "name": "PANJHAN",
+  "lat": 20.275072,
+  "lng": 74.610987
+ },
+ "PKD": {
+  "name": "PENUKONDA",
+  "lat": 14.100066,
+  "lng": 77.59458
+ },
+ "PKE": {
+  "name": "PIMPAR KHED",
+  "lat": 20.307474,
+  "lng": 74.756352
+ },
+ "PKZ": {
+  "name": "PPLI PKHI KALAN",
+  "lat": 30.731363,
+  "lng": 74.73312
+ },
+ "PLL": {
+  "name": "PARLI",
+  "lat": 10.800543,
+  "lng": 76.559828
+ },
+ "PLMD": {
+  "name": "PILAMEDU",
+  "lat": 11.032753,
+  "lng": 77.00003
+ },
+ "PLPM": {
+  "name": "PALAPPURAM",
+  "lat": 10.751889,
+  "lng": 76.398287
+ },
+ "PNDP": {
+  "name": "PANDILLAPALLI",
+  "lat": 17.172286,
+  "lng": 80.170325
+ },
+ "PNP": {
+  "name": "PANIPAT JN",
+  "lat": 29.390329,
+  "lng": 76.964085
+ },
+ "PNQ": {
+  "name": "PUNKUNNAM",
+  "lat": 10.53414,
+  "lng": 76.208987
+ },
+ "PNV": {
+  "name": "PANEVADI",
+  "lat": 20.262511,
+  "lng": 74.483526
+ },
+ "PON": {
+  "name": "PONNERI",
+  "lat": 13.332337,
+  "lng": 80.198884
+ },
+ "POX": {
+  "name": "POLA-PATTHAR",
+  "lat": 22.345502,
+  "lng": 77.854917
+ },
+ "PPY": {
+  "name": "PAPATAPALLI",
+  "lat": 17.372992,
+  "lng": 80.175986
+ },
+ "PPZ": {
+  "name": "PEDDEMPET",
+  "lat": 18.804149,
+  "lng": 79.427212
+ },
+ "PQL": {
+  "name": "PINDLAI",
+  "lat": 17.926395,
+  "lng": 79.455634
+ },
+ "PR": {
+  "name": "MUMBAI PAREL",
+  "lat": 19.009482,
+  "lng": 72.837661
+ },
+ "PRKD": {
+  "name": "POWERKHEDA",
+  "lat": 22.673856,
+  "lng": 77.748086
+ },
+ "PRLW": {
+  "name": "PAREL LOCO WORKSHOP",
+  "lat": 19.00447,
+  "lng": 72.83486
+ },
+ "PRND": {
+  "name": "PERINAD",
+  "lat": 8.948607,
+  "lng": 76.620676
+ },
+ "PSPY": {
+  "name": "PRASANNAYA PALLI",
+  "lat": 14.649507,
+  "lng": 77.595078
+ },
+ "PTJ": {
+  "name": "PODANUR JN",
+  "lat": 10.964091,
+  "lng": 76.9887
+ },
+ "PTKC": {
+  "name": "PATHANKOT CANTT",
+  "lat": 32.259378,
+  "lng": 75.636536
+ },
+ "PTKP": {
+  "name": "POTKAPALLI",
+  "lat": 18.428664,
+  "lng": 79.464191
+ },
+ "PTT": {
+  "name": "PUTALAPATTU",
+  "lat": 13.333614,
+  "lng": 79.104178
+ },
+ "PUK": {
+  "name": "PUDUKAD",
+  "lat": 10.420784,
+  "lng": 76.260995
+ },
+ "PUNE": {
+  "name": "PUNE JN",
+  "lat": 18.528877,
+  "lng": 73.874415
+ },
+ "PVD": {
+  "name": "PEDDAVADIAPUDI",
+  "lat": 16.414143,
+  "lng": 80.612933
+ },
+ "PVRD": {
+  "name": "PIRAVAM ROAD",
+  "lat": 9.829026,
+  "lng": 76.455586
+ },
+ "PVU": {
+  "name": "PARAVUR",
+  "lat": 8.815131,
+  "lng": 76.669343
+ },
+ "PWL": {
+  "name": "PALWAL",
+  "lat": 28.151581,
+  "lng": 77.341795
+ },
+ "PY": {
+  "name": "PERUNDURAI",
+  "lat": 11.253903,
+  "lng": 77.628832
+ },
+ "PYA": {
+  "name": "PEDAPARIYA",
+  "lat": 14.021391,
+  "lng": 79.875732
+ },
+ "PYLA": {
+  "name": "PIYALA BLOCK HUT",
+  "lat": 28.28671,
+  "lng": 77.31786
+ },
+ "PYX": {
+  "name": "PEYANAPALLI",
+  "lat": 13.132022,
+  "lng": 79.137455
+ },
+ "QLN": {
+  "name": "KOLLAM JN",
+  "lat": 8.886219,
+  "lng": 76.595483
+ },
+ "RAM": {
+  "name": "RAMAPURAM",
+  "lat": 13.098106,
+  "lng": 79.179433
+ },
+ "RC": {
+  "name": "RAICHUR",
+  "lat": 16.192803,
+  "lng": 77.338997
+ },
+ "RCG": {
+  "name": "RACHAGUNNERI",
+  "lat": 13.714793,
+  "lng": 79.631251
+ },
+ "RDDE": {
+  "name": "RATHDHANA",
+  "lat": 28.904091,
+  "lng": 77.059044
+ },
+ "RDE": {
+  "name": "RUNDHI",
+  "lat": 28.067705,
+  "lng": 77.351198
+ },
+ "RDM": {
+  "name": "RAMGUNDAM",
+  "lat": 18.763986,
+  "lng": 79.434826
+ },
+ "RECH": {
+  "name": "RECHNI ROAD",
+  "lat": 19.14072,
+  "lng": 79.451668
+ },
+ "REPI": {
+  "name": "RANGEPALLI",
+  "lat": 14.024487,
+  "lng": 77.575685
+ },
+ "RGP": {
+  "name": "RAGHUNATHPALLI",
+  "lat": 17.75703,
+  "lng": 79.256673
+ },
+ "RGPM": {
+  "name": "RAGHAVAPURAM",
+  "lat": 18.681214,
+  "lng": 79.411736
+ },
+ "RHNE": {
+  "name": "ROHINI",
+  "lat": 20.371132,
+  "lng": 74.87468
+ },
+ "RKDI": {
+  "name": "RAUKHERI",
+  "lat": 23.873307,
+  "lng": 77.974527
+ },
+ "RKM": {
+  "name": "RAJA KI MANDI JN",
+  "lat": 27.194026,
+  "lng": 77.997075
+ },
+ "RKMP": {
+  "name": "RANI KAMALAPATI",
+  "lat": 23.220883,
+  "lng": 77.439369
+ },
+ "RLS": {
+  "name": "RMNA ALBEL SNGH",
+  "lat": 30.511224,
+  "lng": 74.850263
+ },
+ "RLT": {
+  "name": "RALAPET",
+  "lat": 19.318622,
+  "lng": 79.432371
+ },
+ "RLW": {
+  "name": "REPALLIWADA",
+  "lat": 19.184751,
+  "lng": 79.430298
+ },
+ "RMY": {
+  "name": "RUKMAPUR",
+  "lat": 17.276051,
+  "lng": 77.680754
+ },
+ "RNJD": {
+  "name": "RANJANGAON ROAD",
+  "lat": 18.878166,
+  "lng": 74.606712
+ },
+ "RNKA": {
+  "name": "RUNKUTA",
+  "lat": 27.222957,
+  "lng": 77.898607
+ },
+ "RNN": {
+  "name": "RAJANKUNTI",
+  "lat": 13.17463,
+  "lng": 77.565592
+ },
+ "ROHN": {
+  "name": "ROHEDNAGAR HALT",
+  "lat": 28.761498,
+  "lng": 76.813012
+ },
+ "ROK": {
+  "name": "ROHTAK JN",
+  "lat": 28.89092,
+  "lng": 76.579626
+ },
+ "RPBC": {
+  "name": "RAYANAPADU \"B\" CABIN",
+  "lat": 16.57266,
+  "lng": 80.56771
+ },
+ "RPJ": {
+  "name": "RAJPURA JN",
+  "lat": 30.486277,
+  "lng": 76.593624
+ },
+ "RPK": {
+  "name": "RAVALPALLI KALAN",
+  "lat": 17.439795,
+  "lng": 78.083847
+ },
+ "RPRL": {
+  "name": "RAPARLA HALT",
+  "lat": 15.618667,
+  "lng": 80.168669
+ },
+ "RRI": {
+  "name": "RAHURI",
+  "lat": 19.413539,
+  "lng": 74.677391
+ },
+ "RRU": {
+  "name": "RAYARU",
+  "lat": 26.306033,
+  "lng": 78.130151
+ },
+ "RU": {
+  "name": "RENIGUNTA JN",
+  "lat": 13.6378742,
+  "lng": 79.5062532
+ },
+ "RUG": {
+  "name": "RAJLU GARHI",
+  "lat": 29.090786,
+  "lng": 77.012147
+ },
+ "RV": {
+  "name": "RAVER",
+  "lat": 21.222231,
+  "lng": 76.044418
+ },
+ "RVKH": {
+  "name": "RAVINDRAKHANI",
+  "lat": 18.936903,
+  "lng": 79.461861
+ },
+ "RWF": {
+  "name": "RAIL WHEEL FACTORY SIDING",
+  "lat": 13.10813,
+  "lng": 77.59
+ },
+ "RYP": {
+  "name": "RAYANAPAD",
+  "lat": 16.578414,
+  "lng": 80.561256
+ },
+ "SA": {
+  "name": "SALEM JN",
+  "lat": 11.670755,
+  "lng": 78.113543
+ },
+ "SADP": {
+  "name": "SAIDAPUR",
+  "lat": 16.570787,
+  "lng": 77.250003
+ },
+ "SAHL": {
+  "name": "SAHELI",
+  "lat": 22.453561,
+  "lng": 77.816286
+ },
+ "SANK": {
+  "name": "SANK",
+  "lat": 26.430473,
+  "lng": 78.059769
+ },
+ "SAV": {
+  "name": "SAVDA",
+  "lat": 21.110696,
+  "lng": 75.910247
+ },
+ "SBC": {
+  "name": "KRANTIVIRA SANGOLLI RAYANNA (BENGALURU)",
+  "lat": 12.978174,
+  "lng": 77.56956
+ },
+ "SBJ": {
+  "name": "SARAI BANJARA",
+  "lat": 30.537596,
+  "lng": 76.515446
+ },
+ "SC": {
+  "name": "SECUNDERABAD JN",
+  "lat": 17.433859,
+  "lng": 78.502051
+ },
+ "SCI": {
+  "name": "SANCHI",
+  "lat": 23.487634,
+  "lng": 77.736068
+ },
+ "SCPD": {
+  "name": "SUCHIPIND",
+  "lat": 31.334974,
+  "lng": 75.617617
+ },
+ "SDM": {
+  "name": "SURAREDDIPALEM",
+  "lat": 15.408138,
+  "lng": 80.046019
+ },
+ "SDY": {
+  "name": "SADHOO GARH",
+  "lat": 30.582741,
+  "lng": 76.448226
+ },
+ "SEGM": {
+  "name": "SEVAGRAM",
+  "lat": 20.739191,
+  "lng": 78.618554
+ },
+ "SEM": {
+  "name": "SEDAM",
+  "lat": 17.181207,
+  "lng": 77.285694
+ },
+ "SGBJ": {
+  "name": "SURGAON BANJARI",
+  "lat": 21.946563,
+  "lng": 76.544196
+ },
+ "SGND": {
+  "name": "SHRIGONDA ROAD",
+  "lat": 18.598792,
+  "lng": 74.641938
+ },
+ "SHAD": {
+  "name": "SHAHAD",
+  "lat": 19.243584,
+  "lng": 73.158075
+ },
+ "SHDM": {
+  "name": "SHAHBAD MARKNDA",
+  "lat": 30.165885,
+  "lng": 76.861666
+ },
+ "SHI": {
+  "name": "SINGANALLUR",
+  "lat": 11.012469,
+  "lng": 77.039119
+ },
+ "SHLK": {
+  "name": "SHOLAKA",
+  "lat": 27.973983,
+  "lng": 77.3609
+ },
+ "SIE": {
+  "name": "SIDDAMPALLI",
+  "lat": 13.159867,
+  "lng": 79.137119
+ },
+ "SIKD": {
+  "name": "SIKRODA KWANRI",
+  "lat": 26.569552,
+  "lng": 77.963141
+ },
+ "SION": {
+  "name": "SION",
+  "lat": 19.04653,
+  "lng": 72.86332
+ },
+ "SIR": {
+  "name": "SIRHIND JN",
+  "lat": 30.623814,
+  "lng": 76.382365
+ },
+ "SJNP": {
+  "name": "SUJANPUR",
+  "lat": 32.31259,
+  "lng": 75.613307
+ },
+ "SJVP": {
+  "name": "SANJIVAIH PARK",
+  "lat": 17.4357,
+  "lng": 78.476402
+ },
+ "SKM": {
+  "name": "SINGARAYAKONDA",
+  "lat": 15.252381,
+  "lng": 80.026241
+ },
+ "SKP": {
+  "name": "SHANKARPALLI",
+  "lat": 17.450555,
+  "lng": 78.130793
+ },
+ "SKZR": {
+  "name": "SIRPUR KAGHAZNAGAR",
+  "lat": 19.346563,
+  "lng": 79.489989
+ },
+ "SLKN": {
+  "name": "SANDAL KALAN",
+  "lat": 29.063408,
+  "lng": 77.012804
+ },
+ "SLOR": {
+  "name": "SELOO ROAD",
+  "lat": 20.77708,
+  "lng": 78.715767
+ },
+ "SLV": {
+  "name": "SANDALPUR",
+  "lat": 26.082939,
+  "lng": 78.203427
+ },
+ "SLY": {
+  "name": "SAMALPATTI",
+  "lat": 12.310928,
+  "lng": 78.482944
+ },
+ "SMBX": {
+  "name": "SAMBA",
+  "lat": 32.528497,
+  "lng": 75.120135
+ },
+ "SMF": {
+  "name": "SAMAR GOPALPUR",
+  "lat": 28.959874,
+  "lng": 76.518293
+ },
+ "SMK": {
+  "name": "SAMALKHA",
+  "lat": 29.24151,
+  "lng": 77.003289
+ },
+ "SMT": {
+  "name": "SALAMATPUR",
+  "lat": 23.460948,
+  "lng": 77.672485
+ },
+ "SMTL": {
+  "name": "SIMARIATAL",
+  "lat": 25.921671,
+  "lng": 78.303883
+ },
+ "SMU": {
+  "name": "SAMBHU",
+  "lat": 30.428894,
+  "lng": 76.683891
+ },
+ "SMWA": {
+  "name": "SOMESHWARA",
+  "lat": 13.560346,
+  "lng": 77.512719
+ },
+ "SNI": {
+  "name": "SINDI",
+  "lat": 20.815679,
+  "lng": 78.883243
+ },
+ "SNKB": {
+  "name": "SONKHAMB",
+  "lat": 21.2764,
+  "lng": 78.736559
+ },
+ "SNL": {
+  "name": "SANAHWAL",
+  "lat": 30.837992,
+  "lng": 75.979054
+ },
+ "SNN": {
+  "name": "SONEGAON",
+  "lat": 20.62885,
+  "lng": 78.709315
+ },
+ "SNO": {
+  "name": "SOMANUR",
+  "lat": 11.086873,
+  "lng": 77.185744
+ },
+ "SNP": {
+  "name": "SONIPAT",
+  "lat": 28.989843,
+  "lng": 77.017118
+ },
+ "SNRD": {
+  "name": "BY SANDHURST RD",
+  "lat": 18.960924,
+  "lng": 72.839372
+ },
+ "SNVR": {
+  "name": "SANVATSAR",
+  "lat": 19.883751,
+  "lng": 74.560546
+ },
+ "SOR": {
+  "name": "SONAGIR",
+  "lat": 25.729809,
+  "lng": 78.409212
+ },
+ "SORI": {
+  "name": "SORAI",
+  "lat": 23.556689,
+  "lng": 77.850578
+ },
+ "SPE": {
+  "name": "SULLURUPETA",
+  "lat": 13.696855,
+  "lng": 80.018623
+ },
+ "SPF": {
+  "name": "STUARTPURAM",
+  "lat": 15.874476,
+  "lng": 80.415671
+ },
+ "SPHL": {
+  "name": "SHAMPURHALLI",
+  "lat": 16.875632,
+  "lng": 77.033303
+ },
+ "SPZ": {
+  "name": "SAMPLA",
+  "lat": 28.782293,
+  "lng": 76.773035
+ },
+ "SQZ": {
+  "name": "VANCHANGIRI",
+  "lat": 17.949244,
+  "lng": 79.670344
+ },
+ "SRL": {
+  "name": "SAROLA",
+  "lat": 18.939079,
+  "lng": 74.647868
+ },
+ "SRRA": {
+  "name": "SHORANUR A CABIN",
+  "lat": 10.758981,
+  "lng": 76.285323
+ },
+ "SRRB": {
+  "name": "SHORANUR B-CABIN",
+  "lat": 10.754315,
+  "lng": 76.280644
+ },
+ "SRUR": {
+  "name": "SIRPUR TOWN",
+  "lat": 19.478833,
+  "lng": 79.560717
+ },
+ "SS": {
+  "name": "SHIRSOLI",
+  "lat": 20.934627,
+  "lng": 75.508861
+ },
+ "SSB": {
+  "name": "SHAKURBASTI",
+  "lat": 28.681407,
+  "lng": 77.127568
+ },
+ "SSPN": {
+  "name": "SAI P NILAYAM",
+  "lat": 14.161031,
+  "lng": 77.758879
+ },
+ "SSZ": {
+  "name": "SADDA SINGHWALA",
+  "lat": 30.027358,
+  "lng": 75.324434
+ },
+ "STDB": {
+  "name": "SITAFALMANDI B CABIN",
+  "lat": 17.436973,
+  "lng": 78.514172
+ },
+ "STKT": {
+  "name": "SASTHANKOTTA",
+  "lat": 9.031465,
+  "lng": 76.600983
+ },
+ "STLI": {
+  "name": "SITHOULI",
+  "lat": 26.14654,
+  "lng": 78.187202
+ },
+ "STLIA": {
+  "name": "SITHOULI A CABIN",
+  "lat": 26.15177,
+  "lng": 78.18467
+ },
+ "SUH": {
+  "name": "SULEHALLI",
+  "lat": 17.080078,
+  "lng": 77.05264
+ },
+ "SUHW": {
+  "name": "SULEHALLI WEST",
+  "lat": 17.050398,
+  "lng": 77.02449
+ },
+ "SUM": {
+  "name": "SUMMIT",
+  "lat": 20.211532,
+  "lng": 74.343935
+ },
+ "SUMR": {
+  "name": "SUMER",
+  "lat": 23.625381,
+  "lng": 77.879897
+ },
+ "SUU": {
+  "name": "SULUR ROAD",
+  "lat": 11.049473,
+  "lng": 77.117274
+ },
+ "SUW": {
+  "name": "SUKHISEWANIYAN",
+  "lat": 23.340429,
+  "lng": 77.485358
+ },
+ "SVPM": {
+  "name": "SRI VENKATESWARAPALEM",
+  "lat": 14.806338,
+  "lng": 79.982319
+ },
+ "SWU": {
+  "name": "SANAURA",
+  "lat": 31.581097,
+  "lng": 75.640772
+ },
+ "SXA": {
+  "name": "SAGPHATA",
+  "lat": 21.55671,
+  "lng": 76.392434
+ },
+ "SZM": {
+  "name": "SUBZI MANDI",
+  "lat": 28.668507,
+  "lng": 77.200493
+ },
+ "TAA": {
+  "name": "TADLA PUSAPALLI",
+  "lat": 17.625968,
+  "lng": 79.955252
+ },
+ "TADA": {
+  "name": "TADA",
+  "lat": 13.588544,
+  "lng": 80.036079
+ },
+ "TAE": {
+  "name": "TADALI",
+  "lat": 20.034742,
+  "lng": 79.187926
+ },
+ "TAKU": {
+  "name": "TAKU",
+  "lat": 22.488644,
+  "lng": 77.819648
+ },
+ "TBN": {
+  "name": "TIMARNI",
+  "lat": 22.376271,
+  "lng": 77.230192
+ },
+ "TBT": {
+  "name": "TALBAHAT",
+  "lat": 25.039164,
+  "lng": 78.414477
+ },
+ "TCNR": {
+  "name": "TIRUCHANUR",
+  "lat": 13.63143,
+  "lng": 79.460467
+ },
+ "TCR": {
+  "name": "THRISUR",
+  "lat": 10.51614,
+  "lng": 76.208462
+ },
+ "TDO": {
+  "name": "TANDA URMAR",
+  "lat": 31.672798,
+  "lng": 75.637619
+ },
+ "TDU": {
+  "name": "TANDUR",
+  "lat": 17.250936,
+  "lng": 77.584126
+ },
+ "TDV": {
+  "name": "THONDEBHAVI",
+  "lat": 13.503993,
+  "lng": 77.514955
+ },
+ "TEL": {
+  "name": "TENALI JN",
+  "lat": 16.24187,
+  "lng": 80.64005
+ },
+ "TEO": {
+  "name": "TEEGAON",
+  "lat": 21.637586,
+  "lng": 78.460309
+ },
+ "TGDE": {
+  "name": "THANGUNDI",
+  "lat": 16.803401,
+  "lng": 77.06795
+ },
+ "TGP": {
+  "name": "TULJAPUR",
+  "lat": 20.800276,
+  "lng": 78.807645
+ },
+ "TGR1": {
+  "name": "BLOCK & CATCH SIDING CABIN 1",
+  "lat": 19.70035,
+  "lng": 73.51944
+ },
+ "TGR3": {
+  "name": "BLOCK & CATCH SIDING CABIN 3",
+  "lat": 19.67489,
+  "lng": 73.48647
+ },
+ "THK": {
+  "name": "THAKURLI",
+  "lat": 19.226281,
+  "lng": 73.098017
+ },
+ "THS": {
+  "name": "THANSIT",
+  "lat": 19.550337,
+  "lng": 73.35224
+ },
+ "TKD": {
+  "name": "TUGLAKABAD",
+  "lat": 28.503442,
+  "lng": 77.297051
+ },
+ "TKDC": {
+  "name": "TUGLAKABAD JUNCTION CABIN",
+  "lat": 28.451694,
+  "lng": 77.304196
+ },
+ "TKEC": {
+  "name": "TUGLAKABAD EAST CABIN",
+  "lat": 28.53569,
+  "lng": 77.28318
+ },
+ "TKJ": {
+  "name": "TILAK BRIDGE",
+  "lat": 28.628117,
+  "lng": 77.237404
+ },
+ "TKMY": {
+  "name": "TAKLIMIYA",
+  "lat": 19.457799,
+  "lng": 74.679135
+ },
+ "TLA": {
+  "name": "TITVALA",
+  "lat": 19.296383,
+  "lng": 73.203066
+ },
+ "TLPR": {
+  "name": "TELAPUR",
+  "lat": 17.47496,
+  "lng": 78.284976
+ },
+ "TLV": {
+  "name": "TALVADYA JUNCTION",
+  "lat": 21.927809,
+  "lng": 76.444634
+ },
+ "TMC": {
+  "name": "TALAMANCHI",
+  "lat": 14.606494,
+  "lng": 79.997918
+ },
+ "TNGM": {
+  "name": "TONDALAGPAVARAM",
+  "lat": 16.867925,
+  "lng": 80.43071
+ },
+ "TNGR": {
+  "name": "THONGANUR",
+  "lat": 12.082203,
+  "lng": 78.358953
+ },
+ "TNH": {
+  "name": "TINKHEDA",
+  "lat": 21.407702,
+  "lng": 78.523497
+ },
+ "TNP": {
+  "name": "TONDIARPET",
+  "lat": 13.12752,
+  "lng": 80.281924
+ },
+ "TNPM": {
+  "name": "TONDIARPET MARSHALLING YARD",
+  "lat": 13.136507,
+  "lng": 80.285873
+ },
+ "TNR": {
+  "name": "TANGUTURU",
+  "lat": 15.337746,
+  "lng": 80.033529
+ },
+ "TNT": {
+  "name": "TINNAPPATTI",
+  "lat": 11.812362,
+  "lng": 78.098332
+ },
+ "TPM": {
+  "name": "TOTIYAPALAYAM",
+  "lat": 11.291998,
+  "lng": 77.681165
+ },
+ "TPT": {
+  "name": "TIRUPATTUR JN",
+  "lat": 12.498356,
+  "lng": 78.561817
+ },
+ "TPTY": {
+  "name": "TIRUPATI",
+  "lat": 13.6282907,
+  "lng": 79.4195276
+ },
+ "TPW": {
+  "name": "TIRUPATI W HLT",
+  "lat": 13.624904,
+  "lng": 79.405267
+ },
+ "TRR": {
+  "name": "TARAORI",
+  "lat": 29.797791,
+  "lng": 76.938035
+ },
+ "TRTR": {
+  "name": "TRIPUNITTURA",
+  "lat": 9.949766,
+  "lng": 76.352631
+ },
+ "TRVL": {
+  "name": "TIRUVALLA",
+  "lat": 9.392567,
+  "lng": 76.579849
+ },
+ "TRW": {
+  "name": "TARSOD",
+  "lat": 21.025209,
+  "lng": 75.609329
+ },
+ "TSR": {
+  "name": "TSUNDURU",
+  "lat": 16.156722,
+  "lng": 80.58579
+ },
+ "TTU": {
+  "name": "TETTU",
+  "lat": 15.04312,
+  "lng": 80.005594
+ },
+ "TUN": {
+  "name": "TOHANA",
+  "lat": 29.726406,
+  "lng": 75.902767
+ },
+ "TUP": {
+  "name": "TIRUPPUR",
+  "lat": 11.108222,
+  "lng": 77.339869
+ },
+ "TVC": {
+  "name": "THIRUVANANTHAPURAM CENTRAL",
+  "lat": 8.487017,
+  "lng": 76.952641
+ },
+ "TVP": {
+  "name": "THIRUVANANTHAPURAM PETTAH",
+  "lat": 8.495028,
+  "lng": 76.931775
+ },
+ "TVT": {
+  "name": "TIRUVOTTIYUR",
+  "lat": 13.158641,
+  "lng": 80.296208
+ },
+ "UBC": {
+  "name": "AMBALA CITY",
+  "lat": 30.378075,
+  "lng": 76.764645
+ },
+ "UCA": {
+  "name": "UCHANA",
+  "lat": 29.4667,
+  "lng": 76.178568
+ },
+ "UCB": {
+  "name": "UNCHI BASSI",
+  "lat": 31.862379,
+  "lng": 75.642912
+ },
+ "UGD": {
+  "name": "UPPUGUNDURU",
+  "lat": 15.650054,
+  "lng": 80.193497
+ },
+ "UGN": {
+  "name": "UGAON",
+  "lat": 20.12347,
+  "lng": 74.139687
+ },
+ "UKL": {
+  "name": "UTTUKULI",
+  "lat": 11.15496,
+  "lng": 77.445625
+ },
+ "UMB": {
+  "name": "AMBALA CANT JN",
+  "lat": 30.338243,
+  "lng": 76.828696
+ },
+ "UMBY": {
+  "name": "AMBALA CANTT. YARD",
+  "lat": 30.346898,
+  "lng": 76.814564
+ },
+ "UPD": {
+  "name": "ULAVAPADU",
+  "lat": 15.166996,
+  "lng": 80.013063
+ },
+ "URI": {
+  "name": "URULI",
+  "lat": 18.49372,
+  "lng": 74.136966
+ },
+ "VADR": {
+  "name": "WARUD",
+  "lat": 20.746772,
+  "lng": 78.651267
+ },
+ "VAK": {
+  "name": "VARKALA",
+  "lat": 8.740637,
+  "lng": 76.723134
+ },
+ "VARD": {
+  "name": "VAIKAM ROAD",
+  "lat": 9.777882,
+  "lng": 76.474449
+ },
+ "VBR": {
+  "name": "VAMBORI",
+  "lat": 19.298476,
+  "lng": 74.685007
+ },
+ "VDD": {
+  "name": "VENDODU",
+  "lat": 14.026783,
+  "lng": 79.728794
+ },
+ "VDE": {
+  "name": "VEDAYAPALEM",
+  "lat": 14.405308,
+  "lng": 79.957492
+ },
+ "VELI": {
+  "name": "VELI",
+  "lat": 8.522809,
+  "lng": 76.882779
+ },
+ "VEM": {
+  "name": "VEMPALLI",
+  "lat": 19.405104,
+  "lng": 79.529518
+ },
+ "VGL": {
+  "name": "VAGHLI",
+  "lat": 20.517851,
+  "lng": 75.068427
+ },
+ "VGLJ": {
+  "name": "VIRANGANA LAKSHMIBAI JHANSI JN.",
+  "lat": 25.44395,
+  "lng": 78.5534422
+ },
+ "VGM": {
+  "name": "VINNAMANGALAM",
+  "lat": 12.72821,
+  "lng": 78.67861
+ },
+ "VHGN": {
+  "name": "WIHIRGAON",
+  "lat": 19.725596,
+  "lng": 79.441452
+ },
+ "VJ": {
+  "name": "VIRINCHIPURAM",
+  "lat": 12.9622,
+  "lng": 79.029915
+ },
+ "VJPJ": {
+  "name": "VIJIYPUR JAMMU",
+  "lat": 32.572099,
+  "lng": 75.021443
+ },
+ "VK": {
+  "name": "VIKHROLI",
+  "lat": 19.11148,
+  "lng": 72.928021
+ },
+ "VKB": {
+  "name": "VIKARABAD JN",
+  "lat": 17.3374029,
+  "lng": 77.9096929
+ },
+ "VKI": {
+  "name": "VENKATAGIRI",
+  "lat": 13.944251,
+  "lng": 79.604487
+ },
+ "VKT": {
+  "name": "VENKATACHALAM",
+  "lat": 14.327081,
+  "lng": 79.927326
+ },
+ "VL": {
+  "name": "VILAD",
+  "lat": 19.198548,
+  "lng": 74.67467
+ },
+ "VLT": {
+  "name": "VALATHOOR",
+  "lat": 12.889687,
+  "lng": 78.839676
+ },
+ "VN": {
+  "name": "VANIYAMBADI",
+  "lat": 12.679344,
+  "lng": 78.622748
+ },
+ "VNJ": {
+  "name": "VANJIPALAIYAM",
+  "lat": 11.118171,
+  "lng": 77.26623
+ },
+ "VOC": {
+  "name": "VOC NAGAR",
+  "lat": 13.140807,
+  "lng": 80.287611
+ },
+ "VPL": {
+  "name": "VENKATAMPALLE",
+  "lat": 15.037864,
+  "lng": 77.462392
+ },
+ "VPR": {
+  "name": "VISAPUR",
+  "lat": 18.824762,
+  "lng": 74.59948
+ },
+ "VRBD": {
+  "name": "VRINDABAN ROAD",
+  "lat": 27.555652,
+  "lng": 77.623771
+ },
+ "VRPD": {
+  "name": "VIRAPANDY ROAD",
+  "lat": 11.596662,
+  "lng": 78.074539
+ },
+ "VRU": {
+  "name": "VALIVERU",
+  "lat": 16.189668,
+  "lng": 80.606027
+ },
+ "VSD": {
+  "name": "VASIND",
+  "lat": 19.406509,
+  "lng": 73.267468
+ },
+ "VTK": {
+  "name": "VALLATHOL NAGAR",
+  "lat": 10.731727,
+  "lng": 76.28149
+ },
+ "VTM": {
+  "name": "VETAPALEMU",
+  "lat": 15.783148,
+  "lng": 80.300675
+ },
+ "VVH": {
+  "name": "VIDYAVIHAR",
+  "lat": 19.079542,
+  "lng": 72.897117
+ },
+ "VVKN": {
+  "name": "VIVEKANANDA NAGAR",
+  "lat": 19.982366,
+  "lng": 79.279341
+ },
+ "VVKP": {
+  "name": "VIVEKANAND PURI HALT",
+  "lat": 28.664473,
+  "lng": 77.183813
+ },
+ "VWA": {
+  "name": "VIDURASWATTHA",
+  "lat": 13.666552,
+  "lng": 77.509475
+ },
+ "VZ": {
+  "name": "VIJAYAMANGALAM",
+  "lat": 11.196285,
+  "lng": 77.521714
+ },
+ "WCN": {
+  "name": "WIMCO NAGAR",
+  "lat": 13.179683,
+  "lng": 80.305459
+ },
+ "WDC": {
+  "name": "WADI CHORD CABIN",
+  "lat": 17.04554,
+  "lng": 76.99945
+ },
+ "WG": {
+  "name": "WAGHOLI",
+  "lat": 20.582009,
+  "lng": 78.772122
+ },
+ "WGA": {
+  "name": "WAGHODA",
+  "lat": 21.27938,
+  "lng": 76.120622
+ },
+ "WIRR": {
+  "name": "WIRUR",
+  "lat": 19.641294,
+  "lng": 79.431279
+ },
+ "WKI": {
+  "name": "WADAKANCHERI",
+  "lat": 10.651345,
+  "lng": 76.239688
+ },
+ "WL": {
+  "name": "WARANGAL",
+  "lat": 17.973296,
+  "lng": 79.605607
+ },
+ "WP": {
+  "name": "WANGAPALLI",
+  "lat": 17.581246,
+  "lng": 78.984645
+ },
+ "WRA": {
+  "name": "WALAYAR",
+  "lat": 10.846787,
+  "lng": 76.837587
+ },
+ "WRR": {
+  "name": "WARORA",
+  "lat": 20.244151,
+  "lng": 79.010059
+ },
+ "XX-BHRO": {
+  "name": "BHAROLI OUTER CABIN",
+  "lat": 32.271433,
+  "lng": 75.621898
+ },
+ "XX-DKZO": {
+  "name": "DELHI KISHAN GANJ OUTER CABIN",
+  "lat": 28.666067,
+  "lng": 77.208551
+ },
+ "XX-ETAC": {
+  "name": "ITARSI BYPASS CABIN A",
+  "lat": 22.64308,
+  "lng": 77.76442
+ },
+ "XX-ETCC": {
+  "name": "ITARSI BYPASS CABIN C",
+  "lat": 22.569664,
+  "lng": 77.756968
+ },
+ "XX-GTLC": {
+  "name": "GUNTAKAL CHORD CABIN",
+  "lat": 15.187424,
+  "lng": 77.36343
+ },
+ "XX-JTJC": {
+  "name": "JOLARPETTAI CHORD CABIN",
+  "lat": 12.524715,
+  "lng": 78.568222
+ },
+ "XX-KZWO": {
+  "name": "KATAR SINGHWALA OUTER CABIN",
+  "lat": 30.15139,
+  "lng": 75.01748
+ },
+ "XX-LARB": {
+  "name": "LALITPUR BYPASS CABIN",
+  "lat": 24.74958,
+  "lng": 78.39239
+ },
+ "XX-MGSJB": {
+  "name": "MAGNESITE BYPASS CABIN",
+  "lat": 11.703988,
+  "lng": 78.093291
+ },
+ "XX-MJRO": {
+  "name": "MAJRI OUTER CABIN",
+  "lat": 20.126385,
+  "lng": 79.049983
+ },
+ "XX-MTMB": {
+  "name": "MOTUMARI BYPASS CABIN",
+  "lat": 16.975421,
+  "lng": 80.307002
+ },
+ "XX-NGPA": {
+  "name": "NAGPUR A CABIN",
+  "lat": 21.14569,
+  "lng": 79.08863
+ },
+ "XX-NRKC": {
+  "name": "NARKHER CHORD CABIN",
+  "lat": 21.455981,
+  "lng": 78.52403
+ },
+ "XX-PBCC": {
+  "name": "PUNTAMBA BYPASS CABIN",
+  "lat": 19.74684,
+  "lng": 74.62255
+ },
+ "XX-PDPB": {
+  "name": "PEDDAPALLI BYPASS B CABIN",
+  "lat": 18.572621,
+  "lng": 79.393476
+ },
+ "XX-RCO": {
+  "name": "RAICHUR OUTER CABIN",
+  "lat": 16.224378,
+  "lng": 77.349218
+ },
+ "XX-RDMB": {
+  "name": "RAMAGUNDAM BYPASS CABIN",
+  "lat": 18.74999,
+  "lng": 79.43116
+ },
+ "XX-RDMC": {
+  "name": "RAMAGUNDAM CHORD CABIN",
+  "lat": 18.75474,
+  "lng": 79.43237
+ },
+ "XX-RUXA": {
+  "name": "RENIGUNTA BYPASS A CABIN",
+  "lat": 13.63343,
+  "lng": 79.49983
+ },
+ "XX-RUXC": {
+  "name": "RENIGUNTA CHORD CABIN",
+  "lat": 13.652999,
+  "lng": 79.520412
+ },
+ "XX-SAOC": {
+  "name": "SALEM OUTER CABIN A",
+  "lat": 11.675936,
+  "lng": 78.110909
+ },
+ "XX-SJVB": {
+  "name": "SANJIVAIAH PARK BRIDGE CABIN",
+  "lat": 17.437412,
+  "lng": 78.46798
+ },
+ "XX-TNAB": {
+  "name": "THANE B CABIN",
+  "lat": 19.19133,
+  "lng": 72.999997
+ },
+ "YADD": {
+  "name": "YADADRI",
+  "lat": 17.551034,
+  "lng": 78.941663
+ },
+ "YAL": {
+  "name": "YATALURU",
+  "lat": 13.893192,
+  "lng": 79.626428
+ },
+ "YDLP": {
+  "name": "YADALAPUR",
+  "lat": 16.384916,
+  "lng": 77.327456
+ },
+ "YG": {
+  "name": "YADGIR",
+  "lat": 16.744649,
+  "lng": 77.129702
+ },
+ "YGL": {
+  "name": "YELGUR",
+  "lat": 17.861102,
+  "lng": 79.747283
+ },
+ "YL": {
+  "name": "YEOLA",
+  "lat": 20.022633,
+  "lng": 74.496226
+ },
+ "YLK": {
+  "name": "YELLAKARU",
+  "lat": 13.846557,
+  "lng": 79.649569
+ },
+ "YNA": {
+  "name": "YENOR",
+  "lat": 20.494097,
+  "lng": 78.840938
+ },
+ "YP": {
+  "name": "ERRUPALEM",
+  "lat": 16.825095,
+  "lng": 80.47167
+ },
+ "YPD": {
+  "name": "YERPEDU",
+  "lat": 13.6874,
+  "lng": 79.575062
+ },
+ "YPRA": {
+  "name": "YESVANTPUR A CABIN",
+  "lat": 13.040391,
+  "lng": 77.548511
+ },
+ "YS": {
+  "name": "YERMARAS",
+  "lat": 16.272695,
+  "lng": 77.347257
+ },
+ "YSPM": {
+  "name": "YASANTAPURU",
+  "lat": 17.736808,
+  "lng": 79.205217
+ },
+ "YT": {
+  "name": "YEVAT",
+  "lat": 18.489012,
+  "lng": 74.256651
+ },
+ "ZN": {
+  "name": "JANGAON",
+  "lat": 17.724031,
+  "lng": 79.15371
+ },
+ "ZPL": {
+  "name": "ZANGALAPALLE",
+  "lat": 14.590082,
+  "lng": 77.641803
+ }
+}
