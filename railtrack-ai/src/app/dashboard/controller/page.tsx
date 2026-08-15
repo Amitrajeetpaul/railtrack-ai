@@ -89,6 +89,7 @@ export default function ControllerDashboard() {
   const [aiAssist, setAiAssist] = useState(true);
   const [showAI, setShowAI] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [conflictSidebarOpen, setConflictSidebarOpen] = useState(true);
   const [activeConflict, setActiveConflict] = useState<Conflict | null>(null);
   const [decisions, setDecisions] = useState<any[]>([]);
   // State for tracking live data from RapidAPI
@@ -725,7 +726,7 @@ export default function ControllerDashboard() {
   ].filter(Boolean) as string[];
 
   return (
-    <div className="has-mobile-tab-bar has-mobile-action-bar" style={{ height: '100vh', display: 'flex', flexDirection: 'column', overflow: 'hidden', background: 'var(--bg-base)' }}>
+    <div className="has-mobile-tab-bar has-mobile-action-bar" style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', overflow: 'visible', background: 'var(--bg-base)' }}>
       <OfficialUtilityBar />
       {/* Demo Banner */}
       {user?.isDemo && (
@@ -746,12 +747,23 @@ export default function ControllerDashboard() {
 
       {/* Top Nav */}
       <header className="app-header-row" style={{ height: '56px', background: '#FFFFFF', borderBottom: '1.5px solid var(--bg-border)', display: 'flex', alignItems: 'center', padding: '0 20px', gap: '20px', flexShrink: 0, boxShadow: '0 2px 8px rgba(0,0,0,0.03)' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+        <button
+          type="button"
+          onClick={() => setSidebarOpen(o => !o)}
+          title={sidebarOpen ? 'Collapse left sidebar' : 'Expand left sidebar'}
+          aria-label={sidebarOpen ? 'Collapse left sidebar' : 'Expand left sidebar'}
+          style={{
+            display: 'flex', alignItems: 'center', gap: '10px',
+            background: 'transparent', border: '1px solid transparent',
+            borderRadius: 'var(--radius-xs)', cursor: 'pointer',
+            padding: '6px 8px', transition: 'all 0.15s ease'
+          }}
+        >
           <span className="signal-lamp signal-lamp-green" style={{ width: '12px', height: '12px' }} />
           <div style={{ fontFamily: 'var(--font-headline)', fontSize: '16px', fontWeight: 800, color: 'var(--accent-primary)', letterSpacing: '-0.02em' }}>
             RAILTRACK AI
           </div>
-        </div>
+        </button>
         <div style={{ width: '1px', height: '24px', background: 'var(--bg-border)' }} />
         <nav className="desktop-nav-links" style={{ display: 'flex', gap: '6px' }}>
           {[
@@ -828,37 +840,6 @@ export default function ControllerDashboard() {
               <span className="panel-header">Train Queue</span>
               <span style={{ fontFamily: 'var(--font-jetbrains)', fontSize: '12px', color: 'var(--accent-primary)' }}>{Array.from(new Set([...customTrains, ...trains].map(t => t.id))).length}</span>
             </div>
-            {/* Live IRCTC Train Search Bar */}
-            <form onSubmit={handleSearchTrain} style={{ padding: '8px 12px', borderBottom: '1px solid var(--bg-border)', display: 'flex', gap: '6px', background: 'var(--bg-elevated)' }}>
-              <input
-                type="text"
-                className="input"
-                placeholder="Search 5-digit train no. (e.g. 12002)..."
-                aria-label="Search train number"
-                value={searchQuery}
-                onChange={e => setSearchQuery(e.target.value)}
-                style={{ padding: '6px 10px', fontSize: '11px', flex: 1, fontFamily: 'var(--font-jetbrains)' }}
-              />
-              <button type="submit" className="btn-primary" disabled={isSearching} aria-label="Fetch live train data" style={{ padding: '6px 10px', fontSize: '11px', whiteSpace: 'nowrap', display: 'inline-flex', alignItems: 'center', gap: '5px' }}>
-                {isSearching ? '...' : <><Search size={13} strokeWidth={2.25} /> Fetch</>}
-              </button>
-            </form>
-
-            {/* Informational note about live data */}
-            <div style={{ padding: '6px 16px', background: '#EBF3FA', borderBottom: '1px solid var(--bg-border)', display: 'flex', alignItems: 'center', gap: '6px' }}>
-              <span style={{ fontSize: '11px', color: 'var(--accent-primary)', fontFamily: 'var(--font-headline)', fontWeight: 600 }}>
-                <Info size={12} strokeWidth={2} style={{ display: 'inline', verticalAlign: '-2px', marginRight: '4px' }} />
-                Search any Indian Railways train number to fetch live IRCTC tracking
-              </span>
-            </div>
-
-            {searchNotification && (
-              <div style={{ padding: '8px 12px', background: '#EBF3FA', borderBottom: '1px solid var(--accent-primary)', color: 'var(--accent-primary)', fontSize: '11px', fontFamily: 'var(--font-mono)', lineHeight: 1.4, display: 'flex', alignItems: 'flex-start', gap: '6px' }}>
-                <Info size={13} strokeWidth={2} style={{ flexShrink: 0, marginTop: '1px' }} />
-                <span>{searchNotification}</span>
-              </div>
-            )}
-
             <div style={{ overflowY: 'auto', flex: 1 }}>
               {Array.from(new Set([...customTrains, ...trains].map(t => t.id))).map(id => [...customTrains, ...trains].find(t => t.id === id)!).map(train => (
                 <div
@@ -1042,7 +1023,7 @@ export default function ControllerDashboard() {
         )}
 
         {/* ── CENTER COLUMN ── */}
-        <main id="main-content" className="main-content-col" style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden', minWidth: 0 }}>
+        <main id="main-content" className="main-content-col" style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'visible', minWidth: 0 }}>
           {/* Section header */}
           <div style={{ padding: '12px 16px', borderBottom: '1px solid var(--bg-border)', display: 'flex', alignItems: 'center', gap: '12px', background: 'var(--bg-surface)' }}>
             <Breadcrumb items={[{ label: user?.section || 'NR-42' }, { label: 'Controller View' }]} />
@@ -1075,12 +1056,26 @@ export default function ControllerDashboard() {
                 </button>
               </div>
 
-              {conflicts.length > 0 && (
-                <span className="badge-conflict" style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                  <span style={{ animation: 'pulse-live 1s ease-in-out infinite', display: 'inline-block', width: '6px', height: '6px', borderRadius: '50%', background: 'var(--accent-danger)' }} />
-                  {conflicts.length} CONFLICT{conflicts.length > 1 ? 'S' : ''}
-                </span>
-              )}
+              <button
+                type="button"
+                onClick={() => setConflictSidebarOpen(open => !open)}
+                aria-pressed={conflictSidebarOpen}
+                className="btn-danger"
+                style={{
+                  display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '6px',
+                  padding: '8px 12px', fontSize: '11px', fontFamily: 'var(--font-headline)',
+                  borderRadius: 'var(--radius-xs)', whiteSpace: 'nowrap',
+                  transition: 'all 0.2s ease',
+                }}
+              >
+                <OctagonAlert size={13} strokeWidth={2.5} />
+                {conflictSidebarOpen ? 'Hide Conflicts' : 'Active Conflicts'}
+                {conflicts.length > 0 && (
+                  <span className="badge-safe" style={{ padding: '2px 6px', fontSize: '9px', borderRadius: '999px' }}>
+                    {conflicts.length}
+                  </span>
+                )}
+              </button>
               {/* AI Assist Toggle */}
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <span style={{ fontFamily: 'var(--font-space-mono)', fontSize: '11px', color: 'var(--text-muted)' }}>AI ASSIST</span>
@@ -1103,12 +1098,48 @@ export default function ControllerDashboard() {
           </div>
 
           {/* Track map area */}
-          <div style={{ flex: 1, padding: '16px', overflow: 'hidden', display: 'flex', flexDirection: 'column', gap: '12px', position: 'relative' }}>
+          <div style={{ flex: 1, padding: '16px', overflow: 'visible', display: 'flex', flexDirection: 'column', gap: '12px', position: 'relative' }}>
             <LiveTrackMap
               conflictSegment={activeConflict ? 'SEG-04' : null}
               onTrainClick={setSelectedTrain}
               liveTrainData={liveTrainData}
             />
+
+            <div className="panel" style={{ padding: '12px 14px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <Search size={14} strokeWidth={2.25} style={{ color: 'var(--accent-primary)' }} />
+                <span className="panel-header">Live Train Lookup</span>
+              </div>
+
+              <form onSubmit={handleSearchTrain} style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                <input
+                  type="text"
+                  className="input"
+                  placeholder="Search 5-digit train no. (e.g. 12002)..."
+                  aria-label="Search train number"
+                  value={searchQuery}
+                  onChange={e => setSearchQuery(e.target.value)}
+                  style={{ padding: '8px 10px', fontSize: '12px', flex: 1, fontFamily: 'var(--font-jetbrains)' }}
+                />
+                <button type="submit" className="btn-primary" disabled={isSearching} aria-label="Fetch live train data" style={{ padding: '8px 12px', fontSize: '12px', whiteSpace: 'nowrap', display: 'inline-flex', alignItems: 'center', gap: '5px' }}>
+                  {isSearching ? '...' : <><Search size={13} strokeWidth={2.25} /> Fetch</>}
+                </button>
+              </form>
+
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', background: '#EBF3FA', border: '1px solid #C5DCF2', borderRadius: 'var(--radius-xs)', padding: '6px 8px' }}>
+                <Info size={12} strokeWidth={2} style={{ color: 'var(--accent-primary)', flexShrink: 0 }} />
+                <span style={{ fontSize: '11px', color: 'var(--accent-primary)', fontFamily: 'var(--font-headline)', fontWeight: 600 }}>
+                  Search any Indian Railways train number to fetch live IRCTC tracking
+                </span>
+              </div>
+
+              {searchNotification && (
+                <div style={{ padding: '8px 10px', background: '#EBF3FA', border: '1px solid var(--accent-primary)', borderRadius: 'var(--radius-xs)', color: 'var(--accent-primary)', fontSize: '11px', fontFamily: 'var(--font-mono)', lineHeight: 1.4, display: 'flex', alignItems: 'flex-start', gap: '6px' }}>
+                  <Info size={13} strokeWidth={2} style={{ flexShrink: 0, marginTop: '1px' }} />
+                  <span>{searchNotification}</span>
+                </div>
+              )}
+            </div>
 
             {/* AI panel overlay */}
             {showAI && aiAssist && (
@@ -1201,16 +1232,30 @@ export default function ControllerDashboard() {
         </main>
 
         {/* ── RIGHT COLUMN (320px) ── */}
-        <aside className="sidebar-right" style={{ flexShrink: 0, background: 'var(--bg-surface)', borderLeft: '1px solid var(--bg-border)', display: 'flex', flexDirection: 'column' }}>
-
-          {/* Active Conflicts */}
-          <div style={{ borderBottom: '1px solid var(--bg-border)' }}>
-            <div style={{ padding: '12px 16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <span className="panel-header">Active Conflicts</span>
-              <span className={conflicts.length > 0 ? 'badge-conflict' : 'badge-safe'} style={{ fontSize: '10px', marginLeft: 'auto' }}>
-                {conflicts.length}
-              </span>
-            </div>
+        <aside
+          className="sidebar-right"
+          style={{
+            flex: conflictSidebarOpen ? '0 0 320px' : '0 0 0px',
+            width: conflictSidebarOpen ? '320px' : '0px',
+            overflow: 'hidden',
+            flexShrink: 0,
+            background: 'var(--bg-surface)',
+            borderLeft: conflictSidebarOpen ? '1px solid var(--bg-border)' : 'none',
+            display: 'flex',
+            flexDirection: 'column',
+            transition: 'all 0.2s ease',
+          }}
+        >
+          {conflictSidebarOpen && (
+            <>
+              {/* Active Conflicts */}
+              <div style={{ borderBottom: '1px solid var(--bg-border)' }}>
+                <div style={{ padding: '12px 16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <span className="panel-header">Active Conflicts</span>
+                  <span className={conflicts.length > 0 ? 'badge-conflict' : 'badge-safe'} style={{ fontSize: '10px', marginLeft: 'auto' }}>
+                    {conflicts.length}
+                  </span>
+                </div>
 
             {/* Quick Demo Trigger Box */}
             <div style={{ padding: '8px 16px', background: 'rgba(0, 212, 255, 0.05)', borderBottom: '1px solid var(--bg-border)' }}>
@@ -1257,112 +1302,114 @@ export default function ControllerDashboard() {
             </div>
           </div>
 
-          {/* Disruptions */}
-          <div style={{ borderBottom: '1px solid var(--bg-border)' }}>
-            <div style={{ padding: '12px 16px' }}>
-              <span className="panel-header">Incoming Disruptions</span>
-            </div>
-            {/* Capped + scrollable — same reason as Active Conflicts above. */}
-            <div style={{ maxHeight: '160px', overflowY: 'auto' }}>
-              {loadingDisruptions ? (
-                <div style={{ padding: '16px', fontSize: '12px', color: 'var(--text-muted)', textAlign: 'center', fontFamily: 'var(--font-space-mono)' }}>
-                  Loading...
+              {/* Disruptions */}
+              <div style={{ borderBottom: '1px solid var(--bg-border)' }}>
+                <div style={{ padding: '12px 16px' }}>
+                  <span className="panel-header">Incoming Disruptions</span>
                 </div>
-              ) : disruptions.length === 0 ? (
-                <div style={{ padding: '16px', fontSize: '12px', color: 'var(--accent-safe)', textAlign: 'center', fontFamily: 'var(--font-space-mono)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
-                  <Check size={14} strokeWidth={2.5} /> NO ACTIVE DISRUPTIONS
-                </div>
-              ) : (
-                disruptions.map((d, i) => {
-                  const DIcon = DISRUPTION_ICONS[d.icon] || TriangleAlert;
-                  return (
-                  <div key={i} style={{ padding: '10px 16px', borderBottom: '1px solid var(--bg-border)', display: 'flex', gap: '10px' }}>
-                    <span style={{ color: 'var(--text-secondary)', flexShrink: 0 }}><DIcon size={16} strokeWidth={2} /></span>
-                    <div>
-                      <div style={{ fontSize: '12px', color: 'var(--text-secondary)', lineHeight: 1.4 }}>{d.text}</div>
-                      <div style={{ fontFamily: 'var(--font-jetbrains)', fontSize: '11px', color: 'var(--text-muted)', marginTop: '2px' }}>{d.time}</div>
+                {/* Capped + scrollable — same reason as Active Conflicts above. */}
+                <div style={{ maxHeight: '160px', overflowY: 'auto' }}>
+                  {loadingDisruptions ? (
+                    <div style={{ padding: '16px', fontSize: '12px', color: 'var(--text-muted)', textAlign: 'center', fontFamily: 'var(--font-space-mono)' }}>
+                      Loading...
                     </div>
-                  </div>
-                  );
-                })
-              )}
-            </div>
-          </div>
-
-          {/* Recent Decisions */}
-          <div style={{ borderBottom: '1px solid var(--bg-border)', flex: '0 0 auto' }}>
-            <div style={{ padding: '12px 16px' }}>
-              <span className="panel-header">Recent Decisions</span>
-            </div>
-            <div style={{ maxHeight: '200px', overflowY: 'auto' }}>
-              {decisions.slice(0, 5).map(d => (
-                <div key={d.id} style={{ padding: '8px 16px', borderBottom: '1px solid var(--bg-border)' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2px' }}>
-                    <span style={{ fontFamily: 'var(--font-jetbrains)', fontSize: '10px', color: 'var(--text-muted)' }}>{d.timestamp}</span>
-                    <span className={d.source === 'AI' ? 'badge-safe' : 'badge-rail'} style={{ fontSize: '9px' }}>{d.source}</span>
-                  </div>
-                  <div style={{ fontSize: '11px', color: 'var(--text-secondary)', lineHeight: 1.4 }}>{d.action}</div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* NLP Chat */}
-          <div style={{ flex: 1, minHeight: '320px', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
-            <div style={{ padding: '12px 16px', borderBottom: '1px solid var(--bg-border)' }}>
-              <span className="panel-header">Ask AI Assistant</span>
-            </div>
-            <div ref={chatScrollRef} style={{ flex: 1, overflowY: 'auto', padding: '12px 16px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
-              {chatHistory.map((msg, i) => (
-                <div key={i} style={{
-                  padding: '8px 12px',
-                  borderRadius: 'var(--radius-xs)',
-                  fontSize: '12px',
-                  lineHeight: 1.5,
-                  background: msg.role === 'ai' ? '#EBF3FA' : 'var(--bg-elevated)',
-                  border: `1px solid ${msg.role === 'ai' ? '#C5DCF2' : 'var(--bg-border)'}`,
-                  color: msg.role === 'ai' ? 'var(--text-primary)' : 'var(--text-secondary)',
-                  fontFamily: msg.role === 'ai' ? 'var(--font-mono)' : 'inherit',
-                  alignSelf: msg.role === 'user' ? 'flex-end' : 'flex-start',
-                  maxWidth: '90%',
-                }}>
-                  {msg.role === 'ai' && (
-                    <span style={{ fontFamily: 'var(--font-headline)', fontSize: '10px', fontWeight: 700, color: 'var(--accent-primary)', display: 'block', marginBottom: '4px' }}>AI ▸</span>
+                  ) : disruptions.length === 0 ? (
+                    <div style={{ padding: '16px', fontSize: '12px', color: 'var(--accent-safe)', textAlign: 'center', fontFamily: 'var(--font-space-mono)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
+                      <Check size={14} strokeWidth={2.5} /> NO ACTIVE DISRUPTIONS
+                    </div>
+                  ) : (
+                    disruptions.map((d, i) => {
+                      const DIcon = DISRUPTION_ICONS[d.icon] || TriangleAlert;
+                      return (
+                      <div key={i} style={{ padding: '10px 16px', borderBottom: '1px solid var(--bg-border)', display: 'flex', gap: '10px' }}>
+                        <span style={{ color: 'var(--text-secondary)', flexShrink: 0 }}><DIcon size={16} strokeWidth={2} /></span>
+                        <div>
+                          <div style={{ fontSize: '12px', color: 'var(--text-secondary)', lineHeight: 1.4 }}>{d.text}</div>
+                          <div style={{ fontFamily: 'var(--font-jetbrains)', fontSize: '11px', color: 'var(--text-muted)', marginTop: '2px' }}>{d.time}</div>
+                        </div>
+                      </div>
+                      );
+                    })
                   )}
-                  {msg.text}
                 </div>
-              ))}
-              {/* Typing indicator while waiting for a reply */}
-              {chatLoading && (
-                <div style={{
-                  padding: '8px 12px', borderRadius: 'var(--radius-xs)', fontSize: '12px',
-                  background: '#EBF3FA', border: '1px solid #C5DCF2',
-                  alignSelf: 'flex-start', display: 'flex', alignItems: 'center', gap: '6px',
-                }}>
-                  <span style={{ fontFamily: 'var(--font-headline)', fontSize: '10px', fontWeight: 700, color: 'var(--accent-primary)' }}>AI ▸</span>
-                  {[0, 1, 2].map(i => (
-                    <span key={i} style={{
-                      width: '5px', height: '5px', borderRadius: '50%', background: 'var(--accent-primary)',
-                      display: 'inline-block', animation: 'pulse-live 1s ease-in-out infinite',
-                      animationDelay: `${i * 0.2}s`, opacity: 0.7,
-                    }} />
+              </div>
+
+              {/* Recent Decisions */}
+              <div style={{ borderBottom: '1px solid var(--bg-border)', flex: '0 0 auto' }}>
+                <div style={{ padding: '12px 16px' }}>
+                  <span className="panel-header">Recent Decisions</span>
+                </div>
+                <div style={{ maxHeight: '200px', overflowY: 'auto' }}>
+                  {decisions.slice(0, 5).map(d => (
+                    <div key={d.id} style={{ padding: '8px 16px', borderBottom: '1px solid var(--bg-border)' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2px' }}>
+                        <span style={{ fontFamily: 'var(--font-jetbrains)', fontSize: '10px', color: 'var(--text-muted)' }}>{d.timestamp}</span>
+                        <span className={d.source === 'AI' ? 'badge-safe' : 'badge-rail'} style={{ fontSize: '9px' }}>{d.source}</span>
+                      </div>
+                      <div style={{ fontSize: '11px', color: 'var(--text-secondary)', lineHeight: 1.4 }}>{d.action}</div>
+                    </div>
                   ))}
                 </div>
-              )}
-            </div>
-            <form onSubmit={handleChat} style={{ padding: '12px', borderTop: '1px solid var(--bg-border)', display: 'flex', gap: '8px' }}>
-              <input
-                className="input"
-                value={chatInput}
-                onChange={e => setChatInput(e.target.value)}
-                placeholder="Ask about your section..."
-                aria-label="Ask the AI assistant"
-                disabled={chatLoading}
-                style={{ fontSize: '12px', padding: '8px 12px', opacity: chatLoading ? 0.6 : 1 }}
-              />
-              <button type="submit" className="btn-primary" style={{ padding: '8px 12px', fontSize: '12px', flexShrink: 0 }}>→</button>
-            </form>
-          </div>
+              </div>
+
+              {/* NLP Chat */}
+              <div style={{ flex: 1, minHeight: '320px', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+                <div style={{ padding: '12px 16px', borderBottom: '1px solid var(--bg-border)' }}>
+                  <span className="panel-header">Ask AI Assistant</span>
+                </div>
+                <div ref={chatScrollRef} style={{ flex: 1, overflowY: 'auto', padding: '12px 16px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                  {chatHistory.map((msg, i) => (
+                    <div key={i} style={{
+                      padding: '8px 12px',
+                      borderRadius: 'var(--radius-xs)',
+                      fontSize: '12px',
+                      lineHeight: 1.5,
+                      background: msg.role === 'ai' ? '#EBF3FA' : 'var(--bg-elevated)',
+                      border: `1px solid ${msg.role === 'ai' ? '#C5DCF2' : 'var(--bg-border)'}`,
+                      color: msg.role === 'ai' ? 'var(--text-primary)' : 'var(--text-secondary)',
+                      fontFamily: msg.role === 'ai' ? 'var(--font-mono)' : 'inherit',
+                      alignSelf: msg.role === 'user' ? 'flex-end' : 'flex-start',
+                      maxWidth: '90%',
+                    }}>
+                      {msg.role === 'ai' && (
+                        <span style={{ fontFamily: 'var(--font-headline)', fontSize: '10px', fontWeight: 700, color: 'var(--accent-primary)', display: 'block', marginBottom: '4px' }}>AI ▸</span>
+                      )}
+                      {msg.text}
+                    </div>
+                  ))}
+                  {/* Typing indicator while waiting for a reply */}
+                  {chatLoading && (
+                    <div style={{
+                      padding: '8px 12px', borderRadius: 'var(--radius-xs)', fontSize: '12px',
+                      background: '#EBF3FA', border: '1px solid #C5DCF2',
+                      alignSelf: 'flex-start', display: 'flex', alignItems: 'center', gap: '6px',
+                    }}>
+                      <span style={{ fontFamily: 'var(--font-headline)', fontSize: '10px', fontWeight: 700, color: 'var(--accent-primary)' }}>AI ▸</span>
+                      {[0, 1, 2].map(i => (
+                        <span key={i} style={{
+                          width: '5px', height: '5px', borderRadius: '50%', background: 'var(--accent-primary)',
+                          display: 'inline-block', animation: 'pulse-live 1s ease-in-out infinite',
+                          animationDelay: `${i * 0.2}s`, opacity: 0.7,
+                        }} />
+                      ))}
+                    </div>
+                  )}
+                </div>
+                <form onSubmit={handleChat} style={{ padding: '12px', borderTop: '1px solid var(--bg-border)', display: 'flex', gap: '8px' }}>
+                  <input
+                    className="input"
+                    value={chatInput}
+                    onChange={e => setChatInput(e.target.value)}
+                    placeholder="Ask about your section..."
+                    aria-label="Ask the AI assistant"
+                    disabled={chatLoading}
+                    style={{ fontSize: '12px', padding: '8px 12px', opacity: chatLoading ? 0.6 : 1 }}
+                  />
+                  <button type="submit" className="btn-primary" style={{ padding: '8px 12px', fontSize: '12px', flexShrink: 0 }}>→</button>
+                </form>
+              </div>
+            </>
+          )}
         </aside>
       </div>
 
