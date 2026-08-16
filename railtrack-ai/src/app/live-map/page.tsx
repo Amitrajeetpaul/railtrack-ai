@@ -1,10 +1,9 @@
 'use client';
 import Link from 'next/link';
 import { useAuth } from '@/lib/auth';
-import { SlidersHorizontal, Play, BarChart3, Settings, Globe, ExternalLink } from 'lucide-react';
-import OfficialUtilityBar from '@/components/OfficialUtilityBar';
+import { Globe, ExternalLink } from 'lucide-react';
 import Breadcrumb from '@/components/Breadcrumb';
-import SiteFooter from '@/components/SiteFooter';
+import AppShell from '@/components/AppShell';
 
 export default function LiveMapPage() {
   const { isAuthReady } = useAuth();
@@ -26,37 +25,8 @@ export default function LiveMapPage() {
   }
 
   return (
-    <div className="has-mobile-tab-bar" style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', background: 'var(--bg-base)' }}>
-      <OfficialUtilityBar />
-      <header className="app-header-row" style={{ height: '56px', background: '#FFFFFF', borderBottom: '1.5px solid var(--bg-border)', display: 'flex', alignItems: 'center', padding: '0 20px', gap: '20px', flexShrink: 0, boxShadow: '0 2px 8px rgba(0,0,0,0.03)' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <span className="signal-lamp signal-lamp-green" style={{ width: '12px', height: '12px' }} />
-          <div style={{ fontFamily: 'var(--font-headline)', fontSize: '16px', fontWeight: 800, color: 'var(--accent-primary)', letterSpacing: '-0.02em' }}>
-            RAILTRACK AI
-          </div>
-        </div>
-        <div style={{ width: '1px', height: '24px', background: 'var(--bg-border)' }} />
-        <nav className="desktop-nav-links" style={{ display: 'flex', gap: '6px', flex: 1 }}>
-          {[
-            { label: 'Dashboard', href: '/dashboard/controller' },
-            { label: 'Simulate', href: '/simulate' },
-            { label: 'Analytics', href: '/analytics' },
-            { label: 'Admin', href: '/admin' },
-            { label: 'Live Map', href: '/live-map', active: true },
-          ].map(item => (
-            <Link key={item.href} href={item.href} style={{
-              padding: '7px 14px', borderRadius: 'var(--radius-xs)', fontSize: '13px', textDecoration: 'none',
-              background: item.active ? '#EBF3FA' : 'transparent',
-              color: item.active ? 'var(--accent-primary)' : 'var(--text-secondary)',
-              fontFamily: 'var(--font-headline)', fontWeight: item.active ? 700 : 500, transition: 'all 0.15s ease',
-            }}>
-              {item.label}
-            </Link>
-          ))}
-        </nav>
-      </header>
-
-      <main id="main-content" className="main-content-col" style={{ flex: 1, display: 'flex', flexDirection: 'column', padding: '24px', overflowY: 'auto' }}>
+    <AppShell active="live-map">
+      <div style={{ padding: '24px' }}>
         <div style={{ marginBottom: '16px' }}>
           <Breadcrumb items={[{ label: 'Live Map' }]} />
         </div>
@@ -95,16 +65,7 @@ export default function LiveMapPage() {
             referrerPolicy="no-referrer-when-downgrade"
           />
         </div>
-      </main>
-
-      <SiteFooter />
-
-      <nav className="mobile-tab-bar">
-        <Link href="/dashboard/controller"><span className="mobile-tab-icon"><SlidersHorizontal size={18} strokeWidth={2} /></span>Dashboard</Link>
-        <Link href="/simulate"><span className="mobile-tab-icon"><Play size={18} strokeWidth={2} /></span>Simulate</Link>
-        <Link href="/analytics"><span className="mobile-tab-icon"><BarChart3 size={18} strokeWidth={2} /></span>Analytics</Link>
-        <Link href="/admin"><span className="mobile-tab-icon"><Settings size={18} strokeWidth={2} /></span>Admin</Link>
-      </nav>
-    </div>
+      </div>
+    </AppShell>
   );
 }

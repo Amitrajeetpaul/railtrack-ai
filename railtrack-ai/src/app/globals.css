@@ -683,6 +683,39 @@ h4 { font-size: 16px; font-weight: 600; }
   animation: glitch-in 0.5s steps(2, end) both;
 }
 
+/* ---------- Shared authenticated-app shell (sidebar + content) ---------- */
+.app-shell {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+}
+.app-nav-sidebar {
+  display: none;
+}
+.app-shell-main {
+  flex: 1;
+  min-width: 0;
+}
+@media (min-width: 900px) {
+  .app-nav-sidebar {
+    display: flex;
+    flex-direction: column;
+    flex: 0 0 232px;
+    position: sticky;
+    top: 0;
+    align-self: flex-start;
+    height: 100vh;
+    background: var(--bg-elevated);
+    border-right: 1px solid var(--bg-border);
+    overflow-y: auto;
+  }
+}
+@media (max-width: 899px) {
+  .app-shell-main {
+    padding-bottom: 74px; /* clears the fixed mobile-tab-bar */
+  }
+}
+
 /* ---------- Landing top nav — desktop only, like the source mockup ---------- */
 @media (max-width: 900px) {
   .landing-nav-links {
