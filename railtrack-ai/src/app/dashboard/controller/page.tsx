@@ -1,15 +1,14 @@
 'use client';
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import Link from 'next/link';
 import { useAuth } from '@/lib/auth';
 import LiveTrackMap from '@/components/LiveTrackMap';
 import AIRecommendation from '@/components/AIRecommendation';
 import { Train, Conflict, TrainPriority } from '@/lib/mockData';
 import { API_BASE, trainsQueryFor } from '@/lib/api';
-import { OctagonAlert, RefreshCw, TriangleAlert, Zap, Check, SlidersHorizontal, BarChart3, Settings, Wrench, Search, TrainFront, GitBranch, Building2, Info, Play, Link2, Bot, type LucideIcon } from 'lucide-react';
-import OfficialUtilityBar from '@/components/OfficialUtilityBar';
+import { OctagonAlert, RefreshCw, TriangleAlert, Zap, Check, Wrench, Search, TrainFront, GitBranch, Building2, Info, Link2, Bot, type LucideIcon } from 'lucide-react';
 import Breadcrumb from '@/components/Breadcrumb';
+import AppShell from '@/components/AppShell';
 
 const DISRUPTION_ICONS: Record<string, LucideIcon> = {
   collision: OctagonAlert,
@@ -752,8 +751,8 @@ export default function ControllerDashboard() {
   ].filter(Boolean) as string[];
 
   return (
-    <div className="has-mobile-tab-bar has-mobile-action-bar" style={{ height: '100vh', display: 'flex', flexDirection: 'column', overflow: 'hidden', background: 'var(--bg-base)' }}>
-      <OfficialUtilityBar />
+    <AppShell active="dashboard">
+      <div className="has-mobile-tab-bar has-mobile-action-bar" style={{ height: '100%', display: 'flex', flexDirection: 'column', overflow: 'hidden', background: 'var(--bg-base)' }}>
       {/* Demo Banner */}
       {user?.isDemo && (
         <div className="demo-banner">
@@ -771,61 +770,32 @@ export default function ControllerDashboard() {
         </div>
       )}
 
-      {/* Top Nav */}
-      <header className="app-header-row" style={{ height: '56px', background: '#FFFFFF', borderBottom: '1.5px solid var(--bg-border)', display: 'flex', alignItems: 'center', padding: '0 20px', gap: '20px', flexShrink: 0, boxShadow: '0 2px 8px rgba(0,0,0,0.03)' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <span className="signal-lamp signal-lamp-green" style={{ width: '12px', height: '12px' }} />
-          <div style={{ fontFamily: 'var(--font-headline)', fontSize: '16px', fontWeight: 800, color: 'var(--accent-primary)', letterSpacing: '-0.02em' }}>
-            RAILTRACK AI
-          </div>
+      {/* Page-specific status row (WS telemetry state, sign out, sidebar toggle) */}
+      <div style={{ height: '48px', background: '#FFFFFF', borderBottom: '1.5px solid var(--bg-border)', display: 'flex', alignItems: 'center', justifyContent: 'flex-end', padding: '0 20px', gap: '14px', flexShrink: 0 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', fontFamily: 'var(--font-headline)', fontWeight: 600,
+          color: wsStatus === 'reconnecting' ? 'var(--accent-warn)' : wsStatus === 'reconnected' ? 'var(--accent-safe)' : 'var(--accent-safe)' }}>
+          <span style={{
+            width: '8px', height: '8px', borderRadius: '50%',
+            background: wsStatus === 'reconnecting' ? 'var(--accent-warn)' : wsStatus === 'reconnected' ? 'var(--accent-safe)' : connectionState === 'ws' ? 'var(--accent-safe)' : 'var(--accent-warn)',
+          }} className="animate-pulse-live" />
+          {wsStatus === 'reconnecting' ? 'RECONNECTING…' : wsStatus === 'reconnected' ? 'FEED RECONNECTED' : connectionState === 'ws' ? 'TELEMETRY FEED' : 'POLLING'}
         </div>
-        <div style={{ width: '1px', height: '24px', background: 'var(--bg-border)' }} />
-        <nav className="desktop-nav-links" style={{ display: 'flex', gap: '6px' }}>
-          {[
-            { label: 'Dashboard', href: '/dashboard/controller', active: true },
-            { label: 'Simulate', href: '/simulate' },
-            { label: 'Analytics', href: '/analytics' },
-            { label: 'Admin', href: '/admin' },
-            { label: 'Live Map', href: '/live-map' },
-          ].map(item => (
-            <Link key={item.href} href={item.href} style={{
-              padding: '7px 14px', borderRadius: 'var(--radius-xs)', fontSize: '13px', textDecoration: 'none',
-              background: item.active ? '#EBF3FA' : 'transparent',
-              color: item.active ? 'var(--accent-primary)' : 'var(--text-secondary)',
-              fontFamily: 'var(--font-headline)',
-              fontWeight: item.active ? 700 : 500,
-              transition: 'all 0.15s ease',
-            }}>
-              {item.label}
-            </Link>
-          ))}
-        </nav>
-        <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: '14px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', fontFamily: 'var(--font-headline)', fontWeight: 600,
-            color: wsStatus === 'reconnecting' ? 'var(--accent-warn)' : wsStatus === 'reconnected' ? 'var(--accent-safe)' : 'var(--accent-safe)' }}>
-            <span style={{
-              width: '8px', height: '8px', borderRadius: '50%',
-              background: wsStatus === 'reconnecting' ? 'var(--accent-warn)' : wsStatus === 'reconnected' ? 'var(--accent-safe)' : connectionState === 'ws' ? 'var(--accent-safe)' : 'var(--accent-warn)',
-            }} className="animate-pulse-live" />
-            {wsStatus === 'reconnecting' ? 'RECONNECTING…' : wsStatus === 'reconnected' ? 'FEED RECONNECTED' : connectionState === 'ws' ? 'TELEMETRY FEED' : 'POLLING'}
-          </div>
-          <button
-            onClick={logout}
-            className="btn-ghost"
-            style={{ padding: '6px 14px', fontSize: '12.5px', fontFamily: 'var(--font-headline)', borderRadius: 'var(--radius-xs)' }}>
-            Sign Out
-          </button>
-          <button
-            onClick={() => setSidebarOpen(o => !o)}
-            className="btn-ghost"
-            style={{ padding: '6px 10px', fontSize: '14px', marginRight: '4px', borderRadius: 'var(--radius-xs)' }}
-            title={sidebarOpen ? 'Hide sidebar' : 'Show sidebar'}
-            aria-label={sidebarOpen ? 'Hide sidebar' : 'Show sidebar'}
-          >
-            {sidebarOpen ? '◀' : '▶'}
-          </button>
-        </div>
-      </header>
+        <button
+          onClick={logout}
+          className="btn-ghost"
+          style={{ padding: '6px 14px', fontSize: '12.5px', fontFamily: 'var(--font-headline)', borderRadius: 'var(--radius-xs)' }}>
+          Sign Out
+        </button>
+        <button
+          onClick={() => setSidebarOpen(o => !o)}
+          className="btn-ghost"
+          style={{ padding: '6px 10px', fontSize: '14px', marginRight: '4px', borderRadius: 'var(--radius-xs)' }}
+          title={sidebarOpen ? 'Hide sidebar' : 'Show sidebar'}
+          aria-label={sidebarOpen ? 'Hide sidebar' : 'Show sidebar'}
+        >
+          {sidebarOpen ? '◀' : '▶'}
+        </button>
+      </div>
 
       {/* Main 3-column layout */}
       <div className="main-3col-row" style={{ flex: 1 }}>
@@ -1070,7 +1040,7 @@ export default function ControllerDashboard() {
         )}
 
         {/* ── CENTER COLUMN ── */}
-        <main id="main-content" className="main-content-col" style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden', minWidth: 0 }}>
+        <main className="main-content-col" style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden', minWidth: 0 }}>
           {/* Section header */}
           <div style={{ padding: '12px 16px', borderBottom: '1px solid var(--bg-border)', display: 'flex', alignItems: 'center', gap: '12px', background: 'var(--bg-surface)' }}>
             <Breadcrumb items={[{ label: user?.section || 'NR-42' }, { label: 'Controller View' }]} />
@@ -1447,21 +1417,7 @@ export default function ControllerDashboard() {
         </button>
       </div>
 
-      {/* Mobile bottom tab bar navigation */}
-      <nav className="mobile-tab-bar">
-        <Link href="/dashboard/controller" className="mobile-tab-active">
-          <span className="mobile-tab-icon"><SlidersHorizontal size={18} strokeWidth={2} /></span>Dashboard
-        </Link>
-        <Link href="/simulate">
-          <span className="mobile-tab-icon"><Play size={18} strokeWidth={2} /></span>Simulate
-        </Link>
-        <Link href="/analytics">
-          <span className="mobile-tab-icon"><BarChart3 size={18} strokeWidth={2} /></span>Analytics
-        </Link>
-        <Link href="/admin">
-          <span className="mobile-tab-icon"><Settings size={18} strokeWidth={2} /></span>Admin
-        </Link>
-      </nav>
-    </div>
+      </div>
+    </AppShell>
   );
 }
