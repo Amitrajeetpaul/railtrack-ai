@@ -2,7 +2,7 @@
 import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 import { API_BASE } from '@/lib/api';
-import { Zap, GitBranch, MessageSquareText, Users, ClipboardList, Satellite, ArrowRight, Github, Route, Check, type LucideIcon } from 'lucide-react';
+import { Zap, GitBranch, MessageSquareText, Users, ClipboardList, Satellite, ArrowRight, Github, Route, Check, UserCircle, type LucideIcon } from 'lucide-react';
 
 function AnimatedCounter({ target, suffix = '', duration = 2000 }: { target: number; suffix?: string; duration?: number }) {
   const [count, setCount] = useState(0);
@@ -98,13 +98,13 @@ export default function LandingPage() {
       <header style={{
         position: 'sticky', top: 0, zIndex: 30, display: 'flex', alignItems: 'center', justifyContent: 'space-between',
         padding: '14px 24px', background: 'rgba(0,18,36,0.95)', backdropFilter: 'blur(10px)',
-        borderBottom: '1px solid rgba(26,84,144,0.3)',
+        borderBottom: '1px solid rgba(26,84,144,0.3)', gap: '16px', flexWrap: 'wrap',
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
           <div style={{
             width: '32px', height: '32px', borderRadius: 'var(--radius-xs)',
             background: 'linear-gradient(135deg, #A4C9FF, var(--accent-primary))',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
           }}>
             <Route size={17} strokeWidth={2.25} color="#FFFFFF" />
           </div>
@@ -112,7 +112,29 @@ export default function LandingPage() {
             RAILTRACK<span style={{ color: '#A4C9FF' }}>.AI</span>
           </span>
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+
+        <nav style={{ display: 'flex', alignItems: 'center', gap: '4px' }} className="landing-nav-links">
+          {[
+            { label: 'Landing', href: '/', active: true },
+            { label: 'Dashboard', href: '/dashboard/controller' },
+            { label: 'Simulate', href: '/simulate' },
+            { label: 'Admin', href: '/admin' },
+            { label: 'Analytics', href: '/analytics' },
+            { label: 'Live Map', href: '/live-map' },
+          ].map(item => (
+            <Link key={item.label} href={item.href} style={{
+              fontFamily: 'var(--font-space-mono)', fontSize: '11px', fontWeight: 700, letterSpacing: '0.06em',
+              textTransform: 'uppercase', textDecoration: 'none', padding: '8px 14px', borderRadius: 'var(--radius-xs)',
+              color: item.active ? '#FFFFFF' : 'rgba(255,255,255,0.6)',
+              background: item.active ? 'rgba(26,84,144,0.35)' : 'transparent',
+              border: item.active ? '1px solid rgba(164,201,255,0.4)' : '1px solid transparent',
+            }}>
+              {item.label}
+            </Link>
+          ))}
+        </nav>
+
+        <div style={{ display: 'flex', alignItems: 'center', gap: '18px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
             <span className="animate-pulse-live" style={{ width: '6px', height: '6px', borderRadius: '50%', background: 'var(--accent-safe)', display: 'inline-block' }} />
             <span style={{ fontFamily: 'var(--font-space-mono)', fontSize: '10.5px', color: '#88D982', letterSpacing: '0.08em' }}>SYS_ONLINE</span>
@@ -122,12 +144,11 @@ export default function LandingPage() {
             style={{ color: 'rgba(255,255,255,0.7)', display: 'flex' }}>
             <Github size={17} strokeWidth={2} />
           </a>
-          <Link href="/login" style={{
-            fontFamily: 'var(--font-headline)', fontSize: '13px', fontWeight: 700, color: '#001224',
-            background: 'linear-gradient(90deg, #A4C9FF, #FFFFFF)', padding: '8px 18px', borderRadius: 'var(--radius-xs)',
-            textDecoration: 'none', letterSpacing: '0.02em',
+          <Link href="/login" aria-label="Sign in" style={{
+            width: '32px', height: '32px', borderRadius: 'var(--radius-xs)', display: 'flex', alignItems: 'center', justifyContent: 'center',
+            background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.15)', color: 'rgba(255,255,255,0.9)',
           }}>
-            Live Demo
+            <UserCircle size={18} strokeWidth={2} />
           </Link>
         </div>
       </header>
@@ -163,7 +184,7 @@ export default function LandingPage() {
           }}>
             <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#A4C9FF', display: 'inline-block' }} className="animate-pulse-live" />
             <span style={{ fontFamily: 'var(--font-space-mono)', fontSize: '11px', color: '#A4C9FF', letterSpacing: '0.1em' }}>
-              LIVE DEMO • ENTERPRISE TRAFFIC SYSTEM
+              SYS.OPT.THROUGHPUT
             </span>
           </div>
 
@@ -171,7 +192,7 @@ export default function LandingPage() {
             Orchestrate Railway Traffic with
             <br />
             <span style={{ background: 'linear-gradient(90deg, #A4C9FF, #FFFFFF, #A4C9FF)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
-              Unprecedented Precision
+              Unprecedented Precision.
             </span>
           </h1>
 
@@ -181,8 +202,9 @@ export default function LandingPage() {
             borderRadius: '0 var(--radius-xs) var(--radius-xs) 0', fontFamily: 'var(--font-mono)',
           }}>
             <span style={{ color: '#A4C9FF', marginRight: '8px' }}>{'>'}</span>
-            Real-time conflict detection, precedence optimization, and what-if simulation
-            for Indian Railways section controllers. Built with OR-Tools CP-SAT + deep learning.
+            RailTrack AI leverages deterministic optimization and Explainable AI to maximize
+            network throughput, resolve conflicts in real-time, and empower controllers with
+            actionable, transparent recommendations.
           </p>
 
           <div style={{ display: 'flex', gap: '16px', justifyContent: 'center', flexWrap: 'wrap', marginBottom: '56px' }}>
@@ -203,7 +225,7 @@ export default function LandingPage() {
           </div>
         </div>
 
-        {/* Schematic Dashboard Preview — real fetched stats, illustrative diagram labeled as such */}
+        {/* Schematic Dashboard Preview */}
         <div style={{
           position: 'relative', zIndex: 1, maxWidth: '1080px', margin: '0 auto', width: '100%',
           background: 'rgba(0,18,36,0.9)', borderRadius: 'var(--radius-md) var(--radius-md) 0 0',
@@ -216,34 +238,82 @@ export default function LandingPage() {
               <span style={{ width: '10px', height: '10px', borderRadius: '50%', background: 'rgba(163,246,156,0.7)' }} />
             </div>
             <span style={{ fontFamily: 'var(--font-mono)', fontSize: '10px', color: 'var(--accent-primary)', letterSpacing: '0.1em' }}>
-              LIVE_SYSTEM_STATUS
+              NETWORK_TOPOLOGY_VIEW_V2.1
             </span>
           </div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1px', background: 'rgba(26,84,144,0.3)' }}>
-            {[
-              { label: 'TRAINS MANAGED / DAY', value: stats.trains_today, suffix: '+' },
-              { label: 'AVG DELAY REDUCTION', value: stats.avg_delay_reduction, suffix: '%' },
-              { label: 'SYSTEM UPTIME', value: stats.uptime_percentage, suffix: '%' },
-            ].map((stat, i) => (
-              <div key={i} style={{ background: '#001224', padding: '22px 24px' }}>
-                <div style={{ fontFamily: 'var(--font-mono)', fontSize: '11px', color: 'rgba(164,201,255,0.7)', letterSpacing: '0.08em', marginBottom: '10px' }}>
-                  {stat.label}
-                </div>
-                <div style={{ fontFamily: 'var(--font-mono)', fontSize: '30px', fontWeight: 700, color: '#FFFFFF' }}>
-                  {stat.value !== null ? (
-                    <AnimatedCounter target={Math.floor(stat.value)} suffix={stat.suffix} duration={2200 + i * 300} />
-                  ) : (
-                    <span style={{ opacity: 0.3 }}>—</span>
-                  )}
-                </div>
-                {stat.suffix === '%' && stat.value !== null && (
-                  <div style={{ height: '3px', background: 'rgba(164,201,255,0.15)', borderRadius: 'var(--radius-pill)', marginTop: '10px', overflow: 'hidden' }}>
-                    <div style={{ height: '100%', width: `${Math.min(stat.value, 100)}%`, background: '#A4C9FF' }} />
-                  </div>
-                )}
+
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', minHeight: '260px' }}>
+            {/* System Status — real fetched stats */}
+            <div style={{ borderRight: '1px solid rgba(26,84,144,0.3)', padding: '18px', display: 'flex', flexDirection: 'column', gap: '14px', position: 'relative' }}>
+              <div className="corner-bracket-tl" />
+              <div style={{ fontFamily: 'var(--font-space-mono)', fontSize: '10px', color: '#A4C9FF', letterSpacing: '0.12em', borderBottom: '1px solid rgba(26,84,144,0.3)', paddingBottom: '10px' }}>
+                SYSTEM STATUS
               </div>
-            ))}
+              {[
+                { label: 'GLOBAL_THROUGHPUT', value: stats.uptime_percentage, suffix: '%', color: '#A3F69C' },
+                { label: 'AVG_DELAY_REDUCTION', value: stats.avg_delay_reduction, suffix: '%', color: '#A4C9FF' },
+              ].map((stat, i) => (
+                <div key={i}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', fontFamily: 'var(--font-mono)', fontSize: '11px', color: 'rgba(255,255,255,0.7)' }}>
+                    <span>{stat.label}</span>
+                    <span style={{ color: stat.color }}>
+                      {stat.value !== null ? <AnimatedCounter target={Math.floor(stat.value)} suffix={stat.suffix} duration={2000 + i * 300} /> : '—'}
+                    </span>
+                  </div>
+                  <div style={{ height: '4px', background: 'rgba(26,84,144,0.2)', borderRadius: 'var(--radius-pill)', marginTop: '6px', overflow: 'hidden' }}>
+                    <div style={{ height: '100%', width: stat.value !== null ? `${Math.min(stat.value, 100)}%` : '0%', background: stat.color }} />
+                  </div>
+                </div>
+              ))}
+              <div style={{ marginTop: 'auto', display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                <div style={{ height: '24px', background: 'rgba(26,84,144,0.1)', border: '1px solid rgba(26,84,144,0.2)', borderRadius: 'var(--radius-xs)', display: 'flex', alignItems: 'center', padding: '0 8px', fontFamily: 'var(--font-mono)', fontSize: '10px', color: 'rgba(255,255,255,0.5)' }}>
+                  OPT_ENGINE: RUNNING
+                </div>
+                <div style={{ height: '24px', background: 'rgba(26,84,144,0.1)', border: '1px solid rgba(26,84,144,0.2)', borderRadius: 'var(--radius-xs)', display: 'flex', alignItems: 'center', padding: '0 8px', fontFamily: 'var(--font-mono)', fontSize: '10px', color: 'rgba(255,255,255,0.5)' }}>
+                  SOLVER: OR-TOOLS CP-SAT
+                </div>
+              </div>
+            </div>
+
+            {/* Live Routing Topology — decorative diagram */}
+            <div style={{ borderRight: '1px solid rgba(26,84,144,0.3)', padding: '18px', position: 'relative', overflow: 'hidden', minHeight: '220px' }}>
+              <div style={{ position: 'absolute', inset: 0, backgroundImage: 'linear-gradient(rgba(26,84,144,0.15) 1px, transparent 1px), linear-gradient(90deg, rgba(26,84,144,0.15) 1px, transparent 1px)', backgroundSize: '20px 20px' }} />
+              <div style={{ position: 'absolute', top: '14px', left: '18px', zIndex: 1, fontFamily: 'var(--font-space-mono)', fontSize: '10px', color: '#A4C9FF', letterSpacing: '0.12em' }}>
+                LIVE ROUTING TOPOLOGY
+              </div>
+              <div style={{ position: 'absolute', top: '50%', left: 0, width: '100%', height: '1px', background: 'rgba(26,84,144,0.5)', transform: 'translateY(-16px)' }} />
+              <div style={{ position: 'absolute', top: '50%', left: 0, width: '100%', height: '1px', background: 'rgba(26,84,144,0.5)', transform: 'translateY(16px)' }} />
+              <div className="data-stream" style={{ position: 'absolute', left: '30%', top: 0, width: '1px', height: '100%', opacity: 0.5 }} />
+              <div style={{ position: 'absolute', top: '50%', left: '25%', width: '32px', height: '8px', background: '#A3F69C', borderRadius: 'var(--radius-xs)', transform: 'translateY(-16px)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'var(--font-mono)', fontSize: '8px', color: '#001224', fontWeight: 700 }}>T1</div>
+              <div style={{ position: 'absolute', top: '50%', left: '62%', width: '32px', height: '8px', background: '#A4C9FF', borderRadius: 'var(--radius-xs)', transform: 'translateY(16px)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'var(--font-mono)', fontSize: '8px', color: '#001224', fontWeight: 700 }}>T2</div>
+              <div className="animate-pulse-live" style={{ position: 'absolute', top: '50%', left: '48%', width: '16px', height: '16px', borderRadius: '50%', border: '2px solid var(--accent-danger)', transform: 'translate(-50%, -50%)' }} />
+              <svg style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }}>
+                <path d="M 90 100 Q 150 100 180 70 T 260 100" fill="none" stroke="#A3F69C" strokeDasharray="4 4" strokeWidth="1.5"
+                  style={{ animation: 'dash-flow 2s linear infinite' }} />
+              </svg>
+            </div>
+
+            {/* Resolution Log — illustrative example trace, not a live session log */}
+            <div style={{ padding: '18px', display: 'flex', flexDirection: 'column', gap: '8px', position: 'relative' }}>
+              <div className="corner-bracket-br" />
+              <div style={{ fontFamily: 'var(--font-space-mono)', fontSize: '10px', color: '#A4C9FF', letterSpacing: '0.12em', borderBottom: '1px solid rgba(26,84,144,0.3)', paddingBottom: '10px', marginBottom: '4px' }}>
+                RESOLUTION LOG (EXAMPLE)
+              </div>
+              {[
+                { t: 'T+0.0s', msg: 'SEC_42 CONFLICT DETECTED', color: 'rgba(255,255,255,0.6)' },
+                { t: 'T+0.0s', msg: 'OR-TOOLS SOLVER INIT', color: '#A3F69C' },
+                { t: 'T+0.4s', msg: 'ALT_ROUTE_A EVALUATED', color: 'rgba(255,255,255,0.6)' },
+                { t: 'T+0.6s', msg: 'PRECEDENCE RECALCULATED', color: '#A3F69C' },
+                { t: 'T+0.9s', msg: 'DISPATCH COMMITTED', color: '#A4C9FF' },
+              ].map((line, i) => (
+                <div key={i} style={{ display: 'flex', gap: '8px', fontFamily: 'var(--font-mono)', fontSize: '10px' }}>
+                  <span style={{ color: 'rgba(26,84,144,0.9)', flexShrink: 0 }}>[{line.t}]</span>
+                  <span style={{ color: line.color }}>{line.msg}</span>
+                </div>
+              ))}
+            </div>
           </div>
+
           <div style={{ padding: '16px 24px 20px', display: 'flex', alignItems: 'center', gap: '8px', borderTop: '1px solid rgba(26,84,144,0.3)' }}>
             <span style={{ fontFamily: 'var(--font-mono)', fontSize: '10.5px', color: 'rgba(255,255,255,0.4)' }}>
               Live Train Data → Conflict Detection → OR-Tools Solver → WebSocket → Frontend

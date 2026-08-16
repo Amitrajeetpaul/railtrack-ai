@@ -683,6 +683,13 @@ h4 { font-size: 16px; font-weight: 600; }
   animation: glitch-in 0.5s steps(2, end) both;
 }
 
+/* ---------- Landing top nav — desktop only, like the source mockup ---------- */
+@media (max-width: 900px) {
+  .landing-nav-links {
+    display: none !important;
+  }
+}
+
 /* ---------- Login — two-column govt-portal layout ---------- */
 .login-grid {
   display: grid;
