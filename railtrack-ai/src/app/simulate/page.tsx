@@ -1,6 +1,5 @@
 'use client';
 import { useState, useEffect } from 'react';
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import LiveTrackMap from '@/components/LiveTrackMap';
 import SystemFeedsModal from '@/components/SystemFeedsModal';
@@ -10,9 +9,9 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Train } from '@/lib/mockData';
 import { API_BASE, trainsQueryFor } from '@/lib/api';
 import { useAuth } from '@/lib/auth';
-import { Radio, TriangleAlert, Zap, Rocket, Lightbulb, SlidersHorizontal, Play, BarChart3, Settings, Satellite } from 'lucide-react';
-import OfficialUtilityBar from '@/components/OfficialUtilityBar';
+import { Radio, TriangleAlert, Zap, Rocket, Lightbulb, Satellite } from 'lucide-react';
 import Breadcrumb from '@/components/Breadcrumb';
+import AppShell from '@/components/AppShell';
 
 function getClientToken() {
   const match = document.cookie.match(/(?:^|;\s*)railtrack_token=([^;]*)/);
@@ -365,49 +364,9 @@ export default function SimulatePage() {
   }
 
   return (
-    <div className="has-mobile-tab-bar" style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', background: 'var(--bg-base)' }}>
-      <OfficialUtilityBar />
-      {/* Top Nav */}
-      <header className="app-header-row" style={{ height: '56px', background: '#FFFFFF', borderBottom: '1.5px solid var(--bg-border)', display: 'flex', alignItems: 'center', padding: '0 20px', gap: '20px', flexShrink: 0, boxShadow: '0 2px 8px rgba(0,0,0,0.03)' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <span className="signal-lamp signal-lamp-green" style={{ width: '12px', height: '12px' }} />
-          <div style={{ fontFamily: 'var(--font-headline)', fontSize: '16px', fontWeight: 800, color: 'var(--accent-primary)', letterSpacing: '-0.02em' }}>
-            RAILTRACK AI
-          </div>
-        </div>
-        <div style={{ width: '1px', height: '24px', background: 'var(--bg-border)' }} />
-        <nav className="desktop-nav-links" style={{ display: 'flex', gap: '6px', flex: 1 }}>
-          {[
-            { label: 'Dashboard', href: '/dashboard/controller' },
-            { label: 'Simulate', href: '/simulate', active: true },
-            { label: 'Analytics', href: '/analytics' },
-            { label: 'Admin', href: '/admin' },
-            { label: 'Live Map', href: '/live-map' },
-          ].map(item => (
-            <Link key={item.href} href={item.href} style={{
-              padding: '7px 14px', borderRadius: 'var(--radius-xs)', fontSize: '13px', textDecoration: 'none',
-              background: item.active ? '#EBF3FA' : 'transparent',
-              color: item.active ? 'var(--accent-primary)' : 'var(--text-secondary)',
-              fontFamily: 'var(--font-headline)', fontWeight: item.active ? 700 : 500, transition: 'all 0.15s ease',
-            }}>
-              {item.label}
-            </Link>
-          ))}
-        </nav>
-
-        {/* System Feeds Trigger Button */}
-        <button
-          onClick={() => setIsSystemsModalOpen(true)}
-          className="badge-safe"
-          style={{
-            padding: '8px 14px', borderRadius: 'var(--radius-xs)', cursor: 'pointer', fontFamily: 'var(--font-headline)', fontSize: '12px'
-          }}>
-          <Radio size={14} strokeWidth={2.25} style={{ display: 'inline', verticalAlign: '-2px', marginRight: '4px' }} /> Railway Systems Feeds (COA/FOIS)
-        </button>
-      </header>
-
+    <AppShell active="simulate">
       {/* Main Content */}
-      <div className="main-3col-row" style={{ flex: 1 }}>
+      <div className="main-3col-row" style={{ height: '100%', paddingBottom: 0 }}>
 
         {/* ── LEFT PANEL (Form) ── */}
         <aside className="sidebar-right" style={{ background: 'var(--bg-surface)', borderRight: '1px solid var(--bg-border)', display: 'flex', flexDirection: 'column' }}>
@@ -568,9 +527,17 @@ export default function SimulatePage() {
 
 
         {/* ── CENTER AREA (Map & Results) ── */}
-        <main id="main-content" className="main-content-col" style={{ flex: 1, display: 'flex', flexDirection: 'column', padding: '24px', overflowY: 'auto' }}>
-          <div style={{ marginBottom: '16px' }}>
+        <main className="main-content-col" style={{ flex: 1, display: 'flex', flexDirection: 'column', padding: '24px', overflowY: 'auto' }}>
+          <div style={{ marginBottom: '16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px' }}>
             <Breadcrumb items={[{ label: 'Simulate' }]} />
+            <button
+              onClick={() => setIsSystemsModalOpen(true)}
+              className="badge-safe"
+              style={{
+                padding: '8px 14px', borderRadius: 'var(--radius-xs)', cursor: 'pointer', fontFamily: 'var(--font-headline)', fontSize: '12px', border: 'none'
+              }}>
+              <Radio size={14} strokeWidth={2.25} style={{ display: 'inline', verticalAlign: '-2px', marginRight: '4px' }} /> Railway Systems Feeds (COA/FOIS)
+            </button>
           </div>
 
           {simHistory.length > 0 && (
@@ -990,17 +957,10 @@ export default function SimulatePage() {
       </div>
       <SystemFeedsModal isOpen={isSystemsModalOpen} onClose={() => setIsSystemsModalOpen(false)} />
 
-      <nav className="mobile-tab-bar">
-        <Link href="/dashboard/controller"><span className="mobile-tab-icon"><SlidersHorizontal size={18} strokeWidth={2} /></span>Dashboard</Link>
-        <Link href="/simulate" className="mobile-tab-active"><span className="mobile-tab-icon"><Play size={18} strokeWidth={2} /></span>Simulate</Link>
-        <Link href="/analytics"><span className="mobile-tab-icon"><BarChart3 size={18} strokeWidth={2} /></span>Analytics</Link>
-        <Link href="/admin"><span className="mobile-tab-icon"><Settings size={18} strokeWidth={2} /></span>Admin</Link>
-      </nav>
-
       <style>{`
         @keyframes spin { to { transform: rotate(360deg); } }
       `}</style>
-    </div>
+    </AppShell>
   );
 }
 
