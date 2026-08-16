@@ -2,7 +2,7 @@
 import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 import { API_BASE } from '@/lib/api';
-import { Zap, GitBranch, MessageSquareText, Users, ClipboardList, Satellite, ArrowRight, Github, Route, Check, UserCircle, type LucideIcon } from 'lucide-react';
+import { Zap, MessageSquareText, Satellite, ArrowRight, Route, Check, UserCircle, type LucideIcon } from 'lucide-react';
 
 function AnimatedCounter({ target, suffix = '', duration = 2000 }: { target: number; suffix?: string; duration?: number }) {
   const [count, setCount] = useState(0);
@@ -31,41 +31,26 @@ const HIGHLIGHT_FEATURES: Feature[] = [
   {
     icon: Zap,
     title: 'Real-Time Conflict Detection',
-    desc: 'The system checks every running train pair for shared-platform and crossing conflicts fresh on every request, so controllers always see current section state, not a stale snapshot.',
+    desc: 'Continuously monitors interlocking state, train positions, and schedule adherence to predict and identify routing conflicts before they manifest on the network.',
   },
   {
     icon: MessageSquareText,
-    title: 'Explainable Recommendations',
-    desc: 'Every solver decision comes with a plain-language reason grounded in the actual schedule — no black-box output. The controller always sees why, and can Accept or Override.',
+    title: 'Explainable AI (XAI)',
+    desc: 'Recommendations are not black boxes. Every routing decision is accompanied by a transparent logic trace detailing the operational constraints and precedence rules considered.',
   },
   {
     icon: Satellite,
-    title: 'Live Train Tracking',
-    desc: 'Real-time position, delay, and station data for any Indian Railways train number, pulled from a live tracking API — not simulated placeholder data.',
-  },
-];
-
-const MORE_FEATURES: Feature[] = [
-  {
-    icon: GitBranch,
-    title: 'What-If Simulation',
-    desc: 'Simulate disruptions before they happen. Run scenarios with delays, breakdowns, or weather events through the same real solver and compare optimized outcomes side-by-side before applying anything live.',
-  },
-  {
-    icon: Users,
-    title: 'Multi-Role Access Control',
-    desc: 'Purpose-built dashboards for Section Controllers, Traffic Supervisors, Logistics Operators, and Admins with role-scoped data.',
-  },
-  {
-    icon: ClipboardList,
-    title: 'Immutable Audit Trail',
-    desc: 'Every AI recommendation, override, and manual decision is logged with operator ID, timestamp, and outcome for accountability and review.',
+    title: 'High-Fidelity Live Tracking',
+    desc: 'Ingests telemetry data at sub-second latency. Visualized on a strictly structured, minimalist map interface designed for rapid situational awareness without visual fatigue.',
   },
 ];
 
 const TECH_STACK = [
-  'Next.js', 'TypeScript', 'FastAPI', 'PostgreSQL', 'SQLAlchemy',
-  'Google OR-Tools', 'Groq / Llama 3.1', 'Vercel', 'Railway',
+  { code: 'FRNT', name: 'Next.js', live: false },
+  { code: 'API', name: 'FastAPI', live: false },
+  { code: 'DB', name: 'PostgreSQL', live: false },
+  { code: 'OPT', name: 'Google OR-Tools', live: true },
+  { code: 'LLM', name: 'Groq/Llama 3.1', live: true },
 ];
 
 export default function LandingPage() {
@@ -139,11 +124,6 @@ export default function LandingPage() {
             <span className="animate-pulse-live" style={{ width: '6px', height: '6px', borderRadius: '50%', background: 'var(--accent-safe)', display: 'inline-block' }} />
             <span style={{ fontFamily: 'var(--font-space-mono)', fontSize: '10.5px', color: '#88D982', letterSpacing: '0.08em' }}>SYS_ONLINE</span>
           </div>
-          <a href="https://github.com/Amitrajeetpaul/railtrack-ai" target="_blank" rel="noopener noreferrer"
-            aria-label="View source on GitHub"
-            style={{ color: 'rgba(255,255,255,0.7)', display: 'flex' }}>
-            <Github size={17} strokeWidth={2} />
-          </a>
           <Link href="/login" aria-label="Sign in" style={{
             width: '32px', height: '32px', borderRadius: 'var(--radius-xs)', display: 'flex', alignItems: 'center', justifyContent: 'center',
             background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.15)', color: 'rgba(255,255,255,0.9)',
@@ -333,11 +313,13 @@ export default function LandingPage() {
             {TECH_STACK.map((tech, i) => (
               <span key={i} style={{
                 position: 'relative', overflow: 'hidden', background: 'var(--bg-surface)', border: '1px solid var(--bg-border)',
-                borderRadius: 'var(--radius-xs)', padding: '10px 18px 10px 22px', fontFamily: 'var(--font-space-mono)',
-                fontSize: '12.5px', color: 'var(--text-primary)', fontWeight: 700,
+                borderRadius: 'var(--radius-xs)', padding: '10px 18px 10px 22px', fontFamily: 'var(--font-mono)',
+                fontSize: '13px', color: 'var(--text-primary)', display: 'inline-flex', alignItems: 'center', gap: '8px',
               }}>
                 <span style={{ position: 'absolute', left: 0, top: 0, bottom: 0, width: '4px', background: 'var(--accent-primary)' }} />
-                {tech}
+                {tech.live && <span className="animate-pulse-live" style={{ width: '6px', height: '6px', borderRadius: '50%', background: 'var(--accent-safe)', display: 'inline-block' }} />}
+                <span style={{ fontFamily: 'var(--font-space-mono)', fontSize: '10px', color: 'var(--text-muted)', fontWeight: 700 }}>{tech.code}</span>
+                <span style={{ fontWeight: 700 }}>{tech.name}</span>
               </span>
             ))}
           </div>
@@ -352,12 +334,13 @@ export default function LandingPage() {
           </div>
           <h2 style={{ fontSize: '34px', fontWeight: 800 }}>Operational Superiority</h2>
           <p style={{ color: 'var(--text-secondary)', marginTop: '16px', lineHeight: 1.7 }}>
-            From real-time monitoring to advanced AI optimization, RailTrack AI covers every aspect of railway traffic management.
+            Transforming complex, high-density traffic scenarios into resolved, executable plans in milliseconds.
+            Precision precedence optimization without the noise.
           </p>
         </div>
 
         {/* Elaborate cards — with an illustrative mini-panel example under each */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '24px', marginBottom: '24px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '24px' }}>
           {HIGHLIGHT_FEATURES.map((f, i) => (
             <div key={i} className="panel" style={{ padding: '28px', display: 'flex', flexDirection: 'column' }}>
               <div style={{
@@ -373,28 +356,31 @@ export default function LandingPage() {
               {i === 0 && (
                 <div style={{ background: 'var(--bg-elevated)', border: '1px solid var(--bg-border)', borderRadius: 'var(--radius-xs)', padding: '14px', position: 'relative', overflow: 'hidden' }}>
                   <span style={{ position: 'absolute', left: 0, top: 0, bottom: 0, width: '3px', background: 'var(--accent-danger)' }} />
-                  <div style={{ fontFamily: 'var(--font-space-mono)', fontSize: '10px', color: 'var(--text-muted)', letterSpacing: '0.08em', marginBottom: '8px' }}>EXAMPLE — CONFLICT CARD</div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', fontFamily: 'var(--font-mono)', fontSize: '12px', marginBottom: '6px' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', fontFamily: 'var(--font-mono)', fontSize: '12px', marginBottom: '10px' }}>
                     <span style={{ fontWeight: 700 }}>TRN-8492</span>
                     <span className="badge-conflict" style={{ fontSize: '10px', padding: '1px 8px' }}>Conflict</span>
                   </div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', color: 'var(--text-secondary)' }}>
-                    <span>Section 42A → 42B</span>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', color: 'var(--text-secondary)', fontFamily: 'var(--font-space-mono)' }}>
+                    <span>Sec: 42A → 42B</span>
+                    <span style={{ fontWeight: 700 }}>ETA: -12s</span>
                   </div>
                 </div>
               )}
 
               {i === 1 && (
                 <div style={{ background: '#001224', borderRadius: 'var(--radius-xs)', padding: '14px', fontFamily: 'var(--font-mono)', fontSize: '11px', color: '#A4C9FF' }}>
-                  <div style={{ fontFamily: 'var(--font-space-mono)', fontSize: '10px', color: 'rgba(255,255,255,0.5)', letterSpacing: '0.08em', marginBottom: '8px' }}>EXAMPLE — XAI TRACE LOG</div>
-                  <div style={{ opacity: 0.85 }}>{'>'} constraints_eval: pass</div>
-                  <div style={{ opacity: 0.85 }}>{'>'} priority rule applied</div>
+                  <div style={{ fontFamily: 'var(--font-space-mono)', fontSize: '10px', color: 'rgba(255,255,255,0.5)', letterSpacing: '0.08em', marginBottom: '8px' }}>TRACE_LOG_PREVIEW</div>
+                  <div style={{ opacity: 0.85 }}>{'>'} CONSTRAINTS_EVAL: PASS</div>
+                  <div style={{ opacity: 0.85, marginBottom: '10px' }}>{'>'} HEURISTIC_SCORE: 0.94</div>
+                  <a href="#" style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '6px', color: '#FFFFFF', fontWeight: 700, fontSize: '10.5px', textDecoration: 'none', letterSpacing: '0.04em' }}>
+                    VIEW FULL TRACE <ArrowRight size={12} strokeWidth={2.5} />
+                  </a>
                 </div>
               )}
 
               {i === 2 && (
                 <ul style={{ listStyle: 'none', margin: 0, padding: '14px', background: 'var(--bg-elevated)', border: '1px solid var(--bg-border)', borderRadius: 'var(--radius-xs)', display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                  {['Sub-second position updates', 'Topology-aware mapping'].map((item, j) => (
+                  {['Sub-second updates', 'Topology-aware mapping'].map((item, j) => (
                     <li key={j} style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '12px', fontFamily: 'var(--font-space-mono)' }}>
                       <span style={{ width: '18px', height: '18px', borderRadius: 'var(--radius-xs)', background: 'rgba(46,125,50,0.12)', border: '1px solid rgba(46,125,50,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                         <Check size={11} strokeWidth={3} color="var(--accent-safe)" />
@@ -404,25 +390,6 @@ export default function LandingPage() {
                   ))}
                 </ul>
               )}
-            </div>
-          ))}
-        </div>
-
-        {/* Simplified cards — remaining features, same visual family */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '20px' }}>
-          {MORE_FEATURES.map((f, i) => (
-            <div key={i} className="panel" style={{ padding: '24px' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>
-                <div style={{
-                  width: '38px', height: '38px', borderRadius: 'var(--radius-xs)', background: 'var(--bg-elevated)',
-                  border: '1px solid var(--bg-border)', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  color: 'var(--accent-primary)', flexShrink: 0,
-                }}>
-                  <f.icon size={20} strokeWidth={1.75} />
-                </div>
-                <h3 style={{ fontSize: '15px', fontWeight: 700 }}>{f.title}</h3>
-              </div>
-              <p style={{ fontSize: '13px', color: 'var(--text-secondary)', lineHeight: 1.7 }}>{f.desc}</p>
             </div>
           ))}
         </div>

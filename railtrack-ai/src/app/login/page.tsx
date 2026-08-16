@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth, UserRole } from '@/lib/auth';
-import { SlidersHorizontal, TrendingUp, Truck, Settings, TriangleAlert, ArrowRight, Info, ShieldAlert, LifeBuoy, type LucideIcon } from 'lucide-react';
+import { TriangleAlert, ArrowRight, Info, ShieldAlert, ShieldCheck, LifeBuoy } from 'lucide-react';
 import OfficialUtilityBar from '@/components/OfficialUtilityBar';
 import SiteFooter from '@/components/SiteFooter';
 
@@ -12,11 +12,11 @@ function setCookie(name: string, value: string, maxAgeSeconds = 86400) {
   document.cookie = `${name}=${encodeURIComponent(value)}; path=/; max-age=${maxAgeSeconds}; SameSite=Lax`;
 }
 
-const ROLES: { key: UserRole; icon: LucideIcon; label: string; desc: string }[] = [
-  { key: 'CONTROLLER',  icon: SlidersHorizontal, label: 'Section Controller',    desc: 'Live track map, conflict resolution' },
-  { key: 'SUPERVISOR',  icon: TrendingUp,        label: 'Traffic Supervisor',     desc: 'Aggregate KPIs, multi-section view' },
-  { key: 'LOGISTICS',   icon: Truck,             label: 'Logistics Operator',     desc: 'Freight scheduling, cargo ETAs' },
-  { key: 'ADMIN',       icon: Settings,          label: 'System Administrator',   desc: 'Users, config, system health' },
+const ROLES: { key: UserRole; label: string }[] = [
+  { key: 'CONTROLLER',  label: 'Section Controller' },
+  { key: 'SUPERVISOR',  label: 'Traffic Supervisor' },
+  { key: 'LOGISTICS',   label: 'Logistics Operator' },
+  { key: 'ADMIN',       label: 'System Administrator' },
 ];
 
 export default function LoginPage() {
@@ -110,7 +110,7 @@ export default function LoginPage() {
   };
 
   return (
-    <div style={{ minHeight: '100vh', background: 'var(--bg-base)', display: 'flex', flexDirection: 'column' }}>
+    <div style={{ minHeight: '100vh', background: '#F3F4F6', display: 'flex', flexDirection: 'column' }}>
       <OfficialUtilityBar />
       <div style={{
         flex: 1,
@@ -121,26 +121,7 @@ export default function LoginPage() {
         padding: '24px',
         position: 'relative',
       }}>
-      {/* Background grid lines */}
-      <div style={{ position: 'absolute', inset: 0, backgroundImage: 'linear-gradient(var(--grid-line) 1px, transparent 1px), linear-gradient(90deg, var(--grid-line) 1px, transparent 1px)', backgroundSize: '40px 40px', opacity: 0.7 }} />
-
       <div id="main-content" style={{ position: 'relative', zIndex: 1, width: '100%', maxWidth: '920px' }}>
-        {/* Formal Masthead */}
-        <div style={{ textAlign: 'center', marginBottom: '32px' }}>
-          <div style={{ fontFamily: 'var(--font-headline)', fontSize: '11px', color: 'var(--text-muted)', fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: '10px' }}>
-            Ministry of Railways &middot; Problem Statement 25022
-          </div>
-          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '10px', marginBottom: '8px' }}>
-            <span className="signal-lamp signal-lamp-green" style={{ width: '16px', height: '16px' }} />
-            <span style={{ fontFamily: 'var(--font-headline)', fontSize: '28px', fontWeight: 800, color: 'var(--accent-primary)', letterSpacing: '-0.03em' }}>
-              RAILTRACK AI
-            </span>
-          </div>
-          <div style={{ fontFamily: 'var(--font-headline)', fontSize: '13px', color: 'var(--text-secondary)', fontWeight: 500, letterSpacing: '0.04em' }}>
-            Decision Support System for Section Traffic Control
-          </div>
-        </div>
-
         <div className="login-grid">
           {/* Instructions & Security Notice */}
           <div className="login-grid-info" style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
@@ -175,34 +156,29 @@ export default function LoginPage() {
           {/* Login Card */}
           <div className="login-grid-form">
         <div className="card-elevated" style={{ padding: '36px', borderRadius: 'var(--radius-md)', borderTop: '4px solid var(--accent-primary)' }}>
+          {/* Card header */}
+          <div style={{ textAlign: 'center', marginBottom: '28px' }}>
+            <ShieldCheck size={40} strokeWidth={1.75} color="var(--accent-primary)" style={{ marginBottom: '10px' }} />
+            <div style={{ fontFamily: 'var(--font-headline)', fontSize: '20px', fontWeight: 700, color: 'var(--text-primary)' }}>Official Login</div>
+            <div style={{ fontSize: '13.5px', color: 'var(--text-secondary)', marginTop: '2px' }}>Please authenticate to continue</div>
+          </div>
+
           {/* Role selector */}
-          <div style={{ marginBottom: '28px' }}>
-            <div className="panel-header" style={{ marginBottom: '12px' }}>Select Controller Role</div>
-            <div className="grid-2col-responsive" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+          <div style={{ marginBottom: '16px' }}>
+            <label htmlFor="login-role" style={{ display: 'block', fontFamily: 'var(--font-headline)', fontSize: '12px', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '6px' }}>
+              Operational Role
+            </label>
+            <select
+              id="login-role"
+              className="input"
+              value={selectedRole}
+              onChange={e => handleRoleSelect(e.target.value as UserRole)}
+              style={{ background: 'var(--bg-elevated)', cursor: 'pointer' }}
+            >
               {ROLES.map(role => (
-                <button key={role.key}
-                  type="button"
-                  onClick={() => handleRoleSelect(role.key)}
-                  style={{
-                    background: selectedRole === role.key ? '#EBF3FA' : '#FFFFFF',
-                    border: `1.5px solid ${selectedRole === role.key ? 'var(--accent-primary)' : 'var(--bg-border)'}`,
-                    borderRadius: 'var(--radius-sm)',
-                    padding: '12px 14px',
-                    cursor: 'pointer',
-                    textAlign: 'left',
-                    transition: 'all 0.15s ease',
-                    boxShadow: selectedRole === role.key ? '0 2px 8px rgba(26,84,144,0.12)' : 'none',
-                  }}>
-                  <div style={{ marginBottom: '6px', color: selectedRole === role.key ? 'var(--accent-primary)' : 'var(--text-secondary)' }}><role.icon size={20} strokeWidth={2} /></div>
-                  <div style={{ fontFamily: 'var(--font-headline)', fontSize: '12.5px', fontWeight: 700, color: selectedRole === role.key ? 'var(--accent-primary)' : 'var(--text-primary)' }}>
-                    {role.label}
-                  </div>
-                  <div style={{ fontSize: '11px', color: 'var(--text-secondary)', marginTop: '2px', lineHeight: '1.3' }}>
-                    {role.desc}
-                  </div>
-                </button>
+                <option key={role.key} value={role.key}>{role.label}</option>
               ))}
-            </div>
+            </select>
           </div>
 
           {/* Form */}
