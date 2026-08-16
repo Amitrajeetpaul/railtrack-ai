@@ -3,10 +3,9 @@ import { useState, useEffect } from 'react';
 import { API_BASE } from '@/lib/api';
 import Link from 'next/link';
 import { useAuth } from '@/lib/auth';
-import { SlidersHorizontal, Play, BarChart3, X, RefreshCw } from 'lucide-react';
-import OfficialUtilityBar from '@/components/OfficialUtilityBar';
+import { X, RefreshCw } from 'lucide-react';
 import Breadcrumb from '@/components/Breadcrumb';
-import SiteFooter from '@/components/SiteFooter';
+import AppShell from '@/components/AppShell';
 import StationSearchInput from '@/components/StationSearchInput';
 
 // Helper to grab token on the client
@@ -403,69 +402,36 @@ export default function AdminPage() {
   }
 
   return (
-    <div className="has-mobile-tab-bar" style={{ height: '100vh', display: 'flex', flexDirection: 'column', background: 'var(--bg-base)' }}>
-      <OfficialUtilityBar />
-      {/* Top Nav */}
-      <header className="app-header-row" style={{ height: '56px', background: '#FFFFFF', borderBottom: '1.5px solid var(--bg-border)', display: 'flex', alignItems: 'center', padding: '0 20px', gap: '20px', flexShrink: 0, boxShadow: '0 2px 8px rgba(0,0,0,0.03)' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <span className="signal-lamp signal-lamp-green" style={{ width: '12px', height: '12px' }} />
-          <div style={{ fontFamily: 'var(--font-headline)', fontSize: '16px', fontWeight: 800, color: 'var(--accent-primary)', letterSpacing: '-0.02em' }}>
-            RAILTRACK AI
+    <AppShell active="admin">
+      <div style={{ padding: '32px' }}>
+        <div style={{ maxWidth: '1100px', margin: '0 auto' }}>
+          <div style={{ marginBottom: '16px' }}>
+            <Breadcrumb items={[{ label: 'Admin' }, { label: TABS.find(t => t.id === activeTab)?.label || 'User Management' }]} />
           </div>
-        </div>
-        <div style={{ width: '1px', height: '24px', background: 'var(--bg-border)' }} />
-        <nav className="desktop-nav-links" style={{ display: 'flex', gap: '6px' }}>
-          {[
-            { label: 'Dashboard', href: '/dashboard/controller' },
-            { label: 'Simulate', href: '/simulate' },
-            { label: 'Analytics', href: '/analytics' },
-            { label: 'Admin', href: '/admin', active: true },
-            { label: 'Live Map', href: '/live-map' },
-          ].map(item => (
-            <Link key={item.href} href={item.href} style={{
-              padding: '7px 14px', borderRadius: 'var(--radius-xs)', fontSize: '13px', textDecoration: 'none',
-              background: item.active ? '#EBF3FA' : 'transparent',
-              color: item.active ? 'var(--accent-primary)' : 'var(--text-secondary)',
-              fontFamily: 'var(--font-headline)', fontWeight: item.active ? 700 : 500,
-              transition: 'all 0.15s ease',
-            }}>
-              {item.label}
-            </Link>
-          ))}
-        </nav>
-      </header>
 
-      <div className="main-3col-row" style={{ flex: 1 }}>
-        {/* Sidebar */}
-        <aside className="sidebar-left" style={{ background: 'var(--bg-surface)', borderRight: '1px solid var(--bg-border)', display: 'flex', flexDirection: 'column' }}>
-          <div style={{ padding: '24px 16px', flex: 1 }}>
-            <div style={{ fontFamily: 'var(--font-space-mono)', fontSize: '11px', color: 'var(--text-muted)', letterSpacing: '0.1em', marginBottom: '16px', marginLeft: '12px' }}>ADMINISTRATION</div>
-            <nav style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-              {TABS.map(tab => (
-                <button
-                  key={tab.id}
-                  onClick={() => setActiveTab(tab.id)}
-                  style={{
-                    display: 'flex', alignItems: 'center', gap: '12px', padding: '10px 12px', borderRadius: 'var(--radius-xs)', border: 'none', width: '100%', textAlign: 'left', cursor: 'pointer', fontSize: '13px',
-                    background: activeTab === tab.id ? 'var(--bg-elevated)' : 'transparent',
-                    color: activeTab === tab.id ? 'var(--text-primary)' : 'var(--text-secondary)',
-                    transition: 'all 0.15s ease'
-                  }}
-                >
-                  <span style={{ color: activeTab === tab.id ? 'var(--accent-primary)' : 'var(--text-muted)' }}>{tab.icon}</span>
-                  {tab.label}
-                </button>
-              ))}
-            </nav>
+          <h1 style={{ fontSize: '32px', fontWeight: 800, marginBottom: '4px' }}>Admin Console</h1>
+          <p style={{ color: 'var(--text-secondary)', marginBottom: '24px' }}>System configuration and control.</p>
+
+          <div className="table-scroll-wrap" style={{ display: 'flex', gap: '8px', borderBottom: '1px solid var(--bg-border)', marginBottom: '24px' }}>
+            {TABS.map(tab => (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                style={{
+                  display: 'flex', alignItems: 'center', gap: '8px', padding: '10px 6px', marginBottom: '-1px',
+                  border: 'none', borderBottom: `2px solid ${activeTab === tab.id ? 'var(--accent-primary)' : 'transparent'}`,
+                  background: 'transparent', cursor: 'pointer', fontSize: '13px', fontFamily: 'var(--font-headline)',
+                  fontWeight: 700, color: activeTab === tab.id ? 'var(--accent-primary)' : 'var(--text-secondary)',
+                  marginRight: '20px',
+                }}
+              >
+                {tab.icon}
+                {tab.label}
+              </button>
+            ))}
           </div>
-        </aside>
 
-        {/* Main Content */}
-        <main id="main-content" style={{ flex: 1, overflowY: 'auto', padding: '32px' }}>
-          <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
-            <div style={{ marginBottom: '20px' }}>
-              <Breadcrumb items={[{ label: 'Admin' }, { label: TABS.find(t => t.id === activeTab)?.label || 'User Management' }]} />
-            </div>
+          <div style={{ maxWidth: '1000px' }}>
 
             {activeTab === 'users' && (
               <div className="animate-slide-in">
@@ -801,9 +767,8 @@ export default function AdminPage() {
             )}
 
           </div>
-        </main>
+        </div>
       </div>
-      <SiteFooter />
       {/* Invite Modal */}
       {showInviteModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70" style={{ position: 'fixed', inset: 0, zIndex: 50, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(0,0,0,0.7)' }}>
@@ -903,13 +868,6 @@ export default function AdminPage() {
           {toast}
         </div>
       )}
-
-      <nav className="mobile-tab-bar">
-        <Link href="/dashboard/controller"><span className="mobile-tab-icon"><SlidersHorizontal size={18} strokeWidth={2} /></span>Dashboard</Link>
-        <Link href="/simulate"><span className="mobile-tab-icon"><Play size={18} strokeWidth={2} /></span>Simulate</Link>
-        <Link href="/analytics"><span className="mobile-tab-icon"><BarChart3 size={18} strokeWidth={2} /></span>Analytics</Link>
-        <Link href="/admin" className="mobile-tab-active"><span className="mobile-tab-icon"><Settings size={18} strokeWidth={2} /></span>Admin</Link>
-      </nav>
-    </div>
+    </AppShell>
   );
 }
