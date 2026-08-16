@@ -7,7 +7,7 @@ import LiveTrackMap from '@/components/LiveTrackMap';
 import AIRecommendation from '@/components/AIRecommendation';
 import { Train, Conflict, TrainPriority } from '@/lib/mockData';
 import { API_BASE, trainsQueryFor } from '@/lib/api';
-import { OctagonAlert, RefreshCw, TriangleAlert, Zap, Check, SlidersHorizontal, BarChart3, Settings, Wrench, Search, TrainFront, GitBranch, Building2, Info, Play, type LucideIcon } from 'lucide-react';
+import { OctagonAlert, RefreshCw, TriangleAlert, Zap, Check, SlidersHorizontal, BarChart3, Settings, Wrench, Search, TrainFront, GitBranch, Building2, Info, Play, Link2, Bot, type LucideIcon } from 'lucide-react';
 import OfficialUtilityBar from '@/components/OfficialUtilityBar';
 import Breadcrumb from '@/components/Breadcrumb';
 
@@ -541,6 +541,11 @@ export default function ControllerDashboard() {
   // The message list scrolls internally (fixed-height panel) — without this,
   // a reply lands below the visible area and looks like nothing happened.
   const chatScrollRef = useRef<HTMLDivElement>(null);
+  // On mobile, the chat panel is the last thing in a long stacked column —
+  // technically reachable but a lot of scrolling. A floating "Ask AI" button
+  // jumps straight to it, matching the floating-FAB pattern from the Stitch
+  // mobile design, without duplicating the chat UI in a second overlay.
+  const chatPanelRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     chatScrollRef.current?.scrollTo({ top: chatScrollRef.current.scrollHeight, behavior: 'smooth' });
   }, [chatHistory, chatLoading]);
@@ -1268,27 +1273,37 @@ export default function ControllerDashboard() {
 
             {/* Capped + scrollable: an unbounded list here was squeezing the
                 Ask AI Assistant panel below down to almost nothing. */}
-            <div style={{ maxHeight: '180px', overflowY: 'auto' }}>
+            <div style={{ maxHeight: '220px', overflowY: 'auto', padding: '8px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
               {conflicts.filter(c => conflictLocationFilter === 'ALL' || c.location === conflictLocationFilter).map(c => (
-                <div key={c.id} style={{ padding: '10px 16px', borderBottom: '1px solid var(--bg-border)', cursor: 'pointer' }}
-                  onClick={() => { setActiveConflict(c); setShowAI(true); }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
-                    <span style={{ fontFamily: 'var(--font-jetbrains)', fontSize: '12px', color: 'var(--accent-danger)', fontWeight: 700 }}>
-                      {c.trainA} ↔ {c.trainB}
+                <div key={c.id} onClick={() => { setActiveConflict(c); setShowAI(true); }}
+                  style={{
+                    padding: '12px', cursor: 'pointer', borderRadius: 'var(--radius-sm)',
+                    background: 'rgba(198,40,40,0.06)', border: '1px solid rgba(198,40,40,0.25)',
+                    transition: 'background 0.15s ease',
+                  }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '6px' }}>
+                    <span style={{ display: 'inline-flex', alignItems: 'center', gap: '5px', fontFamily: 'var(--font-headline)', fontSize: '12.5px', fontWeight: 700, color: 'var(--text-primary)' }}>
+                      <Link2 size={13} strokeWidth={2.25} color="var(--accent-danger)" /> {c.trainA} ↔ {c.trainB}
                     </span>
-                    <span className={`badge-${c.severity === 'HIGH' ? 'conflict' : 'warn'}`} style={{ fontSize: '9px' }}>{c.severity}</span>
+                    <span style={{ fontFamily: 'var(--font-jetbrains)', fontSize: '13px', fontWeight: 700, color: 'var(--accent-danger)' }}>
+                      {c.timeToConflict != null
+                        ? `${Math.floor(c.timeToConflict / 60)}:${String(c.timeToConflict % 60).padStart(2, '0')}`
+                        : '—:—'}
+                    </span>
                   </div>
                   {c.chainId && (
                     <div title="This conflict shares a train with at least one other active conflict — resolving one alone may not clear the other."
-                      style={{ fontSize: '10px', color: 'var(--accent-warn-text)', marginBottom: '2px', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                      ⛓ {c.chainId.replace('CHAIN-', '').split('-').length}-train pileup
+                      style={{ fontSize: '10px', color: 'var(--accent-warn-text)', marginBottom: '4px', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                      <Link2 size={11} strokeWidth={2.25} /> {c.chainId.replace('CHAIN-', '').split('-').length}-train pileup
                     </div>
                   )}
-                  <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>{c.location}</div>
-                  <div style={{ fontFamily: 'var(--font-jetbrains)', fontSize: '11px', color: 'var(--accent-warn-text)', marginTop: '2px' }}>
-                    {c.timeToConflict != null
-                      ? `T-${Math.floor(c.timeToConflict / 60)}:${String(c.timeToConflict % 60).padStart(2, '0')}`
-                      : 'Timing unknown'}
+                  <div style={{ fontSize: '11.5px', color: 'var(--text-secondary)', marginBottom: '8px' }}>{c.location}</div>
+                  <div style={{ display: 'flex', gap: '6px' }}>
+                    <span style={{ fontFamily: 'var(--font-jetbrains)', fontSize: '10px', background: 'rgba(255,255,255,0.7)', padding: '2px 8px', borderRadius: 'var(--radius-xs)', color: 'var(--text-primary)' }}>{c.trainA}</span>
+                    <span style={{ fontFamily: 'var(--font-jetbrains)', fontSize: '10px', background: 'rgba(255,255,255,0.7)', padding: '2px 8px', borderRadius: 'var(--radius-xs)', color: 'var(--text-primary)' }}>{c.trainB}</span>
+                    {c.timeToConflict == null && (
+                      <span style={{ fontSize: '10px', color: 'var(--text-muted)', fontStyle: 'italic', marginLeft: 'auto', alignSelf: 'center' }}>Timing unknown</span>
+                    )}
                   </div>
                 </div>
               ))}
@@ -1351,7 +1366,7 @@ export default function ControllerDashboard() {
           </div>
 
           {/* NLP Chat */}
-          <div style={{ flex: 1, minHeight: '320px', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+          <div ref={chatPanelRef} style={{ flex: 1, minHeight: '320px', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
             <div style={{ padding: '12px 16px', borderBottom: '1px solid var(--bg-border)' }}>
               <span className="panel-header">Ask AI Assistant</span>
             </div>
@@ -1408,6 +1423,19 @@ export default function ControllerDashboard() {
           </div>
         </aside>
       </div>
+
+      {/* Mobile floating AI Assistant button — chat is technically reachable by
+          scrolling the stacked mobile layout, but it's the last thing after
+          Section Info/Queue/Schematic/Conflicts/Disruptions/Decisions. This
+          jumps straight there instead of duplicating the chat UI in a
+          separate overlay. */}
+      <button
+        className="mobile-ai-fab"
+        aria-label="Jump to AI Assistant"
+        onClick={() => chatPanelRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
+      >
+        <Bot size={22} strokeWidth={2} />
+      </button>
 
       {/* Mobile bottom action bar — critical actions, always reachable with one thumb */}
       <div className="mobile-action-bar">

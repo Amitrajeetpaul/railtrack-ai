@@ -1,7 +1,6 @@
 'use client';
 import { Conflict } from '@/lib/mockData';
-import { useState, useEffect } from 'react';
-import { X, MapPin, Lightbulb, Check } from 'lucide-react';
+import { Bot, X, TriangleAlert, MapPin, Check, Link2 } from 'lucide-react';
 
 interface Props {
   onAccept?: (conflict: Conflict) => void;
@@ -12,9 +11,11 @@ interface Props {
 }
 
 export default function AIRecommendation({ visible, conflict, onDismiss, onAccept, onOverride }: Props) {
-  const [showXai, setShowXai] = useState(false);
-
   if (!visible || !conflict) return null;
+
+  const timeLabel = conflict.timeToConflict != null
+    ? `T-${Math.floor(conflict.timeToConflict / 60)}:${String(conflict.timeToConflict % 60).padStart(2, '0')}`
+    : 'Timing unknown';
 
   return (
     <div className="animate-slide-in card-elevated" style={{
@@ -22,136 +23,107 @@ export default function AIRecommendation({ visible, conflict, onDismiss, onAccep
       right: '16px',
       top: '16px',
       bottom: '16px',
-      width: '360px',
+      width: '380px',
       background: '#FFFFFF',
-      border: '1.5px solid var(--bg-border)',
-      borderLeft: '4px solid var(--accent-primary)',
-      borderRadius: 'var(--radius-sm)',
+      border: '2px solid var(--accent-primary)',
+      borderRadius: 'var(--radius-md)',
       display: 'flex',
       flexDirection: 'column',
       zIndex: 10,
       overflow: 'hidden',
+      boxShadow: '0 20px 40px -8px rgba(26,84,144,0.25)',
     }}>
-      {/* Header */}
-      <div style={{ padding: '16px 20px', borderBottom: '1px solid var(--bg-border)', display: 'flex', alignItems: 'center', gap: '10px', background: 'var(--bg-elevated)' }}>
-        <span className="signal-lamp signal-lamp-green" style={{ width: '10px', height: '10px' }} />
-        <span style={{ fontFamily: 'var(--font-headline)', fontSize: '13px', fontWeight: 800, color: 'var(--accent-primary)', letterSpacing: '0.04em' }}>
-          SECTION CONTROL RECOMMENDATION
+      {/* Header — solid navy, matching the design system's primary accent */}
+      <div style={{
+        padding: '14px 18px', display: 'flex', alignItems: 'center', gap: '10px',
+        background: 'linear-gradient(135deg, var(--accent-primary), var(--accent-primary-hover))',
+      }}>
+        <Bot size={20} strokeWidth={2} color="#FFFFFF" />
+        <span style={{ fontFamily: 'var(--font-headline)', fontSize: '14px', fontWeight: 700, color: '#FFFFFF', flex: 1 }}>
+          AI Recommendation
         </span>
-        <button onClick={onDismiss} aria-label="Dismiss" className="btn-icon" style={{ marginLeft: 'auto', width: '28px', height: '28px', border: 'none' }}>
+        <button onClick={onDismiss} aria-label="Dismiss" style={{
+          background: 'rgba(255,255,255,0.15)', border: 'none', borderRadius: 'var(--radius-xs)',
+          width: '26px', height: '26px', display: 'flex', alignItems: 'center', justifyContent: 'center',
+          color: '#FFFFFF', cursor: 'pointer',
+        }}>
           <X size={14} strokeWidth={2.25} />
         </button>
       </div>
 
       {/* Content */}
-      <div style={{ padding: '20px', flex: 1, overflowY: 'auto' }}>
-        {/* Conflict info */}
-        <div style={{ marginBottom: '18px' }}>
-          <div style={{ fontFamily: 'var(--font-headline)', fontSize: '11px', fontWeight: 700, color: 'var(--text-secondary)', letterSpacing: '0.06em', marginBottom: '8px' }}>
-            CONFLICT DETECTED
-          </div>
-          <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginBottom: '8px' }}>
-            <span style={{ fontFamily: 'var(--font-mono)', fontSize: '14px', color: 'var(--accent-primary)', fontWeight: 700 }}>{conflict.trainA}</span>
-            <span style={{ color: 'var(--text-secondary)' }}>↔</span>
-            <span style={{ fontFamily: 'var(--font-mono)', fontSize: '14px', color: 'var(--accent-primary)', fontWeight: 700 }}>{conflict.trainB}</span>
-          </div>
-          <div style={{ fontSize: '13px', color: 'var(--text-primary)', marginBottom: '10px', display: 'flex', alignItems: 'center', gap: '5px' }}>
-            <MapPin size={13} strokeWidth={2} /> Location: {conflict.location}
-          </div>
-          {conflict.chainId && (
-            <div style={{ fontSize: '12px', color: 'var(--accent-warn-text)', marginBottom: '10px', background: 'rgba(245,158,11,0.1)', padding: '6px 10px', borderRadius: 'var(--radius-xs)' }}>
-              ⛓ Part of a {conflict.chainId.replace('CHAIN-', '').split('-').length}-train pileup — resolving this pair alone may not clear the rest of the chain.
+      <div style={{ padding: '18px', flex: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+
+        {/* Conflict detected — tinted alert box */}
+        <div style={{
+          background: 'rgba(198,40,40,0.06)', border: '1px solid rgba(198,40,40,0.25)',
+          borderRadius: 'var(--radius-sm)', padding: '14px', display: 'flex', gap: '10px',
+        }}>
+          <TriangleAlert size={18} strokeWidth={2.25} color="var(--accent-danger)" style={{ flexShrink: 0, marginTop: '1px' }} />
+          <div>
+            <div style={{ fontFamily: 'var(--font-headline)', fontSize: '13.5px', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '4px' }}>
+              {conflict.trainA} ↔ {conflict.trainB} — Conflict Detected
             </div>
-          )}
-          <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-            <span className={`badge-${conflict.severity === 'HIGH' ? 'conflict' : conflict.severity === 'MEDIUM' ? 'warn' : 'rail'}`}>
-              {conflict.severity} SEVERITY
-            </span>
-            <span className="badge-warn font-mono">
-              {conflict.timeToConflict != null
-                ? `T-${Math.floor(conflict.timeToConflict / 60)}:${String(conflict.timeToConflict % 60).padStart(2, '0')}`
-                : 'Timing unknown'}
-            </span>
+            <div style={{ fontSize: '12.5px', color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', gap: '4px', marginBottom: '6px' }}>
+              <MapPin size={12} strokeWidth={2} /> {conflict.location}
+            </div>
+            <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+              <span className={`badge-${conflict.severity === 'HIGH' ? 'conflict' : conflict.severity === 'MEDIUM' ? 'warn' : 'rail'}`}>
+                {conflict.severity}
+              </span>
+              <span className="badge-warn font-mono">{timeLabel}</span>
+            </div>
           </div>
         </div>
 
-        {/* Divider */}
-        <div style={{ height: '1px', background: 'var(--bg-border)', margin: '16px 0' }} />
-
-        {/* Recommendation text */}
-        <div style={{ marginBottom: '18px' }}>
-          <div style={{ fontFamily: 'var(--font-headline)', fontSize: '11px', fontWeight: 700, color: 'var(--text-secondary)', letterSpacing: '0.06em', marginBottom: '8px' }}>
-            RECOMMENDED ACTION
+        {conflict.chainId && (
+          <div style={{ fontSize: '12px', color: 'var(--accent-warn-text)', background: 'rgba(245,158,11,0.1)', padding: '8px 12px', borderRadius: 'var(--radius-xs)', display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <Link2 size={13} strokeWidth={2.25} style={{ flexShrink: 0 }} /> Part of a {conflict.chainId.replace('CHAIN-', '').split('-').length}-train pileup — resolving this pair alone may not clear the rest of the chain.
           </div>
-          <p style={{ fontSize: '13.5px', color: 'var(--text-primary)', lineHeight: 1.6, fontWeight: 500 }}>
-            {conflict.recommendation}
-          </p>
-        </div>
+        )}
 
-        {/* Explain Logic Toggle Button */}
-        <div style={{ marginBottom: '18px' }}>
-          <button
-            onClick={() => setShowXai(!showXai)}
-            style={{
-              width: '100%', padding: '10px 14px', borderRadius: 'var(--radius-xs)',
-              border: '1px solid #C5DCF2', background: showXai ? '#EBF3FA' : '#F8FAFC',
-              color: 'var(--accent-primary)', fontFamily: 'var(--font-headline)', fontSize: '12px', fontWeight: 600,
-              display: 'flex', alignItems: 'center', justifyContent: 'space-between', cursor: 'pointer'
-            }}>
-            <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
-              <Lightbulb size={14} strokeWidth={2} /> {showXai ? 'Hide Recommendation Logic' : 'Explain Recommendation Logic'}
-            </span>
-            <span>{showXai ? '▲' : '▼'}</span>
-          </button>
-
-          {showXai && (
-            <div style={{
-              marginTop: '10px', padding: '14px', background: 'var(--bg-base)',
-              border: '1px solid var(--bg-border)', borderRadius: 'var(--radius-xs)', fontSize: '12px',
-              color: 'var(--text-primary)', lineHeight: 1.6
-            }}>
-              <div style={{ fontFamily: 'var(--font-headline)', fontWeight: 700, color: 'var(--accent-primary)', marginBottom: '6px' }}>
-                Standard Precedence Rules Applied:
-              </div>
-              <ul style={{ paddingLeft: '16px', margin: 0, display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                <li><b>Priority Rule:</b> Express train {conflict.trainA} prioritized over lower-tier {conflict.trainB}.</li>
-                <li><b>Safety Headway:</b> Maintains mandatory 3-min signal block buffer.</li>
-                <li><b>Cascading Delay Prevention:</b> Holding {conflict.trainB} at Loop Line avoids a 24+ min delay ripple on trailing passenger trains.</li>
-              </ul>
-            </div>
-          )}
+        {/* XAI reasoning — shown directly, terminal-style, not hidden behind a toggle */}
+        <div>
+          <div style={{ fontFamily: 'var(--font-space-mono)', fontSize: '10px', fontWeight: 700, color: 'var(--text-muted)', letterSpacing: '0.08em', marginBottom: '8px' }}>
+            XAI REASONING
+          </div>
+          <div style={{
+            background: 'var(--bg-base)', border: '1px solid var(--bg-border)', borderRadius: 'var(--radius-sm)',
+            padding: '14px', fontFamily: 'var(--font-jetbrains)', fontSize: '12px', color: 'var(--text-primary)', lineHeight: 1.7,
+          }}>
+            <p style={{ margin: '0 0 6px' }}>Decision: {conflict.recommendation}</p>
+            <p style={{ margin: 0, color: 'var(--text-muted)' }}>{'>'} Priority rule: higher-tier train given precedence, safety headway maintained.</p>
+            <p style={{ margin: 0, color: 'var(--text-muted)' }}>{'>'} Estimated time saved if accepted: +{conflict.timeSaving} min.</p>
+          </div>
         </div>
 
         {/* Confidence bar */}
-        <div style={{ marginBottom: '18px' }}>
+        <div>
           <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
-            <span style={{ fontFamily: 'var(--font-headline)', fontSize: '11px', fontWeight: 700, color: 'var(--text-secondary)', letterSpacing: '0.06em' }} title="Reflects priority-rule strength for this scenario, not a live-computed model confidence score.">PRIORITY SCORE</span>
-            <span style={{ fontFamily: 'var(--font-mono)', fontSize: '14px', color: 'var(--accent-primary)', fontWeight: 700 }}>{conflict.confidence}%</span>
+            <span style={{ fontFamily: 'var(--font-space-mono)', fontSize: '10px', fontWeight: 700, color: 'var(--text-muted)', letterSpacing: '0.08em' }} title="Reflects priority-rule strength for this scenario, not a live-computed model confidence score.">
+              PRIORITY SCORE
+            </span>
+            <span style={{ fontFamily: 'var(--font-jetbrains)', fontSize: '13px', color: 'var(--accent-primary)', fontWeight: 700 }}>{conflict.confidence}%</span>
           </div>
-          <div style={{ height: '8px', background: 'var(--bg-border)', borderRadius: 'var(--radius-xs)', overflow: 'hidden' }}>
-            <div style={{ height: '100%', width: `${conflict.confidence}%`, background: 'var(--accent-primary)', borderRadius: 'var(--radius-xs)', transition: 'width 0.5s ease' }} />
-          </div>
-        </div>
-
-        {/* Time saving */}
-        <div style={{ background: '#E8F5E9', border: '1px solid #C8E6C9', borderRadius: 'var(--radius-sm)', padding: '14px', marginBottom: '18px' }}>
-          <div style={{ fontFamily: 'var(--font-headline)', fontSize: '11px', fontWeight: 700, color: 'var(--accent-safe)', letterSpacing: '0.06em', marginBottom: '4px' }}>ESTIMATED TIME SAVED</div>
-          <div style={{ fontFamily: 'var(--font-mono)', fontSize: '26px', fontWeight: 700, color: 'var(--accent-safe)' }}>
-            +{conflict.timeSaving} min
+          <div style={{ height: '6px', background: 'var(--bg-border)', borderRadius: 'var(--radius-pill)', overflow: 'hidden' }}>
+            <div style={{ height: '100%', width: `${conflict.confidence}%`, background: 'linear-gradient(90deg, var(--accent-primary), var(--accent-rail))', borderRadius: 'var(--radius-pill)', transition: 'width 0.5s ease' }} />
           </div>
         </div>
       </div>
 
       {/* Actions */}
-      <div style={{ padding: '16px 20px', borderTop: '1px solid var(--bg-border)', display: 'flex', gap: '10px', background: '#FFFFFF' }}>
-        <button className="btn-primary" style={{ flex: 1, justifyContent: 'center', fontSize: '13.5px', padding: '11px', background: 'var(--accent-safe)', borderRadius: 'var(--radius-xs)', display: 'inline-flex', alignItems: 'center', gap: '6px' }} onClick={() => onAccept?.(conflict)}>
-          <Check size={15} strokeWidth={2.5} /> Accept Recommendation
+      <div style={{ padding: '16px 18px', borderTop: '1px solid var(--bg-border)', display: 'flex', gap: '10px', background: 'var(--bg-elevated)' }}>
+        <button className="btn-ghost" style={{ flex: 1, justifyContent: 'center', fontSize: '13px', padding: '11px', borderRadius: 'var(--radius-xs)' }} onClick={() => onOverride?.(conflict)}>
+          Manual Override
         </button>
-        <button className="btn-ghost" style={{ flex: 1, justifyContent: 'center', fontSize: '13.5px', padding: '11px', borderRadius: 'var(--radius-xs)' }} onClick={() => onOverride?.(conflict)}>
-          Override
+        <button style={{
+          flex: 1, justifyContent: 'center', fontSize: '13px', padding: '11px', borderRadius: 'var(--radius-xs)',
+          background: 'var(--accent-primary)', color: '#FFFFFF', border: 'none', cursor: 'pointer',
+          display: 'inline-flex', alignItems: 'center', gap: '6px', fontFamily: 'var(--font-headline)', fontWeight: 600,
+        }} onClick={() => onAccept?.(conflict)}>
+          <Check size={15} strokeWidth={2.5} /> Accept
         </button>
       </div>
     </div>
   );
 }
-

@@ -546,6 +546,33 @@ h4 { font-size: 16px; font-weight: 600; }
   }
 }
 
+.mobile-ai-fab {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .mobile-ai-fab {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    right: 16px;
+    bottom: 140px; /* clears mobile-tab-bar (~58px) + mobile-action-bar (~65px) */
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    background: var(--accent-primary);
+    color: #FFFFFF;
+    border: none;
+    box-shadow: 0 4px 14px rgba(26,84,144,0.4);
+    z-index: 56;
+    cursor: pointer;
+  }
+  .mobile-ai-fab:active {
+    transform: scale(0.95);
+  }
+}
+
 /* ---------- System Feeds Modal — responsive two-column body ---------- */
 .system-feeds-body {
   display: flex;
