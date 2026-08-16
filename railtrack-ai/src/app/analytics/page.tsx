@@ -1,6 +1,5 @@
 'use client';
 import { useState, useEffect, useRef } from 'react';
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth';
 import { useQuery } from '@tanstack/react-query';
@@ -12,10 +11,9 @@ import {
   LineChart, Line, BarChart, Bar, AreaChart, Area,
   XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer
 } from 'recharts';
-import { SlidersHorizontal, Play, BarChart3, Settings } from 'lucide-react';
-import OfficialUtilityBar from '@/components/OfficialUtilityBar';
 import Breadcrumb from '@/components/Breadcrumb';
-import SiteFooter from '@/components/SiteFooter';
+import AppShell from '@/components/AppShell';
+import { Download } from 'lucide-react';
 
 function getClientToken() {
   const match = document.cookie.match(/(?:^|;\s*)railtrack_token=([^;]*)/);
@@ -212,6 +210,21 @@ export default function AnalyticsPage() {
     enabled: isAuthReady,
   });
 
+  const handleExportCsv = () => {
+    const header = ['Incident ID', 'Timestamp', 'Type', 'Location', 'Trains', 'Severity', 'Resolved In'];
+    const rows = incidentsData.map(inc => [inc.id, inc.timestamp, inc.type, inc.location, inc.trains.join(' '), inc.severity, inc.resolvedIn]);
+    const csv = [header, ...rows].map(r => r.map(String).map(v => `"${v.replace(/"/g, '""')}"`).join(',')).join('\n');
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `railtrack_incidents_${new Date().toISOString().slice(0, 10)}.csv`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
   // Custom tooltips
   const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
@@ -258,53 +271,24 @@ export default function AnalyticsPage() {
   }
 
   return (
-    <div className="has-mobile-tab-bar" style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', background: 'var(--bg-base)' }}>
-      <OfficialUtilityBar />
-      {/* Top Nav */}
-      <header className="app-header-row" style={{ height: '56px', background: '#FFFFFF', borderBottom: '1.5px solid var(--bg-border)', display: 'flex', alignItems: 'center', padding: '0 20px', gap: '20px', flexShrink: 0, boxShadow: '0 2px 8px rgba(0,0,0,0.03)' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <span className="signal-lamp signal-lamp-green" style={{ width: '12px', height: '12px' }} />
-          <div style={{ fontFamily: 'var(--font-headline)', fontSize: '16px', fontWeight: 800, color: 'var(--accent-primary)', letterSpacing: '-0.02em' }}>
-            RAILTRACK AI
-          </div>
-        </div>
-        <div style={{ width: '1px', height: '24px', background: 'var(--bg-border)' }} />
-        <nav className="desktop-nav-links" style={{ display: 'flex', gap: '6px' }}>
-          {[
-            { label: 'Dashboard', href: '/dashboard/controller' },
-            { label: 'Simulate', href: '/simulate' },
-            { label: 'Analytics', href: '/analytics', active: true },
-            { label: 'Admin', href: '/admin' },
-            { label: 'Live Map', href: '/live-map' },
-          ].map(item => (
-            <Link key={item.href} href={item.href} style={{
-              padding: '7px 14px', borderRadius: 'var(--radius-xs)', fontSize: '13px', textDecoration: 'none',
-              background: item.active ? '#EBF3FA' : 'transparent',
-              color: item.active ? 'var(--accent-primary)' : 'var(--text-secondary)',
-              fontFamily: 'var(--font-headline)', fontWeight: item.active ? 700 : 500,
-              transition: 'all 0.15s ease',
-            }}>
-              {item.label}
-            </Link>
-          ))}
-        </nav>
-      </header>
-
+    <AppShell active="analytics">
       {/* Content */}
-      <main id="main-content" style={{ padding: '24px' }}>
+      <div style={{ padding: '24px' }}>
         <div style={{ maxWidth: '1400px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '32px' }}>
           <Breadcrumb items={[{ label: 'Analytics' }]} />
 
           {/* Controls Header */}
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '12px' }}>
             <div>
-              <h1 style={{ fontFamily: 'var(--font-space-mono)', fontSize: '24px', fontWeight: 700 }}>Performance Analytics</h1>
-              <p style={{ fontSize: '14px', color: 'var(--text-secondary)', marginTop: '4px' }}>Section {user?.section || 'NR-42'} · Last {period} Day{period === 1 ? '' : 's'} Overview</p>
+              <h1 style={{ fontSize: '28px', fontWeight: 800 }}>Network Analytics</h1>
+              <p style={{ fontSize: '14px', color: 'var(--text-secondary)', marginTop: '4px' }}>
+                Key Performance Indicators &amp; Historical Trends — Section {user?.section || 'NR-42'} · Last {period} Day{period === 1 ? '' : 's'}
+              </p>
             </div>
-            <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+            <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap', alignItems: 'center' }}>
               <select
                 className="input"
-                style={{ width: '160px', maxWidth: '100%', height: '36px', padding: '0 12px' }}
+                style={{ width: '150px', maxWidth: '100%', height: '36px', padding: '0 12px' }}
                 value={String(period)}
                 onChange={e => setPeriod(Number(e.target.value))}
               >
@@ -314,13 +298,16 @@ export default function AnalyticsPage() {
               </select>
               <select
                 className="input"
-                style={{ width: '160px', maxWidth: '100%', height: '36px', padding: '0 12px' }}
+                style={{ width: '170px', maxWidth: '100%', height: '36px', padding: '0 12px' }}
                 value={section}
                 onChange={e => setSection(e.target.value)}
               >
                 <option value={user?.section || 'NR-42'}>Section: {user?.section || 'NR-42'} (Default)</option>
                 <option value="All">Zone: Northern (All)</option>
               </select>
+              <button className="btn-ghost" style={{ padding: '9px 14px', fontSize: '13px' }} onClick={handleExportCsv} disabled={incidentsData.length === 0}>
+                <Download size={14} strokeWidth={2.25} /> Export CSV
+              </button>
             </div>
           </div>
 
@@ -568,15 +555,7 @@ export default function AnalyticsPage() {
           </div>
 
         </div>
-      </main>
-      <SiteFooter />
-
-      <nav className="mobile-tab-bar">
-        <Link href="/dashboard/controller"><span className="mobile-tab-icon"><SlidersHorizontal size={18} strokeWidth={2} /></span>Dashboard</Link>
-        <Link href="/simulate"><span className="mobile-tab-icon"><Play size={18} strokeWidth={2} /></span>Simulate</Link>
-        <Link href="/analytics" className="mobile-tab-active"><span className="mobile-tab-icon"><BarChart3 size={18} strokeWidth={2} /></span>Analytics</Link>
-        <Link href="/admin"><span className="mobile-tab-icon"><Settings size={18} strokeWidth={2} /></span>Admin</Link>
-      </nav>
-    </div>
+      </div>
+    </AppShell>
   );
 }
