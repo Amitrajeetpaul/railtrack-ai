@@ -27,10 +27,11 @@ export interface Conflict {
   location: string;
   severity: 'HIGH' | 'MEDIUM' | 'LOW';
   type: 'CROSSING' | 'PRECEDENCE' | 'PLATFORM' | 'SIGNAL';
-  timeToConflict: number; // seconds
+  timeToConflict: number | null; // seconds — null means genuinely unknown, not "0 / imminent"
   recommendation: string;
   confidence: number; // 0-100
   timeSaving: number; // minutes
+  chainId?: string | null; // groups conflicts sharing a train into one connected pileup
 }
 
 export interface Decision {

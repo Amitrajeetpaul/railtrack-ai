@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import LiveTrackMap from '@/components/LiveTrackMap';
 import SystemFeedsModal from '@/components/SystemFeedsModal';
 import RealPositionsMap, { RealTrainPosition } from '@/components/RealPositionsMap';
+import DependencyGraph from '@/components/DependencyGraph';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Train } from '@/lib/mockData';
 import { API_BASE, trainsQueryFor } from '@/lib/api';
@@ -44,6 +45,52 @@ export default function SimulatePage() {
   const [isFetchingRealPositions, setIsFetchingRealPositions] = useState(false);
   const [realPositionsNote, setRealPositionsNote] = useState<string | null>(null);
 
+  // Simulation history — every /run call is a real, persisted record.
+  // Running a NEW simulation always becomes "current" (simResults, above);
+  // viewingHistoryEntry, when set, means we're looking at an OLDER run in
+  // read-only mode, without disturbing what "current" means.
+  const [viewingHistoryEntry, setViewingHistoryEntry] = useState<{ id: number; createdAt: string } | null>(null);
+  const [historyResults, setHistoryResults] = useState<any>(null);
+  const [isLoadingHistoryEntry, setIsLoadingHistoryEntry] = useState(false);
+
+  const { data: simHistory = [] } = useQuery({
+    queryKey: ['simulate-history'],
+    queryFn: async () => {
+      const token = getClientToken();
+      if (!token) return [];
+      const res = await fetch(`${API_BASE}/api/simulate/history?limit=20`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (!res.ok) return [];
+      return res.json();
+    },
+    enabled: isAuthReady,
+    refetchInterval: 15000,
+  });
+
+  const handleViewHistoryEntry = async (id: number, createdAt: string) => {
+    setIsLoadingHistoryEntry(true);
+    setViewingHistoryEntry({ id, createdAt });
+    try {
+      const token = getClientToken();
+      const res = await fetch(`${API_BASE}/api/simulate/history/${id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (res.ok) setHistoryResults(await res.json());
+    } finally {
+      setIsLoadingHistoryEntry(false);
+    }
+  };
+
+  const handleBackToCurrent = () => {
+    setViewingHistoryEntry(null);
+    setHistoryResults(null);
+  };
+
+  // Whichever the page is actually displaying right now: the read-only
+  // previous run if one's selected, otherwise the real current simResults.
+  const displayedResults = viewingHistoryEntry ? historyResults : simResults;
+
   const toggleTheme = () => {
     const nextTheme = theme === 'dark' ? 'light' : 'dark';
     setTheme(nextTheme);
@@ -63,6 +110,13 @@ export default function SimulatePage() {
     },
     enabled: isAuthReady,
   });
+
+  // Jump straight to one section instead of scanning the full mixed list —
+  // matters once a user (SUPERVISOR/ADMIN) has multiple real sections
+  // imported (corridors, CSV uploads) alongside their own.
+  const [sectionFilter, setSectionFilter] = useState('ALL');
+  const availableSections = Array.from(new Set(trains.map(t => t.section))).sort();
+  const visibleTrains = sectionFilter === 'ALL' ? trains : trains.filter(t => t.section === sectionFilter);
 
   // Real active conflicts (train_a_id/train_b_id from the app's own
   // conflict-detection logic) — reused here to highlight, on the real
@@ -115,6 +169,24 @@ export default function SimulatePage() {
     return opts;
   })();
 
+  // Stress test — inspired by Flatland's malfunction_generators.py:
+  // randomized disruptions across many runs, to report solver robustness
+  // rather than trusting one hand-picked scenario.
+  const [stressTestRuns, setStressTestRuns] = useState(10);
+  const stressTestMutation = useMutation({
+    mutationFn: async () => {
+      const token = getClientToken();
+      const res = await fetch(`${API_BASE}/api/simulate/stress-test`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ train_ids: selectedTrains, runs: stressTestRuns }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.detail || 'Stress test failed');
+      return data;
+    },
+  });
+
   const simulateMutation = useMutation({
     mutationFn: async (payload: any) => {
       const token = getClientToken();
@@ -134,6 +206,10 @@ export default function SimulatePage() {
       setSimResults(data);
       setSimState('RESULTS');
       setApplyMessage(null);
+      // A fresh run is always "current" — drop out of any previous-run view.
+      setViewingHistoryEntry(null);
+      setHistoryResults(null);
+      queryClient.invalidateQueries({ queryKey: ['simulate-history'] });
     },
     onError: (err: any) => {
       setSimState('IDLE');
@@ -238,9 +314,9 @@ export default function SimulatePage() {
   // literal hardcoded string ("Calculated Base Delay") and a fixed "OP"
   // badge for every single row, regardless of which train it was.
   const scheduleByTrain: Record<string, any> = Object.fromEntries(
-    (simResults?.schedule || []).map((s: any) => [s.train, s])
+    (displayedResults?.schedule || []).map((s: any) => [s.train, s])
   );
-  const outcomeRows = (simResults?.actions || []).map((act: any) => {
+  const outcomeRows = (displayedResults?.actions || []).map((act: any) => {
     const trainMeta = trains.find(t => t.id === act.train);
     const schedEntry = scheduleByTrain[act.train];
     const baselineDelay = schedEntry ? (schedEntry.delay_minutes ?? 0) - act.delta : null;
@@ -262,7 +338,7 @@ export default function SimulatePage() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `simulation_${simResults?.simulation_id ?? 'results'}.csv`;
+    a.download = `simulation_${displayedResults?.simulation_id ?? 'results'}.csv`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -306,6 +382,7 @@ export default function SimulatePage() {
             { label: 'Simulate', href: '/simulate', active: true },
             { label: 'Analytics', href: '/analytics' },
             { label: 'Admin', href: '/admin' },
+            { label: 'Live Map', href: '/live-map' },
           ].map(item => (
             <Link key={item.href} href={item.href} style={{
               padding: '7px 14px', borderRadius: 'var(--radius-xs)', fontSize: '13px', textDecoration: 'none',
@@ -345,10 +422,19 @@ export default function SimulatePage() {
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
                 <label style={{ fontFamily: 'var(--font-space-mono)', fontSize: '10px', color: 'var(--text-muted)', letterSpacing: '0.1em' }}>TARGET TRAINS</label>
                 <div style={{ display: 'flex', gap: '8px' }}>
-                  <button className="btn-ghost" style={{ fontSize: '10px', padding: '2px 4px' }} onClick={() => setSelectedTrains(trains.map(t => t.id))}>All</button>
+                  <button className="btn-ghost" style={{ fontSize: '10px', padding: '2px 4px' }} onClick={() => setSelectedTrains(visibleTrains.map(t => t.id))}>All</button>
                   <button className="btn-ghost" style={{ fontSize: '10px', padding: '2px 4px' }} onClick={() => setSelectedTrains([])}>Clear</button>
                 </div>
               </div>
+              {availableSections.length > 1 && (
+                <select className="input" value={sectionFilter} onChange={e => setSectionFilter(e.target.value)}
+                  style={{ marginBottom: '8px', fontSize: '12px' }}>
+                  <option value="ALL">All sections ({trains.length} trains)</option>
+                  {availableSections.map(s => (
+                    <option key={s} value={s}>{s} ({trains.filter(t => t.section === s).length})</option>
+                  ))}
+                </select>
+              )}
               {trainsError ? (
                 <div style={{ padding: '8px', fontSize: '11px', color: 'var(--accent-danger)', fontFamily: 'var(--font-space-mono)' }}>
                   Failed to load trains. Please refresh.
@@ -359,7 +445,7 @@ export default function SimulatePage() {
                 </div>
               ) : (
                 <select className="input" multiple style={{ height: '110px' }} value={selectedTrains} onChange={e => setSelectedTrains(Array.from(e.target.selectedOptions, option => option.value))}>
-                  {trains.map(t => (
+                  {visibleTrains.map(t => (
                     <option key={t.id} value={t.id} style={{ padding: '4px', background: selectedTrains.includes(t.id) ? 'var(--bg-active)' : 'transparent' }}>
                       {t.id} — {t.origin} → {t.destination}
                     </option>
@@ -458,6 +544,25 @@ export default function SimulatePage() {
                 ) : '▶ Run OR-Tools Solver'}
               </button>
             </div>
+
+            {/* Stress Test */}
+            <div style={{ borderTop: '1px solid var(--bg-border)', paddingTop: '16px' }}>
+              <label style={{ display: 'block', fontFamily: 'var(--font-space-mono)', fontSize: '10px', color: 'var(--text-muted)', letterSpacing: '0.1em', marginBottom: '8px' }}>
+                STRESS TEST — RANDOMIZED DISRUPTIONS
+              </label>
+              <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                <input type="number" min="1" max="25" className="input" value={stressTestRuns}
+                  onChange={e => setStressTestRuns(Number(e.target.value))} style={{ width: '70px' }} />
+                <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>runs</span>
+                <button
+                  className="btn-ghost"
+                  onClick={() => { stressTestMutation.reset(); stressTestMutation.mutate(); }}
+                  disabled={selectedTrains.length === 0 || stressTestMutation.isPending}
+                  style={{ flex: 1, justifyContent: 'center', padding: '8px', fontSize: '12px' }}>
+                  {stressTestMutation.isPending ? 'Testing...' : 'Run Stress Test'}
+                </button>
+              </div>
+            </div>
           </div>
         </aside>
 
@@ -467,6 +572,105 @@ export default function SimulatePage() {
           <div style={{ marginBottom: '16px' }}>
             <Breadcrumb items={[{ label: 'Simulate' }]} />
           </div>
+
+          {simHistory.length > 0 && (
+            <div className="panel" style={{ marginBottom: '24px', overflow: 'hidden' }}>
+              <div style={{ padding: '12px 16px', borderBottom: '1px solid var(--bg-border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <span className="panel-header">Simulation History — {simHistory.length} previous run{simHistory.length !== 1 ? 's' : ''}</span>
+                {viewingHistoryEntry && (
+                  <button className="btn-ghost" style={{ fontSize: '11px', padding: '4px 10px' }} onClick={handleBackToCurrent}>← Back to Current</button>
+                )}
+              </div>
+              <div style={{ maxHeight: '160px', overflowY: 'auto' }}>
+                {simHistory.map((h: any) => (
+                  <div key={h.id}
+                    onClick={() => handleViewHistoryEntry(h.id, h.created_at)}
+                    style={{
+                      padding: '8px 16px', borderBottom: '1px solid var(--bg-border)', cursor: 'pointer',
+                      display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '12px',
+                      background: viewingHistoryEntry?.id === h.id ? 'var(--bg-active)' : 'transparent',
+                    }}>
+                    <span>
+                      <span style={{ fontFamily: 'var(--font-jetbrains)', fontWeight: 700, color: 'var(--accent-primary)' }}>#{h.id}</span>
+                      {' '}{h.event_type} @ {h.location} — {h.objective}
+                    </span>
+                    <span style={{ color: 'var(--text-muted)', fontFamily: 'var(--font-jetbrains)' }}>
+                      {h.optimized_delay != null ? `${h.optimized_delay}m optimized` : '—'} · {new Date(h.created_at).toLocaleString()}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {viewingHistoryEntry && (
+            <div className="animate-slide-in" style={{
+              padding: '12px 16px', background: 'rgba(148,163,184,0.12)', border: '1px solid var(--bg-border)',
+              borderRadius: 'var(--radius-xs)', marginBottom: '16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+            }}>
+              <span style={{ fontFamily: 'var(--font-space-mono)', fontSize: '12px', color: 'var(--text-secondary)' }}>
+                Viewing Previous Simulation #{viewingHistoryEntry.id} — run {new Date(viewingHistoryEntry.createdAt).toLocaleString()} (read-only)
+              </span>
+              <button className="btn-ghost" style={{ fontSize: '11px', padding: '4px 10px' }} onClick={handleBackToCurrent}>← Back to Current</button>
+            </div>
+          )}
+
+          {(stressTestMutation.isPending || stressTestMutation.isSuccess || stressTestMutation.isError) && (
+            <div className="panel animate-slide-in" style={{ marginBottom: '24px', padding: '16px' }}>
+              <div className="panel-header" style={{ marginBottom: '8px' }}>Stress Test — Robustness Report</div>
+              <p style={{ fontSize: '11px', color: 'var(--text-muted)', marginBottom: '12px' }}>
+                Randomized disruption scenarios run against the selected trains — not a real scenario, not saved to
+                Simulation History. Measures how robust this train set's schedule is, not one hand-picked outcome.
+              </p>
+              {stressTestMutation.isPending && (
+                <div style={{ fontSize: '12px', color: 'var(--text-muted)', fontFamily: 'var(--font-space-mono)' }}>Running {stressTestRuns} randomized scenarios...</div>
+              )}
+              {stressTestMutation.isError && (
+                <div style={{ fontSize: '12px', color: 'var(--accent-danger)' }}>{(stressTestMutation.error as Error).message}</div>
+              )}
+              {stressTestMutation.isSuccess && (
+                <>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '12px', marginBottom: '16px' }}>
+                    <div>
+                      <div style={{ fontSize: '10px', color: 'var(--text-muted)', fontFamily: 'var(--font-space-mono)' }}>FEASIBILITY</div>
+                      <div style={{ fontSize: '22px', fontWeight: 700, fontFamily: 'var(--font-jetbrains)', color: stressTestMutation.data.feasibility_pct >= 80 ? 'var(--accent-safe)' : 'var(--accent-danger)' }}>
+                        {stressTestMutation.data.feasibility_pct}%
+                      </div>
+                      <div style={{ fontSize: '10px', color: 'var(--text-muted)' }}>{stressTestMutation.data.feasible_runs}/{stressTestMutation.data.total_runs} runs</div>
+                    </div>
+                    <div>
+                      <div style={{ fontSize: '10px', color: 'var(--text-muted)', fontFamily: 'var(--font-space-mono)' }}>AVG OPTIMIZED DELAY</div>
+                      <div style={{ fontSize: '22px', fontWeight: 700, fontFamily: 'var(--font-jetbrains)' }}>
+                        {stressTestMutation.data.avg_optimized_delay ?? '—'}m
+                      </div>
+                      <div style={{ fontSize: '10px', color: 'var(--text-muted)' }}>
+                        range {stressTestMutation.data.min_optimized_delay ?? '—'}–{stressTestMutation.data.max_optimized_delay ?? '—'}m
+                      </div>
+                    </div>
+                    <div>
+                      <div style={{ fontSize: '10px', color: 'var(--text-muted)', fontFamily: 'var(--font-space-mono)' }}>AVG CONFLICTS AVOIDED</div>
+                      <div style={{ fontSize: '22px', fontWeight: 700, fontFamily: 'var(--font-jetbrains)' }}>
+                        {stressTestMutation.data.avg_conflicts_avoided ?? '—'}
+                      </div>
+                    </div>
+                  </div>
+                  <div style={{ maxHeight: '140px', overflowY: 'auto', fontSize: '11px' }}>
+                    {stressTestMutation.data.runs.map((r: any) => (
+                      <div key={r.run} style={{ display: 'flex', justifyContent: 'space-between', padding: '4px 0', borderBottom: '1px solid var(--bg-border)' }}>
+                        <span style={{ color: 'var(--text-muted)' }}>
+                          #{r.run} {r.disruption_type} @ {r.disruption_location} ({r.disruption_duration_minutes}min)
+                        </span>
+                        <span style={{ color: ['OPTIMAL', 'FEASIBLE'].includes(r.status) ? 'var(--accent-safe)' : 'var(--accent-danger)', fontFamily: 'var(--font-jetbrains)' }}>
+                          {r.status}{r.optimized_delay != null ? ` · ${r.optimized_delay}m` : ''}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </>
+              )}
+            </div>
+          )}
+
           {(realPositions || isFetchingRealPositions) && (
             <div style={{ marginBottom: '24px' }}>
               <h3 style={{ fontFamily: 'var(--font-space-mono)', fontSize: '16px', marginBottom: '16px' }}>Real Live Positions</h3>
@@ -501,13 +705,13 @@ export default function SimulatePage() {
             </div>
           )}
 
-          {simState === 'RESULTS' && simResults?.status && !['OPTIMAL', 'FEASIBLE'].includes(simResults.status) && (
+          {(simState === 'RESULTS' || viewingHistoryEntry) && displayedResults?.status && !['OPTIMAL', 'FEASIBLE'].includes(displayedResults.status) && (
             <div className="animate-slide-in" style={{
               padding: '20px', background: '#FFEBEE', border: '1px solid #FFCDD2',
               borderRadius: 'var(--radius-xs)', display: 'flex', flexDirection: 'column', gap: '8px',
             }}>
               <div style={{ fontFamily: 'var(--font-space-mono)', fontSize: '13px', fontWeight: 700, color: 'var(--accent-danger)', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                <TriangleAlert size={15} strokeWidth={2.25} /> No Feasible Schedule Found ({simResults.status})
+                <TriangleAlert size={15} strokeWidth={2.25} /> No Feasible Schedule Found ({displayedResults.status})
               </div>
               <div style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>
                 The solver could not find any valid schedule that satisfies every safety constraint
@@ -518,41 +722,57 @@ export default function SimulatePage() {
             </div>
           )}
 
-          {simState === 'RESULTS' && simResults?.status && ['OPTIMAL', 'FEASIBLE'].includes(simResults.status) && (
+          {(simState === 'RESULTS' || viewingHistoryEntry) && displayedResults?.status && ['OPTIMAL', 'FEASIBLE'].includes(displayedResults.status) && (
             <div className="animate-slide-in" style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-              {/* Apply Strategy Banner */}
-              <div style={{
-                padding: '16px 20px', background: 'rgba(0, 212, 255, 0.08)',
-                border: '1px solid rgba(0, 212, 255, 0.3)', borderRadius: 'var(--radius-xs)',
-                display: 'flex', justifyContent: 'space-between', alignItems: 'center'
-              }}>
-                <div>
-                  <div style={{ fontFamily: 'var(--font-space-mono)', fontSize: '13px', fontWeight: 700, color: 'var(--accent-primary)', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                    <Zap size={14} strokeWidth={2.25} /> AI OPTIMIZATION PLAN READY (SIMULATION #{simResults?.simulation_id})
+              {/* Apply Strategy Banner — only for the genuine current run; a
+                  historical result is read-only, applying it would silently
+                  re-target live trains from an old scenario as if it were now. */}
+              {!viewingHistoryEntry ? (
+                <div style={{
+                  padding: '16px 20px', background: 'rgba(0, 212, 255, 0.08)',
+                  border: '1px solid rgba(0, 212, 255, 0.3)', borderRadius: 'var(--radius-xs)',
+                  display: 'flex', justifyContent: 'space-between', alignItems: 'center'
+                }}>
+                  <div>
+                    <div style={{ fontFamily: 'var(--font-space-mono)', fontSize: '13px', fontWeight: 700, color: 'var(--accent-primary)', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      <Zap size={14} strokeWidth={2.25} /> AI OPTIMIZATION PLAN READY (SIMULATION #{simResults?.simulation_id})
+                    </div>
+                    <div style={{ fontSize: '12px', color: 'var(--text-secondary)', marginTop: '2px' }}>
+                      {applyMessage ? applyMessage : 'Review recommendations below and apply directly to live section trains in PostgreSQL.'}
+                    </div>
                   </div>
-                  <div style={{ fontSize: '12px', color: 'var(--text-secondary)', marginTop: '2px' }}>
-                    {applyMessage ? applyMessage : 'Review recommendations below and apply directly to live section trains in PostgreSQL.'}
+                  <button
+                    onClick={handleApplyStrategy}
+                    disabled={isApplying}
+                    className="btn-primary"
+                    style={{ padding: '10px 18px', fontSize: '13px', whiteSpace: 'nowrap', display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+                    {isApplying ? 'Applying Strategy...' : <><Rocket size={14} strokeWidth={2.25} /> Apply Strategy to Live Corridor</>}
+                  </button>
+                </div>
+              ) : (
+                <div style={{
+                  padding: '16px 20px', background: 'rgba(148,163,184,0.08)',
+                  border: '1px solid var(--bg-border)', borderRadius: 'var(--radius-xs)',
+                }}>
+                  <div style={{ fontFamily: 'var(--font-space-mono)', fontSize: '13px', fontWeight: 700, color: 'var(--text-secondary)' }}>
+                    PREVIOUS SIMULATION #{viewingHistoryEntry.id} (READ-ONLY)
+                  </div>
+                  <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginTop: '2px' }}>
+                    This is a completed prior run — not applied to live trains from here. Go back to Current to run a new scenario.
                   </div>
                 </div>
-                <button
-                  onClick={handleApplyStrategy}
-                  disabled={isApplying}
-                  className="btn-primary"
-                  style={{ padding: '10px 18px', fontSize: '13px', whiteSpace: 'nowrap', display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
-                  {isApplying ? 'Applying Strategy...' : <><Rocket size={14} strokeWidth={2.25} /> Apply Strategy to Live Corridor</>}
-                </button>
-              </div>
+              )}
 
               {/* Metrics Header */}
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: '16px' }}>
                 <div className="panel" style={{ padding: '16px' }}>
                   <div className="panel-header" style={{ marginBottom: '8px' }}>Optimized Delay</div>
                   <div style={{ display: 'flex', alignItems: 'flex-end', gap: '12px' }}>
-                    <span style={{ fontFamily: 'var(--font-jetbrains)', fontSize: '28px', fontWeight: 700, color: 'var(--accent-safe)' }}>{simResults?.optimized_delay ?? '—'}m</span>
+                    <span style={{ fontFamily: 'var(--font-jetbrains)', fontSize: '28px', fontWeight: 700, color: 'var(--accent-safe)' }}>{displayedResults?.optimized_delay ?? '—'}m</span>
                     <span style={{ fontSize: '12px', color: 'var(--text-muted)', marginBottom: '6px' }}>
-                      Baseline {simResults?.baseline_delay ?? '—'}m
-                      {simResults?.delay_delta != null
-                        ? ` (${simResults.delay_delta > 0 ? '+' : ''}${simResults.delay_delta}m)`
+                      Baseline {displayedResults?.baseline_delay ?? '—'}m
+                      {displayedResults?.delay_delta != null
+                        ? ` (${displayedResults.delay_delta > 0 ? '+' : ''}${displayedResults.delay_delta}m)`
                         : ''}
                     </span>
                   </div>
@@ -561,28 +781,28 @@ export default function SimulatePage() {
                   <div className="panel-header" style={{ marginBottom: '8px' }}>Throughput Retained</div>
                   <div style={{ display: 'flex', alignItems: 'flex-end', gap: '12px' }}>
                     <span style={{ fontFamily: 'var(--font-jetbrains)', fontSize: '28px', fontWeight: 700, color: 'var(--text-primary)' }}>
-                      {simResults?.throughput_change ?? '—'}%
+                      {displayedResults?.throughput_change ?? '—'}%
                     </span>
-                    <span className={simResults?.throughput_change >= 80 ? 'badge-safe' : 'badge-warn'} style={{ marginBottom: '6px' }}>
-                      {simResults?.throughput_change >= 80 ? 'good' : 'reduced'}
+                    <span className={displayedResults?.throughput_change >= 80 ? 'badge-safe' : 'badge-warn'} style={{ marginBottom: '6px' }}>
+                      {displayedResults?.throughput_change >= 80 ? 'good' : 'reduced'}
                     </span>
                   </div>
                 </div>
                 <div className="panel" style={{ padding: '16px' }}>
                   <div className="panel-header" style={{ marginBottom: '8px' }}>Conflicts Avoided</div>
                   <div style={{ display: 'flex', alignItems: 'flex-end', gap: '12px' }}>
-                    <span style={{ fontFamily: 'var(--font-jetbrains)', fontSize: '28px', fontWeight: 700, color: 'var(--accent-primary)' }}>{simResults?.conflicts_avoided ?? '—'}</span>
+                    <span style={{ fontFamily: 'var(--font-jetbrains)', fontSize: '28px', fontWeight: 700, color: 'var(--accent-primary)' }}>{displayedResults?.conflicts_avoided ?? '—'}</span>
                     <span style={{ fontSize: '12px', color: 'var(--text-muted)', marginBottom: '6px' }}>HOLD/REROUTE actions</span>
                   </div>
                 </div>
               </div>
 
               {/* AI Recommendations */}
-              {(simResults?.schedule?.length ?? 0) > 0 && (
+              {(displayedResults?.schedule?.length ?? 0) > 0 && (
                 <div className="panel" style={{ padding: '16px' }}>
                   <div className="panel-header" style={{ marginBottom: '12px' }}>AI Recommendations & XAI Rationale</div>
                   <ol style={{ margin: 0, paddingLeft: '20px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                    {(simResults.schedule as any[]).map((item: any, i: number) => (
+                    {(displayedResults.schedule as any[]).map((item: any, i: number) => (
                       <li key={i} style={{ fontSize: '13px', color: 'var(--text-secondary)', lineHeight: 1.5 }}>
                         <span style={{ fontFamily: 'var(--font-jetbrains)', fontWeight: 700, color: 'var(--accent-primary)' }}>{item.train_name || item.train}</span>
                         {' — '}
@@ -604,6 +824,11 @@ export default function SimulatePage() {
                     ))}
                   </ol>
                 </div>
+              )}
+
+              {/* Dependency Graph — who's actually waiting on whom */}
+              {(displayedResults?.schedule?.length ?? 0) > 0 && (
+                <DependencyGraph schedule={displayedResults.schedule} />
               )}
 
               {/* Table Comparison */}
@@ -660,7 +885,7 @@ export default function SimulatePage() {
                 <div style={{ position: 'relative', height: '200px', display: 'flex', gap: '12px' }}>
                   {/* Y-axis Labels (Trains) */}
                   <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-around', width: '80px', borderRight: '1px solid var(--bg-border)' }}>
-                    {Array.from(new Set((simResults?.schedule || []).map((s: any) => s.train_number))).map((tn: any) => (
+                    {Array.from(new Set((displayedResults?.schedule || []).map((s: any) => s.train_number))).map((tn: any) => (
                       <div key={tn} style={{ fontSize: '10px', fontFamily: 'var(--font-space-mono)', color: 'var(--accent-primary)', fontWeight: 600 }}>
                         {tn}
                       </div>
@@ -671,7 +896,7 @@ export default function SimulatePage() {
                   <div style={{ flex: 1, position: 'relative' }}>
                     <svg style={{ width: '100%', height: '100%', overflow: 'visible' }}>
                      {(() => {
-                        const schedule = simResults?.schedule || [];
+                        const schedule = displayedResults?.schedule || [];
                         if (schedule.length === 0) return (
                           <text x="50%" y="50%" fill="var(--text-muted)" fontSize="12" textAnchor="middle">
                             No schedule data returned from solver

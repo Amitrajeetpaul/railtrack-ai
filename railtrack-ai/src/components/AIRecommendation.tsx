@@ -58,12 +58,19 @@ export default function AIRecommendation({ visible, conflict, onDismiss, onAccep
           <div style={{ fontSize: '13px', color: 'var(--text-primary)', marginBottom: '10px', display: 'flex', alignItems: 'center', gap: '5px' }}>
             <MapPin size={13} strokeWidth={2} /> Location: {conflict.location}
           </div>
+          {conflict.chainId && (
+            <div style={{ fontSize: '12px', color: 'var(--accent-warn-text)', marginBottom: '10px', background: 'rgba(245,158,11,0.1)', padding: '6px 10px', borderRadius: 'var(--radius-xs)' }}>
+              ⛓ Part of a {conflict.chainId.replace('CHAIN-', '').split('-').length}-train pileup — resolving this pair alone may not clear the rest of the chain.
+            </div>
+          )}
           <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
             <span className={`badge-${conflict.severity === 'HIGH' ? 'conflict' : conflict.severity === 'MEDIUM' ? 'warn' : 'rail'}`}>
               {conflict.severity} SEVERITY
             </span>
             <span className="badge-warn font-mono">
-              T-{Math.floor(conflict.timeToConflict / 60)}:{String(conflict.timeToConflict % 60).padStart(2, '0')}
+              {conflict.timeToConflict != null
+                ? `T-${Math.floor(conflict.timeToConflict / 60)}:${String(conflict.timeToConflict % 60).padStart(2, '0')}`
+                : 'Timing unknown'}
             </span>
           </div>
         </div>

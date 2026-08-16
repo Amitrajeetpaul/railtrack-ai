@@ -107,6 +107,12 @@ export default function ControllerDashboard() {
     loading: boolean;
   }>>({});
 
+  // Jump straight to one section's conflicts instead of scanning the full
+  // mixed list — matters once a viewer (SUPERVISOR/ADMIN) sees multiple real
+  // sections at once. Filters by conflict.location, which for real-time
+  // detections is exactly the train's section, and for seeded conflicts is
+  // that conflict's real recorded location.
+  const [conflictLocationFilter, setConflictLocationFilter] = useState('ALL');
   const [searchQuery, setSearchQuery] = useState('');
   const [isSearching, setIsSearching] = useState(false);
   const [customTrains, setCustomTrains] = useState<Train[]>([]);
@@ -340,7 +346,12 @@ export default function ControllerDashboard() {
         });
         if (res.ok) {
           const data = await res.json();
-          if (Array.isArray(data) && data.length > 0) return data as Train[];
+          // A real, successful response — even an empty array ("no trains
+          // right now") — is real data and must be trusted as-is. Previously
+          // required `data.length > 0`, so a genuinely empty real section
+          // silently rendered stale hardcoded demo trains instead, with no
+          // indication anything was fake.
+          if (Array.isArray(data)) return data as Train[];
         }
       } catch (e) {
         console.warn('Backend server offline, using fallback train dataset:', e);
@@ -363,12 +374,22 @@ export default function ControllerDashboard() {
         });
         if (res.ok) {
           const data = await res.json();
-          if (Array.isArray(data) && data.length > 0) {
+          // Same fix as the trains query above: a real empty array ("no
+          // active conflicts") is a valid, honest result and must render as
+          // such (the UI already has a "NO ACTIVE CONFLICTS" empty state) —
+          // not be silently replaced with a stale hardcoded demo conflict
+          // referencing train IDs that aren't even in the real roster.
+          if (Array.isArray(data)) {
             return data.map((c: any) => ({
               ...c,
               trainA: c.train_a_id,
               trainB: c.train_b_id,
-              timeToConflict: c.time_to_conflict || 0
+              // Preserve null as "genuinely unknown timing" — coalescing to 0
+              // made an unknown-timing conflict render identically to a real,
+              // imminent one ("T-0:00" either way), which is misleading now
+              // that some conflicts DO have real computed timing to compare against.
+              timeToConflict: c.time_to_conflict ?? null,
+              chainId: c.chain_id ?? null,
             })) as Conflict[];
           }
         }
@@ -397,7 +418,8 @@ export default function ControllerDashboard() {
         });
         if (res.ok) {
           const data = await res.json();
-          if (Array.isArray(data) && data.length > 0) return data;
+          // Same fix as trains/conflicts above — trust a real empty result.
+          if (Array.isArray(data)) return data;
         }
       } catch (e) {
         console.warn('Backend server offline, using fallback disruptions:', e);
@@ -759,6 +781,7 @@ export default function ControllerDashboard() {
             { label: 'Simulate', href: '/simulate' },
             { label: 'Analytics', href: '/analytics' },
             { label: 'Admin', href: '/admin' },
+            { label: 'Live Map', href: '/live-map' },
           ].map(item => (
             <Link key={item.href} href={item.href} style={{
               padding: '7px 14px', borderRadius: 'var(--radius-xs)', fontSize: '13px', textDecoration: 'none',
@@ -1212,6 +1235,18 @@ export default function ControllerDashboard() {
               </span>
             </div>
 
+            {Array.from(new Set(conflicts.map(c => c.location))).length > 1 && (
+              <div style={{ padding: '0 16px 8px' }}>
+                <select className="input" value={conflictLocationFilter} onChange={e => setConflictLocationFilter(e.target.value)}
+                  style={{ fontSize: '11px', width: '100%' }}>
+                  <option value="ALL">All locations ({conflicts.length})</option>
+                  {Array.from(new Set(conflicts.map(c => c.location))).sort().map(loc => (
+                    <option key={loc} value={loc}>{loc} ({conflicts.filter(c => c.location === loc).length})</option>
+                  ))}
+                </select>
+              </div>
+            )}
+
             {/* Quick Demo Trigger Box */}
             <div style={{ padding: '8px 16px', background: 'rgba(0, 212, 255, 0.05)', borderBottom: '1px solid var(--bg-border)' }}>
               <div style={{ fontSize: '10px', color: 'var(--text-muted)', fontFamily: 'var(--font-space-mono)', marginBottom: '6px', display: 'flex', alignItems: 'center', gap: '4px' }}>
@@ -1234,7 +1269,7 @@ export default function ControllerDashboard() {
             {/* Capped + scrollable: an unbounded list here was squeezing the
                 Ask AI Assistant panel below down to almost nothing. */}
             <div style={{ maxHeight: '180px', overflowY: 'auto' }}>
-              {conflicts.map(c => (
+              {conflicts.filter(c => conflictLocationFilter === 'ALL' || c.location === conflictLocationFilter).map(c => (
                 <div key={c.id} style={{ padding: '10px 16px', borderBottom: '1px solid var(--bg-border)', cursor: 'pointer' }}
                   onClick={() => { setActiveConflict(c); setShowAI(true); }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
@@ -1243,13 +1278,21 @@ export default function ControllerDashboard() {
                     </span>
                     <span className={`badge-${c.severity === 'HIGH' ? 'conflict' : 'warn'}`} style={{ fontSize: '9px' }}>{c.severity}</span>
                   </div>
+                  {c.chainId && (
+                    <div title="This conflict shares a train with at least one other active conflict — resolving one alone may not clear the other."
+                      style={{ fontSize: '10px', color: 'var(--accent-warn-text)', marginBottom: '2px', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                      ⛓ {c.chainId.replace('CHAIN-', '').split('-').length}-train pileup
+                    </div>
+                  )}
                   <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>{c.location}</div>
                   <div style={{ fontFamily: 'var(--font-jetbrains)', fontSize: '11px', color: 'var(--accent-warn-text)', marginTop: '2px' }}>
-                    T-{Math.floor(c.timeToConflict / 60)}:{String(c.timeToConflict % 60).padStart(2, '0')}
+                    {c.timeToConflict != null
+                      ? `T-${Math.floor(c.timeToConflict / 60)}:${String(c.timeToConflict % 60).padStart(2, '0')}`
+                      : 'Timing unknown'}
                   </div>
                 </div>
               ))}
-              {conflicts.length === 0 && (
+              {conflicts.filter(c => conflictLocationFilter === 'ALL' || c.location === conflictLocationFilter).length === 0 && (
                 <div style={{ padding: '16px', fontSize: '12px', color: 'var(--accent-safe)', textAlign: 'center', fontFamily: 'var(--font-space-mono)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
                   <Check size={14} strokeWidth={2.5} /> NO ACTIVE CONFLICTS
                 </div>

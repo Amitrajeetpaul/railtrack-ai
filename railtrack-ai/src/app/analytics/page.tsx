@@ -275,6 +275,7 @@ export default function AnalyticsPage() {
             { label: 'Simulate', href: '/simulate' },
             { label: 'Analytics', href: '/analytics', active: true },
             { label: 'Admin', href: '/admin' },
+            { label: 'Live Map', href: '/live-map' },
           ].map(item => (
             <Link key={item.href} href={item.href} style={{
               padding: '7px 14px', borderRadius: 'var(--radius-xs)', fontSize: '13px', textDecoration: 'none',

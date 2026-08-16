@@ -7,14 +7,15 @@ import { SlidersHorizontal, Play, BarChart3, X, RefreshCw } from 'lucide-react';
 import OfficialUtilityBar from '@/components/OfficialUtilityBar';
 import Breadcrumb from '@/components/Breadcrumb';
 import SiteFooter from '@/components/SiteFooter';
+import StationSearchInput from '@/components/StationSearchInput';
 
 // Helper to grab token on the client
 function getClientToken() {
   const match = document.cookie.match(/(?:^|;\s*)railtrack_token=([^;]*)/);
   return match ? decodeURIComponent(match[1]) : null;
 }
-import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { Settings, Users, Key, Activity, Database, Shield, HardDrive, Cpu, Network } from 'lucide-react';
+import { useQuery, useQueryClient, useMutation } from '@tanstack/react-query';
+import { Settings, Users, Key, Activity, Database, Shield, HardDrive, Cpu, Network, Download, Upload, FileText, Zap } from 'lucide-react';
 
 const TABS = [
   { id: 'users', label: 'User Management', icon: <Users size={16} /> },
@@ -22,6 +23,51 @@ const TABS = [
   { id: 'keys', label: 'API Keys', icon: <Key size={16} /> },
   { id: 'config', label: 'Section Config', icon: <Settings size={16} /> },
 ];
+
+function AlgorithmAnswerPanel({ autoRunMutation, autoRunDefaults }: { autoRunMutation: any; autoRunDefaults: any }) {
+  if (!(autoRunMutation.isPending || autoRunMutation.isSuccess || autoRunMutation.isError)) return null;
+  return (
+    <div className="panel animate-slide-in" style={{ marginTop: '16px', padding: '16px' }}>
+      <div className="panel-header" style={{ marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+        <Zap size={14} strokeWidth={2.25} style={{ color: 'var(--accent-primary)' }} />
+        What The Algorithm Says — Right Now, For This Data
+      </div>
+      {autoRunMutation.isPending && (
+        <div style={{ fontSize: '12px', color: 'var(--text-muted)', fontFamily: 'var(--font-space-mono)' }}>Running OR-Tools solver on the imported trains...</div>
+      )}
+      {autoRunMutation.isError && (
+        <div style={{ fontSize: '12px', color: 'var(--accent-danger)' }}>{(autoRunMutation.error as Error).message}</div>
+      )}
+      {autoRunMutation.isSuccess && (
+        <>
+          <p style={{ fontSize: '11px', color: 'var(--text-muted)', marginBottom: '12px' }}>
+            Illustrative scenario ({autoRunDefaults.disruption_type.replace('_', ' ').toLowerCase()}, {autoRunDefaults.disruption_duration_minutes}min) run against the real trains imported above —
+            the trains are real, the disruption is a stand-in to demonstrate the algorithm's reasoning. Full control (custom disruptions, objectives) on the <Link href="/simulate" style={{ color: 'var(--accent-primary)' }}>Simulate page</Link>.
+          </p>
+          {autoRunMutation.data.status && !['OPTIMAL', 'FEASIBLE'].includes(autoRunMutation.data.status) ? (
+            <div style={{ fontSize: '12px', color: 'var(--accent-danger)' }}>No feasible schedule found ({autoRunMutation.data.status}) for this default scenario — try the Simulate page with adjusted parameters.</div>
+          ) : (
+            <ol style={{ margin: 0, paddingLeft: '20px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+              {(autoRunMutation.data.schedule || []).map((item: any, i: number) => (
+                <li key={i} style={{ fontSize: '13px', color: 'var(--text-secondary)', lineHeight: 1.5 }}>
+                  <span style={{ fontFamily: 'var(--font-jetbrains)', fontWeight: 700, color: 'var(--accent-primary)' }}>{item.train_name || item.train}</span>
+                  {' — '}
+                  <span style={{
+                    fontWeight: 600,
+                    color: item.action === 'PROCEED' ? 'var(--accent-safe)' : item.action === 'HOLD' ? '#F59E0B' : 'var(--accent-danger)'
+                  }}>{item.action}</span>
+                  {item.xai_explanation && (
+                    <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginTop: '2px', fontStyle: 'italic' }}>{item.xai_explanation}</div>
+                  )}
+                </li>
+              ))}
+            </ol>
+          )}
+        </>
+      )}
+    </div>
+  );
+}
 
 export default function AdminPage() {
   const { user } = useAuth();
@@ -99,6 +145,100 @@ export default function AdminPage() {
   const [editError, setEditError] = useState('');
   
   const [toast, setToast] = useState('');
+
+  const [corridorFrom, setCorridorFrom] = useState('');
+  const [corridorTo, setCorridorTo] = useState('');
+
+  // Real defaults for the auto-run demo scenario shown right after import —
+  // deliberately labeled as illustrative in the UI: the TRAINS are real
+  // (just imported), the disruption is a stand-in scenario to show the
+  // algorithm reasoning, not a claim that this is happening right now.
+  // num_platforms matches the backend's SYNTHETIC_PLATFORM_POOL (2) — a
+  // smaller, more typical station platform count, so the solver's own
+  // allocation and the stored synthetic platform tags tell the same story.
+  const AUTO_RUN_DEFAULTS = { disruption_type: 'MAINTENANCE', disruption_duration_minutes: 20, objective: 'MINIMIZE_DELAY', num_platforms: 2, headway_minutes: 3 };
+
+  const [autoRunSource, setAutoRunSource] = useState<'corridor' | 'csv' | null>(null);
+
+  const autoRunMutation = useMutation({
+    mutationFn: async ({ trainIds, location }: { trainIds: string[]; location: string }) => {
+      const token = getClientToken();
+      const res = await fetch(`${API_BASE}/api/simulate/run`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ train_ids: trainIds, disruption_location: location, ...AUTO_RUN_DEFAULTS }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.detail || 'Solver run failed');
+      return data;
+    },
+  });
+
+  const importCorridorMutation = useMutation({
+    mutationFn: async () => {
+      const token = getClientToken();
+      const res = await fetch(`${API_BASE}/api/admin/import-corridor`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ from_code: corridorFrom.trim(), to_code: corridorTo.trim() }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.detail || 'Import failed');
+      return data;
+    },
+    onSuccess: (data) => {
+      const trainIds = data.imported.map((t: any) => t.id);
+      if (trainIds.length > 0) {
+        setAutoRunSource('corridor');
+        autoRunMutation.reset();
+        autoRunMutation.mutate({ trainIds, location: corridorFrom.trim() });
+      }
+    },
+  });
+
+  const [csvFile, setCsvFile] = useState<File | null>(null);
+
+  const importCsvMutation = useMutation({
+    mutationFn: async () => {
+      if (!csvFile) throw new Error('Choose a CSV file first.');
+      const token = getClientToken();
+      const formData = new FormData();
+      formData.append('file', csvFile);
+      const res = await fetch(`${API_BASE}/api/admin/import-csv`, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${token}` },
+        body: formData,
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.detail || 'CSV import failed');
+      return data;
+    },
+    onSuccess: (data) => {
+      const trainIds = data.results.filter((r: any) => r.status === 'imported').map((r: any) => r.train_id);
+      if (trainIds.length > 0) {
+        setAutoRunSource('csv');
+        autoRunMutation.reset();
+        autoRunMutation.mutate({ trainIds, location: 'UPLOADED CSV' });
+      }
+    },
+  });
+
+  const handleDownloadTemplate = async () => {
+    const token = getClientToken();
+    const res = await fetch(`${API_BASE}/api/admin/import-csv/template`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    const text = await res.text();
+    const blob = new Blob([text], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'railtrack_import_template.csv';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
 
   const handleInviteSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -280,6 +420,7 @@ export default function AdminPage() {
             { label: 'Simulate', href: '/simulate' },
             { label: 'Analytics', href: '/analytics' },
             { label: 'Admin', href: '/admin', active: true },
+            { label: 'Live Map', href: '/live-map' },
           ].map(item => (
             <Link key={item.href} href={item.href} style={{
               padding: '7px 14px', borderRadius: 'var(--radius-xs)', fontSize: '13px', textDecoration: 'none',
@@ -496,11 +637,166 @@ export default function AdminPage() {
               </div>
             )}
 
-            {(activeTab === 'keys' || activeTab === 'config') && (
+            {activeTab === 'keys' && (
               <div className="animate-slide-in" style={{ padding: '48px', textAlign: 'center', border: '1px dashed var(--bg-border)', borderRadius: 'var(--radius-xs)' }}>
                 <Shield size={48} color="var(--text-muted)" style={{ margin: '0 auto 16px' }} />
-                <h3 style={{ fontFamily: 'var(--font-space-mono)', color: 'var(--text-primary)', marginBottom: '8px' }}>{TABS.find(t => t.id === activeTab)?.label} Locked</h3>
+                <h3 style={{ fontFamily: 'var(--font-space-mono)', color: 'var(--text-primary)', marginBottom: '8px' }}>API Keys Locked</h3>
                 <p style={{ color: 'var(--text-muted)' }}>This section is locked in the demo environment.</p>
+              </div>
+            )}
+
+            {activeTab === 'config' && (
+              <div className="animate-slide-in">
+                <div style={{ marginBottom: '24px' }}>
+                  <h2 style={{ fontFamily: 'var(--font-space-mono)', fontSize: '24px', fontWeight: 700 }}>Import Real Corridor</h2>
+                  <p style={{ color: 'var(--text-secondary)', marginTop: '8px' }}>
+                    Fetch the real trains running any real Indian Railways station-to-station corridor from RailRadar,
+                    live, and add them as a new section — immediately schedulable by the OR-Tools solver and covered
+                    by real-time conflict detection.
+                  </p>
+                </div>
+
+                <div className="panel" style={{ padding: '20px', marginBottom: '24px' }}>
+                  <form
+                    onSubmit={(e) => { e.preventDefault(); importCorridorMutation.reset(); importCorridorMutation.mutate(); }}
+                    style={{ display: 'flex', gap: '12px', alignItems: 'flex-end', flexWrap: 'wrap' }}
+                  >
+                    <div>
+                      <label style={{ display: 'block', fontFamily: 'var(--font-space-mono)', fontSize: '10px', color: 'var(--text-muted)', letterSpacing: '0.1em', marginBottom: '8px' }}>FROM STATION (name or code)</label>
+                      <StationSearchInput value={corridorFrom} onChange={setCorridorFrom} placeholder="e.g. Chennai or MAS" />
+                    </div>
+                    <div>
+                      <label style={{ display: 'block', fontFamily: 'var(--font-space-mono)', fontSize: '10px', color: 'var(--text-muted)', letterSpacing: '0.1em', marginBottom: '8px' }}>TO STATION (name or code)</label>
+                      <StationSearchInput value={corridorTo} onChange={setCorridorTo} placeholder="e.g. Bengaluru or SBC" />
+                    </div>
+                    <button type="submit" className="btn-primary" disabled={importCorridorMutation.isPending}
+                      style={{ padding: '10px 18px', fontSize: '13px', display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+                      <Download size={14} strokeWidth={2.25} />
+                      {importCorridorMutation.isPending ? 'Importing live...' : 'Import Corridor'}
+                    </button>
+                  </form>
+
+                  {importCorridorMutation.isError && (
+                    <div style={{ marginTop: '16px', padding: '12px', background: '#FFEBEE', border: '1px solid #FFCDD2', borderRadius: 'var(--radius-xs)', color: 'var(--accent-danger)', fontSize: '13px' }}>
+                      {(importCorridorMutation.error as Error).message}
+                    </div>
+                  )}
+                </div>
+
+                {importCorridorMutation.isSuccess && (
+                  <div className="panel table-scroll-wrap desktop-table-view animate-slide-in">
+                    <div style={{ padding: '16px', borderBottom: '1px solid var(--bg-border)' }}>
+                      <span className="panel-header">
+                        Imported {importCorridorMutation.data.imported.length} real trains into section{' '}
+                        <span style={{ fontFamily: 'var(--font-jetbrains)', color: 'var(--accent-primary)' }}>{importCorridorMutation.data.section}</span>
+                      </span>
+                      {importCorridorMutation.data.truncated && (
+                        <p style={{ fontSize: '12px', color: 'var(--text-muted)', marginTop: '4px' }}>
+                          RailRadar found {importCorridorMutation.data.total_found} real trains on this corridor — capped to the first 15 to control API cost.
+                        </p>
+                      )}
+                    </div>
+                    <table className="data-table" style={{ minWidth: '640px' }}>
+                      <thead>
+                        <tr>
+                          <th>Train</th>
+                          <th>Name</th>
+                          <th>Priority</th>
+                          <th>Route</th>
+                          <th>Distance</th>
+                          <th>Duration</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {importCorridorMutation.data.imported.map((t: any) => (
+                          <tr key={t.id}>
+                            <td style={{ fontFamily: 'var(--font-jetbrains)', fontWeight: 700, color: 'var(--accent-primary)' }}>{t.id}</td>
+                            <td>{t.name}</td>
+                            <td><span className="badge-rail">{t.priority}</span></td>
+                            <td>{t.origin} → {t.destination}</td>
+                            <td>{t.distance_km != null ? `${t.distance_km} km` : '—'}</td>
+                            <td>{t.duration_minutes != null ? `${t.duration_minutes} min` : '—'}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+
+                {autoRunSource === 'corridor' && (
+                  <AlgorithmAnswerPanel autoRunMutation={autoRunMutation} autoRunDefaults={AUTO_RUN_DEFAULTS} />
+                )}
+
+                <div style={{ marginTop: '40px', marginBottom: '24px' }}>
+                  <h2 style={{ fontFamily: 'var(--font-space-mono)', fontSize: '24px', fontWeight: 700 }}>Import from CSV</h2>
+                  <p style={{ color: 'var(--text-secondary)', marginTop: '8px' }}>
+                    Fallback for when live RailRadar data isn't available (or isn't the point) — upload a
+                    locally-gathered dataset and it goes through the exact same pipeline as a live corridor
+                    import: same solver, same real-time conflict detection, same live-position map.
+                  </p>
+                </div>
+
+                <div className="panel" style={{ padding: '20px', marginBottom: '24px' }}>
+                  <div style={{ display: 'flex', gap: '12px', alignItems: 'center', flexWrap: 'wrap' }}>
+                    <button type="button" className="btn-ghost" onClick={handleDownloadTemplate}
+                      style={{ padding: '10px 16px', fontSize: '13px', display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+                      <FileText size={14} strokeWidth={2.25} /> Download CSV Template
+                    </button>
+                    <input type="file" accept=".csv,text/csv" aria-label="CSV file"
+                      onChange={e => setCsvFile(e.target.files?.[0] || null)}
+                      style={{ fontSize: '13px' }} />
+                    <button type="button" className="btn-primary" disabled={!csvFile || importCsvMutation.isPending}
+                      onClick={() => { importCsvMutation.reset(); importCsvMutation.mutate(); }}
+                      style={{ padding: '10px 18px', fontSize: '13px', display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+                      <Upload size={14} strokeWidth={2.25} />
+                      {importCsvMutation.isPending ? 'Uploading...' : 'Import CSV'}
+                    </button>
+                  </div>
+
+                  {importCsvMutation.isError && (
+                    <div style={{ marginTop: '16px', padding: '12px', background: '#FFEBEE', border: '1px solid #FFCDD2', borderRadius: 'var(--radius-xs)', color: 'var(--accent-danger)', fontSize: '13px' }}>
+                      {(importCsvMutation.error as Error).message}
+                    </div>
+                  )}
+                </div>
+
+                {importCsvMutation.isSuccess && (
+                  <div className="panel table-scroll-wrap desktop-table-view animate-slide-in">
+                    <div style={{ padding: '16px', borderBottom: '1px solid var(--bg-border)' }}>
+                      <span className="panel-header">
+                        Imported {importCsvMutation.data.imported_count} trains, skipped {importCsvMutation.data.skipped_count}
+                      </span>
+                    </div>
+                    <table className="data-table" style={{ minWidth: '480px' }}>
+                      <thead>
+                        <tr>
+                          <th>Row</th>
+                          <th>Train ID</th>
+                          <th>Status</th>
+                          <th>Reason</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {importCsvMutation.data.results.map((r: any) => (
+                          <tr key={r.row}>
+                            <td style={{ fontFamily: 'var(--font-jetbrains)' }}>{r.row}</td>
+                            <td style={{ fontFamily: 'var(--font-jetbrains)', fontWeight: 700, color: r.status === 'imported' ? 'var(--accent-primary)' : 'var(--text-muted)' }}>
+                              {r.train_id || '—'}
+                            </td>
+                            <td>
+                              <span className={r.status === 'imported' ? 'badge-safe' : 'badge-warn'}>{r.status}</span>
+                            </td>
+                            <td style={{ fontSize: '12px', color: 'var(--text-muted)' }}>{r.reason || '—'}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+
+                {autoRunSource === 'csv' && (
+                  <AlgorithmAnswerPanel autoRunMutation={autoRunMutation} autoRunDefaults={AUTO_RUN_DEFAULTS} />
+                )}
               </div>
             )}
 

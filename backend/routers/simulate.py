@@ -10,7 +10,7 @@ from typing import List, Optional
 from fastapi import APIRouter, Depends, HTTPException, status
 from pydantic import BaseModel
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select
+from sqlalchemy import select, desc
 from sqlalchemy.orm import selectinload
 from datetime import datetime
 
@@ -106,33 +106,13 @@ def apply_disruption_penalties(solver_trains: list, disruption_type: str,
 
 # ─── Endpoints ────────────────────────────────────────────────────────────────
 
-@router.post("/run", response_model=SimulationResponse)
-async def run_simulation(
-    req: SimulationRequest,
-    current_user: User = Depends(get_current_user),
-    db: AsyncSession = Depends(get_db),
-):
+def _run_solver_once(trains_db: list, req: SimulationRequest) -> SimulationResponse:
     """
-    Run the OR-Tools CP-SAT precedence optimizer on the requested trains.
-    Applies disruption penalty to train delays before calling the solver.
+    Core solver call, extracted from run_simulation so it can be invoked
+    repeatedly (stress-test) without duplicating the build/solve/derive-
+    metrics logic. Pure function of (trains_db, req) — no DB writes, no
+    simulation_id (caller decides whether/how to persist).
     """
-    # Fetch trains from DB
-    if not req.train_ids:
-        result = await db.execute(select(Train).where(Train.section == current_user.section).options(selectinload(Train.schedules)))
-    else:
-        result = await db.execute(select(Train).where(Train.id.in_(req.train_ids)).options(selectinload(Train.schedules)))
-
-    trains_db = result.scalars().all()
-
-    if not trains_db:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"None of the requested trains found: {req.train_ids}",
-        )
-
-    for tr in trains_db:
-        require_section_access(current_user, tr.section)
-
     # Build solver-compatible train dicts
     solver_trains = []
     for tr in trains_db:
@@ -264,7 +244,7 @@ async def run_simulation(
             delta=delta,
         ))
 
-    response_data = SimulationResponse(
+    return SimulationResponse(
         status=solver_status,
         baseline_delay=baseline_delay,
         optimized_delay=optimized_delay,
@@ -275,16 +255,47 @@ async def run_simulation(
         schedule=schedule,
     )
 
+
+async def _fetch_trains_for_request(train_ids: Optional[List[str]], current_user: User, db: AsyncSession) -> list:
+    """Shared train-fetch + section-access-check, used by /run and /stress-test."""
+    if not train_ids:
+        result = await db.execute(select(Train).where(Train.section == current_user.section).options(selectinload(Train.schedules)))
+    else:
+        result = await db.execute(select(Train).where(Train.id.in_(train_ids)).options(selectinload(Train.schedules)))
+    trains_db = result.scalars().all()
+    if not trains_db:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"None of the requested trains found: {train_ids}",
+        )
+    for tr in trains_db:
+        require_section_access(current_user, tr.section)
+    return trains_db
+
+
+@router.post("/run", response_model=SimulationResponse)
+async def run_simulation(
+    req: SimulationRequest,
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    """
+    Run the OR-Tools CP-SAT precedence optimizer on the requested trains.
+    Applies disruption penalty to train delays before calling the solver.
+    """
+    trains_db = await _fetch_trains_for_request(req.train_ids, current_user, db)
+    response_data = _run_solver_once(trains_db, req)
+
     # Persist simulation result
     sim_record = SimulationResult(
         event_type=req.disruption_type,
         location=req.disruption_location,
         duration_min=req.disruption_duration_minutes,
         objective=req.objective,
-        baseline_delay=baseline_delay,
-        optimized_delay=optimized_delay,
-        delay_delta=delay_delta,
-        conflicts_avoided=conflicts_avoided,
+        baseline_delay=response_data.baseline_delay,
+        optimized_delay=response_data.optimized_delay,
+        delay_delta=response_data.delay_delta,
+        conflicts_avoided=response_data.conflicts_avoided,
         result_json=json.dumps(response_data.model_dump()),
         run_by=current_user.id,
     )
@@ -294,6 +305,94 @@ async def run_simulation(
 
     response_data.simulation_id = sim_record.id
     return response_data
+
+
+class StressTestRequest(BaseModel):
+    train_ids: List[str]
+    runs: int = 10
+
+
+class StressTestRunResult(BaseModel):
+    run: int
+    disruption_type: str
+    disruption_location: str
+    disruption_duration_minutes: int
+    status: str
+    optimized_delay: Optional[int] = None
+    conflicts_avoided: Optional[int] = None
+
+
+class StressTestResponse(BaseModel):
+    total_runs: int
+    feasible_runs: int
+    feasibility_pct: float
+    avg_optimized_delay: Optional[float] = None
+    min_optimized_delay: Optional[int] = None
+    max_optimized_delay: Optional[int] = None
+    avg_conflicts_avoided: Optional[float] = None
+    runs: List[StressTestRunResult]
+
+
+@router.post("/stress-test", response_model=StressTestResponse)
+async def stress_test(
+    req: StressTestRequest,
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    """
+    Run the solver repeatedly against randomized disruption scenarios —
+    inspired by Flatland's malfunction_generators.py: parameterized random
+    disruptions instead of one fixed scenario, to report how robust the
+    solver's schedule is, not just whether one hand-picked run worked.
+    Disruption locations are drawn from the REAL selected trains' own
+    origin/destination stations, not invented. Ephemeral — these are
+    synthetic stress scenarios, not persisted to simulation history like a
+    real user-configured /run.
+    """
+    import random
+
+    runs = min(max(req.runs, 1), 25)
+    trains_db = await _fetch_trains_for_request(req.train_ids, current_user, db)
+
+    real_locations = sorted({t.origin for t in trains_db} | {t.destination for t in trains_db})
+    disruption_types = list(DISRUPTION_MULTIPLIERS.keys())
+
+    run_results: List[StressTestRunResult] = []
+    for i in range(runs):
+        scenario = SimulationRequest(
+            train_ids=req.train_ids,
+            disruption_type=random.choice(disruption_types),
+            disruption_location=random.choice(real_locations) if real_locations else "AGC",
+            disruption_duration_minutes=random.randint(10, 60),
+            objective=random.choice(["MINIMIZE_DELAY", "PRIORITIZE_EXPRESS", "MAXIMIZE_THROUGHPUT"]),
+            num_platforms=2,
+            headway_minutes=3,
+        )
+        result = _run_solver_once(trains_db, scenario)
+        run_results.append(StressTestRunResult(
+            run=i + 1,
+            disruption_type=scenario.disruption_type,
+            disruption_location=scenario.disruption_location,
+            disruption_duration_minutes=scenario.disruption_duration_minutes,
+            status=result.status,
+            optimized_delay=result.optimized_delay,
+            conflicts_avoided=result.conflicts_avoided,
+        ))
+
+    feasible = [r for r in run_results if r.status in ("OPTIMAL", "FEASIBLE")]
+    delays = [r.optimized_delay for r in feasible if r.optimized_delay is not None]
+    conflicts = [r.conflicts_avoided for r in feasible if r.conflicts_avoided is not None]
+
+    return StressTestResponse(
+        total_runs=runs,
+        feasible_runs=len(feasible),
+        feasibility_pct=round((len(feasible) / runs) * 100, 1) if runs else 0.0,
+        avg_optimized_delay=round(sum(delays) / len(delays), 1) if delays else None,
+        min_optimized_delay=min(delays) if delays else None,
+        max_optimized_delay=max(delays) if delays else None,
+        avg_conflicts_avoided=round(sum(conflicts) / len(conflicts), 1) if conflicts else None,
+        runs=run_results,
+    )
 
 
 @router.post("/apply", response_model=ApplySimulationResponse)
@@ -397,5 +496,63 @@ async def apply_simulation_plan(
         conflicts_resolved=conflicts_resolved,
         message=f"Successfully applied simulation plan #{req.simulation_id} across {trains_updated} section trains."
     )
+
+
+class SimulationHistoryEntry(BaseModel):
+    id: int
+    event_type: str
+    location: str
+    objective: str
+    baseline_delay: Optional[int] = None
+    optimized_delay: Optional[int] = None
+    delay_delta: Optional[int] = None
+    conflicts_avoided: Optional[int] = None
+    run_by: Optional[str] = None
+    created_at: datetime
+
+
+@router.get("/history", response_model=List[SimulationHistoryEntry])
+async def get_simulation_history(
+    limit: int = 20,
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    """
+    Real record of every past `/run` call, newest first — so a new
+    simulation replacing the "current" view doesn't erase that earlier
+    work happened. Every row here is a genuine prior solver run, never
+    fabricated.
+    """
+    result = await db.execute(
+        select(SimulationResult).order_by(desc(SimulationResult.created_at)).limit(min(max(limit, 1), 100))
+    )
+    rows = result.scalars().all()
+    return [
+        SimulationHistoryEntry(
+            id=r.id, event_type=r.event_type, location=r.location, objective=r.objective,
+            baseline_delay=r.baseline_delay, optimized_delay=r.optimized_delay,
+            delay_delta=r.delay_delta, conflicts_avoided=r.conflicts_avoided,
+            run_by=r.run_by, created_at=r.created_at,
+        )
+        for r in rows
+    ]
+
+
+@router.get("/history/{simulation_id}", response_model=SimulationResponse)
+async def get_simulation_by_id(
+    simulation_id: int,
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    """Full stored result for one past simulation — same shape /run returns, so the frontend can render it identically in read-only 'viewing previous' mode."""
+    result = await db.execute(select(SimulationResult).where(SimulationResult.id == simulation_id))
+    rec = result.scalar_one_or_none()
+    if not rec or not rec.result_json:
+        raise HTTPException(status_code=404, detail=f"Simulation #{simulation_id} not found.")
+    try:
+        data = json.loads(rec.result_json)
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=f"Failed to parse stored simulation result: {exc}")
+    return SimulationResponse(**data)
 
 
