@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth, UserRole } from '@/lib/auth';
-import { SlidersHorizontal, TrendingUp, Truck, Settings, TriangleAlert, ArrowRight, type LucideIcon } from 'lucide-react';
+import { SlidersHorizontal, TrendingUp, Truck, Settings, TriangleAlert, ArrowRight, Info, ShieldAlert, LifeBuoy, type LucideIcon } from 'lucide-react';
 import OfficialUtilityBar from '@/components/OfficialUtilityBar';
 import SiteFooter from '@/components/SiteFooter';
 
@@ -124,7 +124,7 @@ export default function LoginPage() {
       {/* Background grid lines */}
       <div style={{ position: 'absolute', inset: 0, backgroundImage: 'linear-gradient(var(--grid-line) 1px, transparent 1px), linear-gradient(90deg, var(--grid-line) 1px, transparent 1px)', backgroundSize: '40px 40px', opacity: 0.7 }} />
 
-      <div id="main-content" style={{ position: 'relative', zIndex: 1, width: '100%', maxWidth: '520px' }}>
+      <div id="main-content" style={{ position: 'relative', zIndex: 1, width: '100%', maxWidth: '920px' }}>
         {/* Formal Masthead */}
         <div style={{ textAlign: 'center', marginBottom: '32px' }}>
           <div style={{ fontFamily: 'var(--font-headline)', fontSize: '11px', color: 'var(--text-muted)', fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: '10px' }}>
@@ -141,8 +141,40 @@ export default function LoginPage() {
           </div>
         </div>
 
-        {/* Login Card */}
-        <div className="card-elevated" style={{ padding: '36px', borderRadius: 'var(--radius-md)' }}>
+        <div className="login-grid">
+          {/* Instructions & Security Notice */}
+          <div className="login-grid-info" style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+            <div className="card-elevated" style={{ padding: '24px', borderRadius: 'var(--radius-md)' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', paddingBottom: '12px', marginBottom: '14px', borderBottom: '1px solid var(--bg-border)' }}>
+                <Info size={17} strokeWidth={2.25} color="var(--accent-primary)" />
+                <span style={{ fontFamily: 'var(--font-headline)', fontSize: '15px', fontWeight: 700, color: 'var(--accent-primary)' }}>User Instructions</span>
+              </div>
+              <ul style={{ margin: 0, paddingLeft: '20px', display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '13.5px', color: 'var(--text-secondary)', lineHeight: 1.5 }}>
+                <li>Select your <strong style={{ color: 'var(--text-primary)' }}>operational role</strong> below — this determines which dashboard you land on.</li>
+                <li>Enter the <strong style={{ color: 'var(--text-primary)' }}>email address</strong> associated with your role.</li>
+                <li>Enter your <strong style={{ color: 'var(--text-primary)' }}>password</strong>. Passwords are case-sensitive.</li>
+                <li>Alternatively, use <strong style={{ color: 'var(--text-primary)' }}>Sign in with Google</strong> if your account is linked.</li>
+              </ul>
+            </div>
+            <div style={{
+              background: '#FDECEA', border: '1px solid #F5C6C2', borderRadius: 'var(--radius-md)', padding: '24px',
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', paddingBottom: '12px', marginBottom: '10px', borderBottom: '1px solid #F5C6C2' }}>
+                <ShieldAlert size={17} strokeWidth={2.25} color="var(--accent-danger)" />
+                <span style={{ fontFamily: 'var(--font-headline)', fontSize: '15px', fontWeight: 700, color: 'var(--accent-danger)' }}>Security Notice</span>
+              </div>
+              <p style={{ margin: 0, fontSize: '13.5px', fontWeight: 600, color: 'var(--accent-danger)' }}>
+                UNAUTHORIZED ACCESS IS STRICTLY PROHIBITED.
+              </p>
+              <p style={{ margin: '6px 0 0', fontSize: '13.5px', color: 'var(--accent-danger)', lineHeight: 1.5 }}>
+                This is a controlled-access system. All sign-in attempts and session activity are logged for audit purposes.
+              </p>
+            </div>
+          </div>
+
+          {/* Login Card */}
+          <div className="login-grid-form">
+        <div className="card-elevated" style={{ padding: '36px', borderRadius: 'var(--radius-md)', borderTop: '4px solid var(--accent-primary)' }}>
           {/* Role selector */}
           <div style={{ marginBottom: '28px' }}>
             <div className="panel-header" style={{ marginBottom: '12px' }}>Select Controller Role</div>
@@ -274,6 +306,17 @@ export default function LoginPage() {
               Email: <strong>{selectedRole.toLowerCase()}@demo.rail</strong><br />
               Password: <strong>demo1234</strong>
             </div>
+          </div>
+        </div>
+
+        <button
+          type="button"
+          onClick={() => router.push('/about#contact')}
+          className="btn-ghost"
+          style={{ width: '100%', justifyContent: 'center', fontSize: '13px', padding: '11px', borderRadius: 'var(--radius-sm)', marginTop: '14px', gap: '8px' }}
+        >
+          <LifeBuoy size={15} strokeWidth={2} /> Need help? Contact support
+        </button>
           </div>
         </div>
       </div>

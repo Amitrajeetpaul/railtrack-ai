@@ -38,6 +38,10 @@
   --font-body: 'Inter', system-ui, sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
   --font-space-mono: 'Space Mono', monospace;
+  /* Alias — referenced across the app (landing, login, simulate, footer)
+     but was never defined, so it silently fell back to the body font
+     instead of rendering as monospace. */
+  --font-jetbrains: var(--font-mono);
 
   /* Radius scale — 8/12/16/20/24/28-32px. Everything in the app should map
      onto one of these instead of arbitrary one-off values (previously 2px,
@@ -406,6 +410,20 @@ h4 { font-size: 16px; font-weight: 600; }
   animation: pulse-live 2s ease-in-out infinite;
 }
 
+/* Referenced across the app (admin, simulate, AIRecommendation, landing)
+   but never defined — className applied silently with no effect. */
+@keyframes slide-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-slide-in {
+  animation: slide-in 0.35s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes dash-flow {
+  to { stroke-dashoffset: -120; }
+}
+
 /* ---------- Responsive Layout (Controller Dashboard) ---------- */
 .main-3col-row {
   display: flex;
@@ -614,6 +632,83 @@ h4 { font-size: 16px; font-weight: 600; }
     border: 1px solid var(--bg-border);
     border-radius: var(--radius-sm);
     padding: 14px;
+  }
+}
+
+/* ---------- Landing Hero — Mission Control treatment ---------- */
+.corner-bracket-tl,
+.corner-bracket-br {
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  pointer-events: none;
+}
+.corner-bracket-tl {
+  top: -1px;
+  left: -1px;
+  border-top: 1.5px solid rgba(164, 201, 255, 0.5);
+  border-left: 1.5px solid rgba(164, 201, 255, 0.5);
+}
+.corner-bracket-br {
+  bottom: -1px;
+  right: -1px;
+  border-bottom: 1.5px solid rgba(164, 201, 255, 0.5);
+  border-right: 1.5px solid rgba(164, 201, 255, 0.5);
+}
+
+.data-stream {
+  background: linear-gradient(180deg, transparent, rgba(164, 201, 255, 0.35), transparent);
+  background-size: 100% 200%;
+  animation: stream-flow 2.4s infinite linear;
+}
+@keyframes stream-flow {
+  0% { background-position: 0 -100%; }
+  100% { background-position: 0 100%; }
+}
+
+.dot-grid-bg {
+  background-image: radial-gradient(#1A5490 1px, transparent 1px);
+  background-size: 24px 24px;
+  opacity: 0.06;
+}
+
+/* One-shot on load, not a distracting infinite loop */
+@keyframes glitch-in {
+  0% { opacity: 0; transform: translateX(-2px); }
+  20% { opacity: 1; transform: translateX(2px); }
+  40% { transform: translateX(-1px); }
+  100% { opacity: 1; transform: translateX(0); }
+}
+.glitch-text {
+  animation: glitch-in 0.5s steps(2, end) both;
+}
+
+/* ---------- Login — two-column govt-portal layout ---------- */
+.login-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+  align-items: start;
+}
+/* Mobile: form first so it's reachable without scrolling past the
+   instructions/notice copy; desktop restores the info-left/form-right
+   reading order via the two-column grid below. */
+.login-grid-form {
+  order: 1;
+}
+.login-grid-info {
+  order: 2;
+}
+@media (min-width: 900px) {
+  .login-grid {
+    grid-template-columns: 7fr 5fr;
+    gap: 28px;
+  }
+  .login-grid-info {
+    order: 1;
+  }
+  .login-grid-form {
+    order: 2;
   }
 }
 
